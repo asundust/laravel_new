@@ -1,0 +1,48 @@
+{
+    "name":        "arcanedev/laravel-lang",
+    "description": "Translations manager and checker for Laravel 5 based on 'caouecs/laravel4-lang' package.",
+    "homepage":    "https://github.com/ARCANEDEV/LaravelLang",
+    "keywords":    [
+        "arcanedev", "laravel", "translations", "trans", "languages", "lang", "localisation", "localization", "validations"
+    ],
+    "authors":  [
+        {
+            "name":     "ARCANEDEV",
+            "email":    "arcanedev.maroc@gmail.com",
+            "homepage": "https://github.com/arcanedev-maroc",
+            "role":     "Developer"
+        }
+    ],
+    "type":    "library",
+    "license": "MIT",
+    "require": {
+        "php":                  ">=7.2.0",
+        "arcanedev/support":    "^5.0",
+        "caouecs/laravel-lang": "^4.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^4.0",
+        "phpunit/phpcov":      "^6.0",
+        "phpunit/phpunit":     "^8.0",
+        "mockery/mockery":     "^1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Arcanedev\\LaravelLang\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Arcanedev\\LaravelLang\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Arcanedev\\LaravelLang\\LaravelLangServiceProvider",
+                "Arcanedev\\LaravelLang\\Providers\\DeferredServicesProvider",
+                "Arcanedev\\LaravelLang\\Providers\\TranslationServiceProvider"
+            ]
+        }
+    }
+}
