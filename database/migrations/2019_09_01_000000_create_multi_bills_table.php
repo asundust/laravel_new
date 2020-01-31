@@ -15,14 +15,14 @@ class CreateMultiBillsTable extends Migration
     {
         Schema::create('multi_bills', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('pay_no')->unique()->comment('商户订单号');
-            $table->string('pay_service_no')->nullable()->default(null)->unique()->comment('支付商订单号');
             $table->string('billable_type')->index()->comment('多态模型名称');
-            $table->timestamp('pay_at')->nullable()->default(null)->unique()->comment('支付成功时间');
             $table->string('billable_id')->nullable()->default(null)->index()->comment('多态模型id');
             $table->integer('user_id')->nullable()->default(null)->index()->comment('用户id');
             $table->string('openid')->nullable()->default(null)->index()->comment('Openid(微信支付涉及)');
             $table->decimal('amount', 12, 2)->comment('支付发起金额');
+            $table->string('pay_no')->unique()->comment('商户订单号');
+            $table->string('pay_service_no')->nullable()->default(null)->unique()->comment('支付商订单号');
+            $table->timestamp('pay_at')->nullable()->default(null)->unique()->comment('支付成功时间');
             $table->string('refund_no')->nullable()->default(null)->unique()->comment('退款商户订单号');
             $table->string('refund_service_no')->nullable()->default(null)->unique()->comment('退款支付商订单号');
             $table->timestamp('refund_at')->nullable()->default(null)->unique()->comment('退款到账时间');

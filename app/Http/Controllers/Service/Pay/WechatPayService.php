@@ -84,7 +84,7 @@ class WechatPayService
             DB::rollBack();
             return '';
         } catch (Exception $e) {
-            pl('微信回调失败：' . $e->getMessage(), 'notify', 'wechat');
+            pl('微信回调失败：' . $e->getMessage(), 'wechat-notify', 'pay');
             DB::rollBack();
             return '';
         }

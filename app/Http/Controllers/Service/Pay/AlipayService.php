@@ -76,25 +76,20 @@ class AlipayService
             DB::rollBack();
             return '';
         } catch (Exception $e) {
-            pl('支付宝回调失败：' . $e->getMessage(), 'notify', 'alipay');
+            pl('支付宝回调失败：' . $e->getMessage(), 'alipay-notify', 'pay');
             DB::rollBack();
             return '';
         }
     }
 
     /**
-     * 支付回调同步通知-支付宝
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * 支付回调同步通知
+     *
+     * @return mixed
      */
     public function return()
     {
         $data = Pay::alipay()->verify(); // 是的，验签就这么简单！
-        // 订单号：$data->out_trade_no
-        // 支付宝交易号：$data->trade_no
-        // 订单总金额：$data->total_amount
-        if ($data->app_id == config('pay.alipay.app_id')) {
-            dd('支付成功' . var_export($data->all(), true));
-        }
-        return redirect('/');
+        return MultiBill::handleReturn($data->out_trade_no);
     }
 }
