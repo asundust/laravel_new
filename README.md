@@ -40,7 +40,7 @@ return (new AlipayService())->pay(['no' => $bill->pay_no, 'amount' => $bill->amo
 $bill = $order->bills()->create(['pay_no' => $order->number, 'amount' => $order->price, 'pay_way' => 1, 'status' => 1]);
 return (new WechatPayService())->pay(['no' => $bill->pay_no, 'amount' => $bill->amount, 'name' => '测试订单'], 'scan');
 ```
-如果不需要此类则需要删除`database/migrations/2020_09_02_000000_create_demo_orders_table.php`和`app/Models/Pay/DemoOrder.php`文件
+如果不需要此Demo则需要删除`database/migrations/2020_09_02_000000_create_demo_orders_table.php`和`app/Models/Pay/DemoOrder.php`文件
 
 ## 许可证
 [MIT](https://opensource.org/licenses/MIT)
