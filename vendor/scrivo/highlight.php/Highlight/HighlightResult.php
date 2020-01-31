@@ -36,21 +36,25 @@ namespace Highlight;
  */
 abstract class HighlightResult
 {
-    /** @var int */
+    /** @var int the relevance score */
     public $relevance;
 
-    /** @var string */
+    /** @var string the highlighted HTML code */
     public $value;
 
-    /** @var string */
+    /** @var string the language name */
     public $language;
 
-    /** @var bool */
+    /** @var bool indicates whether any illegal matches were found */
     public $illegal;
 
-    /** @var Language|null */
+    /** @var Mode|null top of the current mode stack */
     public $top;
 
     /** @var \Exception|null */
     public $errorRaised;
+
+    // @TODO In v10.x, remove \stdClass from this type
+    /** @var \stdClass|HighlightResult|null */
+    public $secondBest;
 }

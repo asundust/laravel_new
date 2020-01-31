@@ -4,7 +4,7 @@
 [![Latest Packagist release](https://img.shields.io/packagist/v/scrivo/highlight.php.svg)](https://packagist.org/packages/scrivo/highlight.php)
 [![Monthly downloads on Packagist](https://img.shields.io/packagist/dm/scrivo/highlight.php.svg)](https://packagist.org/packages/scrivo/highlight.php/stats)
 
-*highlight.php* is a server side code highlighter written in PHP that currently supports 185 languages. It's a port of [highlight.js](http://www.highlightjs.org) by Ivan Sagalaev that makes full use of the language and style definitions of the original JavaScript project.
+*highlight.php* is a server-side syntax highlighter written in PHP that currently supports 185 languages. It's a port of [highlight.js](http://www.highlightjs.org) by Ivan Sagalaev that makes full use of the language and style definitions of the original JavaScript project.
 
 [TOC]: # "## Table of Contents"
 
@@ -40,7 +40,7 @@ It's come to our attention that a lot of tutorials and projects out there are lo
 
 ## Usage
 
-The `\Highlight\Highlighter` class contains the highlighting functionality. You can choose between two highlighting modes:
+The `\Highlight\Highlighter` class contains the syntax highlighting functionality. You can choose between two highlighting modes:
 
 1. explicit mode
 2. automatic language detection mode
@@ -100,11 +100,11 @@ The core of the project is loyal port of **highlight.js** and is available under
 
 Available functions:
 
-- [`getAvailableStyleSheets(bool $filePaths = false)`](HighlightUtilities/functions.php#L32-L45)
-- [`getStyleSheet(string $name)`](HighlightUtilities/functions.php#L72-L85)
-- [`getStyleSheetFolder()`](HighlightUtilities/functions.php#L93-L101)
-- [`getStyleSheetPath(string $name)`](HighlightUtilities/functions.php#L109-L121)
-- [`splitCodeIntoArray(string $html)`](HighlightUtilities/functions.php#L137-L150)
+- [`getAvailableStyleSheets(bool $filePaths = false): string[]`](HighlightUtilities/functions.php#L32-L45)
+- [`getStyleSheet(string $name): false|string`](HighlightUtilities/functions.php#L72-L85)
+- [`getStyleSheetFolder(): string`](HighlightUtilities/functions.php#L93-L101)
+- [`getStyleSheetPath(string $name): string`](HighlightUtilities/functions.php#L109-L121)
+- [`splitCodeIntoArray(string $html): false|string[]`](HighlightUtilities/functions.php#L137-L150)
 
 ## Versioning
 

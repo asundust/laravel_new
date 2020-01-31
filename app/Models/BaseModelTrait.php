@@ -6,6 +6,7 @@ trait BaseModelTrait
 {
     /**
      * 创建不重复新订单号
+     *
      * @param string $model
      * @param string $fieldName
      * @return string
@@ -27,6 +28,7 @@ trait BaseModelTrait
 
     /**
      * 根据订单号查询订单
+     *
      * @param $number
      * @param string $model
      * @param string $fieldName
@@ -43,6 +45,6 @@ trait BaseModelTrait
     // 状态名称 status_name
     public function getStatusNameAttribute()
     {
-        return self::$statusArr[$this->status] ?? '';
+        return self::STATUS[$this->status] ?? '';
     }
 }

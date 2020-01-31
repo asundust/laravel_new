@@ -18,3 +18,8 @@ Route::get('test/{name?}', 'Tests\TestController@test');
 Route::get('/', function () {
     return view('welcome');
 });
+
+// 支付通知
+Route::any('notify/alipay', 'NotifyController@notifyAlipay'); // 异步通知 - 支付宝
+Route::any('notify/wechat', 'NotifyController@notifyWechat'); // 异步通知 - 微信
+Route::any('return/alipay', 'NotifyController@returnAlipay'); // 同步返回 - 支付宝

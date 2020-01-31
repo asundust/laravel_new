@@ -6,6 +6,16 @@ use App\Http\Controllers\Controller;
 
 class TestController extends Controller
 {
+    /**
+     * TestController constructor.
+     */
+    public function __construct()
+    {
+        if (app()->isProduction()) {
+            abort(404);
+        }
+    }
+
     public function test($name = '')
     {
         if (strlen($name) == 0) {

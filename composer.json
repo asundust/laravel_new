@@ -16,6 +16,7 @@
         "dingo/api": "^2.3",
         "encore/laravel-admin": "^1.7",
         "fideloper/proxy": "^4.0",
+        "jenssegers/agent": "^2.6",
         "laravel-admin-ext/config": "^1.0",
         "laravel/framework": "^6.2",
         "laravel/tinker": "^2.1",

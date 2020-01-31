@@ -130,6 +130,8 @@ class ComposerStaticInita0ef333b8be16317a15e74eb82803542
         ),
         'J' => 
         array (
+            'Jenssegers\\Agent\\' => 17,
+            'Jaybizzle\\CrawlerDetect\\' => 24,
             'JakubOnderka\\PhpConsoleHighlighter\\' => 35,
             'JakubOnderka\\PhpConsoleColor\\' => 29,
         ),
@@ -408,6 +410,14 @@ class ComposerStaticInita0ef333b8be16317a15e74eb82803542
         array (
             0 => __DIR__ . '/..' . '/laravel/tinker/src',
         ),
+        'Jenssegers\\Agent\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jenssegers/agent/src',
+        ),
+        'Jaybizzle\\CrawlerDetect\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jaybizzle/crawler-detect/src',
+        ),
         'JakubOnderka\\PhpConsoleHighlighter\\' => 
         array (
             0 => __DIR__ . '/..' . '/jakub-onderka/php-console-highlighter/src',
@@ -564,6 +574,13 @@ class ComposerStaticInita0ef333b8be16317a15e74eb82803542
                 0 => __DIR__ . '/..' . '/scrivo/highlight.php',
             ),
         ),
+        'D' => 
+        array (
+            'Detection' => 
+            array (
+                0 => __DIR__ . '/..' . '/mobiledetect/mobiledetectlib/namespaced',
+            ),
+        ),
         'B' => 
         array (
             'BaconQrCode' => 
@@ -596,6 +613,7 @@ class ComposerStaticInita0ef333b8be16317a15e74eb82803542
         'App\\Http\\Controllers\\Auth\\ResetPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ResetPasswordController.php',
         'App\\Http\\Controllers\\Auth\\VerificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/VerificationController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\Service\\Pay\\AlipayService' => __DIR__ . '/../..' . '/app/Http/Controllers/Service/Pay/AlipayService.php',
         'App\\Http\\Controllers\\Tests\\TestController' => __DIR__ . '/../..' . '/app/Http/Controllers/Tests/TestController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
@@ -607,6 +625,7 @@ class ComposerStaticInita0ef333b8be16317a15e74eb82803542
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Models\\BaseModel' => __DIR__ . '/../..' . '/app/Models/BaseModel.php',
         'App\\Models\\BaseModelTrait' => __DIR__ . '/../..' . '/app/Models/BaseModelTrait.php',
+        'App\\Models\\Pay\\MultiBill' => __DIR__ . '/../..' . '/app/Models/Pay/MultiBill.php',
         'App\\Models\\User\\User' => __DIR__ . '/../..' . '/app/Models/User/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
@@ -729,6 +748,7 @@ class ComposerStaticInita0ef333b8be16317a15e74eb82803542
         'Carbon\\Exceptions\\BadUnitException' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Exceptions/BadUnitException.php',
         'Carbon\\Exceptions\\InvalidDateException' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Exceptions/InvalidDateException.php',
         'Carbon\\Exceptions\\NotAPeriodException' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Exceptions/NotAPeriodException.php',
+        'Carbon\\Exceptions\\NotLocaleAwareException' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Exceptions/NotLocaleAwareException.php',
         'Carbon\\Exceptions\\ParseErrorException' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Exceptions/ParseErrorException.php',
         'Carbon\\Factory' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Factory.php',
         'Carbon\\FactoryImmutable' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/FactoryImmutable.php',
@@ -746,6 +766,7 @@ class ComposerStaticInita0ef333b8be16317a15e74eb82803542
         'Carbon\\Traits\\Mixin' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Traits/Mixin.php',
         'Carbon\\Traits\\Modifiers' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Traits/Modifiers.php',
         'Carbon\\Traits\\Mutability' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Traits/Mutability.php',
+        'Carbon\\Traits\\ObjectInitialisation' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Traits/ObjectInitialisation.php',
         'Carbon\\Traits\\Options' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Traits/Options.php',
         'Carbon\\Traits\\Rounding' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Traits/Rounding.php',
         'Carbon\\Traits\\Serialization' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Traits/Serialization.php',
@@ -788,6 +809,7 @@ class ComposerStaticInita0ef333b8be16317a15e74eb82803542
         'DeepCopy\\TypeFilter\\Spl\\SplDoublyLinkedListFilter' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/TypeFilter/Spl/SplDoublyLinkedListFilter.php',
         'DeepCopy\\TypeFilter\\TypeFilter' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/TypeFilter/TypeFilter.php',
         'DeepCopy\\TypeMatcher\\TypeMatcher' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/TypeMatcher/TypeMatcher.php',
+        'Detection\\MobileDetect' => __DIR__ . '/..' . '/mobiledetect/mobiledetectlib/namespaced/Detection/MobileDetect.php',
         'Dingo\\Api\\Auth\\Auth' => __DIR__ . '/..' . '/dingo/api/src/Auth/Auth.php',
         'Dingo\\Api\\Auth\\Provider\\Authorization' => __DIR__ . '/..' . '/dingo/api/src/Auth/Provider/Authorization.php',
         'Dingo\\Api\\Auth\\Provider\\Basic' => __DIR__ . '/..' . '/dingo/api/src/Auth/Provider/Basic.php',
@@ -3118,6 +3140,14 @@ class ComposerStaticInita0ef333b8be16317a15e74eb82803542
         'JakubOnderka\\PhpConsoleColor\\ConsoleColor' => __DIR__ . '/..' . '/jakub-onderka/php-console-color/src/ConsoleColor.php',
         'JakubOnderka\\PhpConsoleColor\\InvalidStyleException' => __DIR__ . '/..' . '/jakub-onderka/php-console-color/src/InvalidStyleException.php',
         'JakubOnderka\\PhpConsoleHighlighter\\Highlighter' => __DIR__ . '/..' . '/jakub-onderka/php-console-highlighter/src/Highlighter.php',
+        'Jaybizzle\\CrawlerDetect\\CrawlerDetect' => __DIR__ . '/..' . '/jaybizzle/crawler-detect/src/CrawlerDetect.php',
+        'Jaybizzle\\CrawlerDetect\\Fixtures\\AbstractProvider' => __DIR__ . '/..' . '/jaybizzle/crawler-detect/src/Fixtures/AbstractProvider.php',
+        'Jaybizzle\\CrawlerDetect\\Fixtures\\Crawlers' => __DIR__ . '/..' . '/jaybizzle/crawler-detect/src/Fixtures/Crawlers.php',
+        'Jaybizzle\\CrawlerDetect\\Fixtures\\Exclusions' => __DIR__ . '/..' . '/jaybizzle/crawler-detect/src/Fixtures/Exclusions.php',
+        'Jaybizzle\\CrawlerDetect\\Fixtures\\Headers' => __DIR__ . '/..' . '/jaybizzle/crawler-detect/src/Fixtures/Headers.php',
+        'Jenssegers\\Agent\\Agent' => __DIR__ . '/..' . '/jenssegers/agent/src/Agent.php',
+        'Jenssegers\\Agent\\AgentServiceProvider' => __DIR__ . '/..' . '/jenssegers/agent/src/AgentServiceProvider.php',
+        'Jenssegers\\Agent\\Facades\\Agent' => __DIR__ . '/..' . '/jenssegers/agent/src/Facades/Agent.php',
         'JsonException' => __DIR__ . '/..' . '/symfony/polyfill-php73/Resources/stubs/JsonException.php',
         'Laravel\\Tinker\\ClassAliasAutoloader' => __DIR__ . '/..' . '/laravel/tinker/src/ClassAliasAutoloader.php',
         'Laravel\\Tinker\\Console\\TinkerCommand' => __DIR__ . '/..' . '/laravel/tinker/src/Console/TinkerCommand.php',
@@ -3359,6 +3389,7 @@ class ComposerStaticInita0ef333b8be16317a15e74eb82803542
         'League\\Fractal\\Serializer\\Serializer' => __DIR__ . '/..' . '/league/fractal/src/Serializer/Serializer.php',
         'League\\Fractal\\Serializer\\SerializerAbstract' => __DIR__ . '/..' . '/league/fractal/src/Serializer/SerializerAbstract.php',
         'League\\Fractal\\TransformerAbstract' => __DIR__ . '/..' . '/league/fractal/src/TransformerAbstract.php',
+        'Mobile_Detect' => __DIR__ . '/..' . '/mobiledetect/mobiledetectlib/Mobile_Detect.php',
         'Mockery' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery.php',
         'Mockery\\Adapter\\Phpunit\\Legacy\\TestListenerForV5' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/Legacy/TestListenerForV5.php',
         'Mockery\\Adapter\\Phpunit\\Legacy\\TestListenerForV6' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/Legacy/TestListenerForV6.php',
