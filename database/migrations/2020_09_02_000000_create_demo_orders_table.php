@@ -15,9 +15,11 @@ class CreateDemoOrdersTable extends Migration
     {
         Schema::create('demo_orders', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('user_id')->index()->comment('用户id');
             $table->string('number')->index()->comment('订单号');
+            $table->string('title')->index()->comment('订单名称');
             $table->decimal('price')->comment('价格');
-            $table->timestamp('pay_at')->comment('支付时间');
+            $table->timestamp('pay_at')->nullable()->default(null)->comment('支付时间');
             $table->tinyInteger('status')->comment('状态(0未付款，1已付款)');
             $table->timestamps();
         });

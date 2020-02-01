@@ -3,9 +3,17 @@
 namespace App\Models\Pay;
 
 use App\Models\BaseModel;
+use App\Models\BaseModelTrait;
 
 class DemoOrder extends BaseModel
 {
+    use BaseModelTrait;
+
+    const STATUS = [
+        0 => '未支付',
+        1 => '已支付',
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -13,12 +21,20 @@ class DemoOrder extends BaseModel
             if (!$order->number) {
                 $order->number = self::getNewNumber(self::class);
             }
+            if (!$order->status) {
+                $order->status = 0;
+            }
         });
     }
 
     public function bills()
     {
         return $this->morphMany(MultiBill::class, 'billable');
+    }
+
+    public function bill()
+    {
+        return $this->morphOne(MultiBill::class, 'billable')->latest();
     }
 
     /**

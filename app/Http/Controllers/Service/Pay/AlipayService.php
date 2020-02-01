@@ -14,7 +14,7 @@ class AlipayService
     /**
      * 发起支付请求
      *
-     * @param array $data => ['no' => '订单号', 'amount' => '金额', 'name' => '订单名称']
+     * @param array $data => ['no' => '订单号', 'amount' => '金额', 'title' => '订单名称']
      * @param string $drive
      * @param array $extData
      * @param string $custom
@@ -22,7 +22,7 @@ class AlipayService
      */
     public function pay($data, $drive = '', $extData = [], $custom = '')
     {
-        $subject = strlen($data['name']) > 18 ? $data['name'] : config('app.name') . ' - ' . $data['name'];
+        $subject = strlen($data['title']) > 18 ? $data['title'] : config('app.name') . ' - ' . $data['title'];
         $order = [
             'out_trade_no' => $data['no'],
             'total_amount' => $data['amount'],

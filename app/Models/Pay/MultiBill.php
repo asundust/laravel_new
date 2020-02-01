@@ -3,9 +3,12 @@
 namespace App\Models\Pay;
 
 use App\Models\BaseModel;
+use App\Models\BaseModelTrait;
 
 class MultiBill extends BaseModel
 {
+    use BaseModelTrait;
+
     // 支付方式
     const PAY_WAY = [
         1 => '微信',
@@ -26,6 +29,19 @@ class MultiBill extends BaseModel
         6 => '退款成功',
         7 => '退款失败',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function (MultiBill $bill) {
+            if (!$bill->pay_no) {
+                $bill->pay_no = self::getNewNumber(self::class);
+            }
+            if (!$bill->status) {
+                $bill->status = 1;
+            }
+        });
+    }
 
     public function billable()
     {

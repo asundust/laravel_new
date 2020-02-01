@@ -19,6 +19,7 @@ class CreateMultiBillsTable extends Migration
             $table->string('billable_id')->nullable()->default(null)->index()->comment('多态模型id');
             $table->integer('user_id')->nullable()->default(null)->index()->comment('用户id');
             $table->string('openid')->nullable()->default(null)->index()->comment('Openid(微信支付涉及)');
+            $table->string('title')->nullable()->default(null)->comment('订单名称');
             $table->decimal('amount', 12, 2)->comment('支付发起金额');
             $table->string('pay_no')->unique()->comment('商户订单号');
             $table->string('pay_service_no')->nullable()->default(null)->unique()->comment('支付商订单号');

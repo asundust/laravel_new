@@ -32,13 +32,14 @@ use App\Models\Pay\DemoOrder;
 ```
 ```
 $order = DemoOrder::create([
+    'user_id' => 0,
+    'title' => '测试订单 - 充值0.01',
     'price' => '0.01',
-    'status' => 0,
 ]);
-$bill = $order->bills()->create(['pay_no' => $order->number, 'amount' => $order->price, 'pay_way' => 2, 'status' => 1]);
-return (new AlipayService())->pay(['no' => $bill->pay_no, 'amount' => $bill->amount, 'name' => '测试订单']);
-$bill = $order->bills()->create(['pay_no' => $order->number, 'amount' => $order->price, 'pay_way' => 1, 'status' => 1]);
-return (new WechatPayService())->pay(['no' => $bill->pay_no, 'amount' => $bill->amount, 'name' => '测试订单'], 'scan');
+$bill = $order->bills()->create(['pay_no' => $order->number, 'title' => $order->title, 'amount' => $order->price, 'pay_way' => 2]);
+return (new AlipayService())->pay(['no' => $bill->pay_no, 'amount' => $bill->amount, 'title' => $bill->title]);
+$bill = $order->bills()->create(['pay_no' => $order->number, 'title' => $order->title, 'amount' => $order->price, 'pay_way' => 1]);
+return (new WechatPayService())->pay(['no' => $bill->pay_no, 'amount' => $bill->amount, 'title' => $bill->title], 'scan');
 ```
 如果不需要此Demo则需要删除`database/migrations/2020_09_02_000000_create_demo_orders_table.php`和`app/Models/Pay/DemoOrder.php`文件
 
