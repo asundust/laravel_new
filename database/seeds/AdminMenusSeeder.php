@@ -34,58 +34,58 @@ class AdminMenusSeeder extends Seeder
                     ],
                 ]
             ],
-            [
-                'title' => '系统工具',
-                'icon' => 'fa-cog',
-                'type' => 0,
-                'uri' => '',
-                'permission' => '',
-                'roles' => [
-
-                ],
-                'data' => [
-                    [
-                        'title' => 'Scheduling',
-                        'icon' => 'fa-clock-o',
-                        'type' => 0,
-                        'uri' => 'scheduling',
-                        'permission' => '',
-                        'roles' => [
-
-                        ],
-                    ],
-                    [
-                        'title' => '日志浏览',
-                        'icon' => 'fa-database',
-                        'type' => 0,
-                        'uri' => 'logs',
-                        'permission' => '',
-                        'roles' => [
-
-                        ],
-                    ],
-                    [
-                        'title' => 'Redis管理',
-                        'icon' => 'fa-database',
-                        'type' => 0,
-                        'uri' => 'redis',
-                        'permission' => '',
-                        'roles' => [
-
-                        ],
-                    ],
-                    [
-                        'title' => 'Composer浏览',
-                        'type' => 0,
-                        'icon' => 'fa-gears',
-                        'uri' => 'composer-viewer',
-                        'permission' => '',
-                        'roles' => [
-
-                        ],
-                    ],
-                ]
-            ],
+            // [
+            //     'title' => '系统工具',
+            //     'icon' => 'fa-cog',
+            //     'type' => 0,
+            //     'uri' => '',
+            //     'permission' => '',
+            //     'roles' => [
+            //
+            //     ],
+            //     'data' => [
+            //         [
+            //             'title' => 'Scheduling',
+            //             'icon' => 'fa-clock-o',
+            //             'type' => 0,
+            //             'uri' => 'scheduling',
+            //             'permission' => '',
+            //             'roles' => [
+            //
+            //             ],
+            //         ],
+            //         [
+            //             'title' => '日志浏览',
+            //             'icon' => 'fa-database',
+            //             'type' => 0,
+            //             'uri' => 'logs',
+            //             'permission' => '',
+            //             'roles' => [
+            //
+            //             ],
+            //         ],
+            //         [
+            //             'title' => 'Redis管理',
+            //             'icon' => 'fa-database',
+            //             'type' => 0,
+            //             'uri' => 'redis',
+            //             'permission' => '',
+            //             'roles' => [
+            //
+            //             ],
+            //         ],
+            //         [
+            //             'title' => 'Composer浏览',
+            //             'type' => 0,
+            //             'icon' => 'fa-gears',
+            //             'uri' => 'composer-viewer',
+            //             'permission' => '',
+            //             'roles' => [
+            //
+            //             ],
+            //         ],
+            //     ]
+            // ],
         ];
 
     /**
