@@ -56,6 +56,8 @@ return [
 
     'asset_url' => env('ASSET_URL', null),
 
+    'beian' => env('APP_BEIAN', ''),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
