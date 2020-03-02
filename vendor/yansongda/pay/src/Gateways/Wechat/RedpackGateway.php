@@ -18,23 +18,20 @@ class RedpackGateway extends Gateway
      * @author yansongda <me@yansongda.cn>
      *
      * @param string $endpoint
-     * @param array  $payload
      *
      * @throws GatewayException
      * @throws InvalidArgumentException
      * @throws InvalidSignException
-     *
-     * @return Collection
      */
     public function pay($endpoint, array $payload): Collection
     {
         $payload['wxappid'] = $payload['appid'];
 
-        if (php_sapi_name() !== 'cli') {
+        if ('cli' !== php_sapi_name()) {
             $payload['client_ip'] = Request::createFromGlobals()->server->get('SERVER_ADDR');
         }
 
-        if ($this->mode === Wechat::MODE_SERVICE) {
+        if (Wechat::MODE_SERVICE === $this->mode) {
             $payload['msgappid'] = $payload['appid'];
         }
 
@@ -56,8 +53,6 @@ class RedpackGateway extends Gateway
      * Get trade type config.
      *
      * @author yansongda <me@yansongda.cn>
-     *
-     * @return string
      */
     protected function getTradeType(): string
     {

@@ -31,7 +31,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
      *
      * @var string
      */
-    const VERSION = '6.13.1';
+    const VERSION = '6.17.1';
 
     /**
      * The base path for the Laravel installation.
@@ -1217,6 +1217,7 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
         $this->reboundCallbacks = [];
         $this->serviceProviders = [];
         $this->resolvingCallbacks = [];
+        $this->terminatingCallbacks = [];
         $this->afterResolvingCallbacks = [];
         $this->globalResolvingCallbacks = [];
     }

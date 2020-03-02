@@ -36,7 +36,6 @@ abstract class Gateway implements GatewayInterface
      * @author yansongda <me@yansongda.cn>
      *
      * @param string $endpoint
-     * @param array  $payload
      *
      * @return Collection
      */
@@ -48,15 +47,13 @@ abstract class Gateway implements GatewayInterface
      * @author yansongda <me@yansongda.cn>
      *
      * @param string|array $order
-     *
-     * @return array
      */
     public function find($order): array
     {
         return [
             'endpoint' => 'pay/orderquery',
-            'order'    => is_array($order) ? $order : ['out_trade_no' => $order],
-            'cert'     => false,
+            'order' => is_array($order) ? $order : ['out_trade_no' => $order],
+            'cert' => false,
         ];
     }
 
@@ -79,8 +76,6 @@ abstract class Gateway implements GatewayInterface
      * @throws GatewayException
      * @throws InvalidArgumentException
      * @throws InvalidSignException
-     *
-     * @return Collection
      */
     protected function preOrder($payload): Collection
     {

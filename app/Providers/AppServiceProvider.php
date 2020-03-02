@@ -41,18 +41,5 @@ class AppServiceProvider extends ServiceProvider
         // if (config('force_https') == 1) {
         //     URL::forceScheme('https');
         // }
-
-        // sql日志记录
-        if (app()->isLocal()) {
-            DB::listen(function ($q) {
-                if (strpos($q->sql, config(config('database.default') . 'connections.mysql.prefix') . 'telescope') === false) {
-                    $bindings = array_map(function ($v) {
-                        return is_time_string($v) ? sprintf("'%s'", $v) : $v;
-                    }, $q->bindings);
-                    $realSql = Str::replaceArray('?', $bindings, $q->sql);
-                    log_channel('sql')->info("{$realSql} {$q->time} ms");
-                }
-            });
-        }
     }
 }

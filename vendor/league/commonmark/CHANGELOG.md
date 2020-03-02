@@ -4,7 +4,25 @@ Updates should follow the [Keep a CHANGELOG](https://keepachangelog.com/) princi
 
 ## [Unreleased][unreleased]
 
-## [1.2.2] - 2019-01-15
+## [1.3.1] - 2020-02-28
+
+### Fixed
+
+ - Fixed return types of `Environment::createCommonMarkEnvironment()` and `Environment::createGFMEnvironment()`
+
+## [1.3.0] - 2020-02-08
+
+### Added
+
+ - Added (optional) **full GFM support!** 🎉🎉🎉 (#409)
+ - Added check to ensure Markdown input is valid UTF-8 (#401, #405)
+ - Added new `unordered_list_markers` configuration option (#408, #411)
+
+### Changed
+
+ - Introduced several micro-optimizations for a 5-10% performance boost
+
+## [1.2.2] - 2020-01-15
 
 This release contains the same changes as 1.1.3:
 
@@ -12,7 +30,7 @@ This release contains the same changes as 1.1.3:
 
  - Fixed link parsing edge case (#403)
 
-## [1.1.3] - 2019-01-15
+## [1.1.3] - 2020-01-15
 
 ### Fixed
 
@@ -207,7 +225,9 @@ No changes were made since 1.0.0-rc1.
    - Removed `DelimiterStack::iterateByCharacters()` (use the new `processDelimiters()` method instead)
    - Removed the protected `DelimiterStack::findMatchingOpener()` method
 
-[unreleased]: https://github.com/thephpleague/commonmark/compare/1.2.2...HEAD
+[unreleased]: https://github.com/thephpleague/commonmark/compare/1.3.1...HEAD
+[1.3.1]: https://github.com/thephpleague/commonmark/compare/1.3.0...1.3.1
+[1.3.0]: https://github.com/thephpleague/commonmark/compare/1.2.2...1.3.0
 [1.2.2]: https://github.com/thephpleague/commonmark/compare/1.2.1...1.2.2
 [1.2.1]: https://github.com/thephpleague/commonmark/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/thephpleague/commonmark/compare/1.1.2...1.2.0

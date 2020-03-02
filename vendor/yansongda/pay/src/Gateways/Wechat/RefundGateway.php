@@ -12,15 +12,13 @@ class RefundGateway extends Gateway
      * @author yansongda <me@yansongda.cn>
      *
      * @param $order
-     *
-     * @return array
      */
     public function find($order): array
     {
         return [
             'endpoint' => 'pay/refundquery',
-            'order'    => is_array($order) ? $order : ['out_trade_no' => $order],
-            'cert'     => false,
+            'order' => is_array($order) ? $order : ['out_trade_no' => $order],
+            'cert' => false,
         ];
     }
 
@@ -30,11 +28,8 @@ class RefundGateway extends Gateway
      * @author yansongda <me@yansongda.cn>
      *
      * @param string $endpoint
-     * @param array  $payload
      *
      * @throws InvalidArgumentException
-     *
-     * @return void
      */
     public function pay($endpoint, array $payload)
     {
@@ -47,8 +42,6 @@ class RefundGateway extends Gateway
      * @author yansongda <me@yansongda.cn>
      *
      * @throws InvalidArgumentException
-     *
-     * @return void
      */
     protected function getTradeType()
     {

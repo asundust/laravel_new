@@ -63,8 +63,6 @@ class Support
      * Bootstrap.
      *
      * @author yansongda <me@yansongda.cn>
-     *
-     * @param Config $config
      */
     private function __construct(Config $config)
     {
@@ -81,7 +79,7 @@ class Support
      *
      * @param $key
      *
-     * @return mixed|null|Config
+     * @return mixed|Config|null
      */
     public function __get($key)
     {
@@ -93,8 +91,6 @@ class Support
      *
      * @author yansongda <me@yansongda.cn>
      *
-     * @param Config $config
-     *
      * @throws GatewayException
      * @throws InvalidArgumentException
      * @throws InvalidSignException
@@ -103,7 +99,7 @@ class Support
      */
     public static function create(Config $config)
     {
-        if (php_sapi_name() === 'cli' || !(self::$instance instanceof self)) {
+        if ('cli' === php_sapi_name() || !(self::$instance instanceof self)) {
             self::$instance = new self($config);
 
             self::setDevKey();
@@ -134,8 +130,6 @@ class Support
      * clear.
      *
      * @author yansongda <me@yansongda.cn>
-     *
-     * @return void
      */
     public static function clear()
     {
@@ -154,8 +148,6 @@ class Support
      * @throws GatewayException
      * @throws InvalidArgumentException
      * @throws InvalidSignException
-     *
-     * @return Collection
      */
     public static function requestApi($endpoint, $data, $cert = false): Collection
     {
@@ -165,7 +157,7 @@ class Support
             $endpoint,
             self::toXml($data),
             $cert ? [
-                'cert'    => self::$instance->cert_client,
+                'cert' => self::$instance->cert_client,
                 'ssl_key' => self::$instance->cert_key,
             ] : []
         );
@@ -186,8 +178,6 @@ class Support
      * @param bool         $preserve_notify_url
      *
      * @throws InvalidArgumentException
-     *
-     * @return array
      */
     public static function filterPayload($payload, $params, $preserve_notify_url = false): array
     {
@@ -199,7 +189,7 @@ class Support
         );
         $payload['appid'] = self::$instance->getConfig($type, '');
 
-        if (self::$instance->getConfig('mode', Wechat::MODE_NORMAL) === Wechat::MODE_SERVICE) {
+        if (Wechat::MODE_SERVICE === self::$instance->getConfig('mode', Wechat::MODE_NORMAL)) {
             $payload['sub_appid'] = self::$instance->getConfig('sub_'.$type, '');
         }
 
@@ -221,8 +211,6 @@ class Support
      * @param array $data
      *
      * @throws InvalidArgumentException
-     *
-     * @return string
      */
     public static function generateSign($data): string
     {
@@ -247,15 +235,13 @@ class Support
      * @author yansongda <me@yansongda.cn>
      *
      * @param array $data
-     *
-     * @return string
      */
     public static function getSignContent($data): string
     {
         $buff = '';
 
         foreach ($data as $k => $v) {
-            $buff .= ($k != 'sign' && $v != '' && !is_array($v)) ? $k.'='.$v.'&' : '';
+            $buff .= ('sign' != $k && '' != $v && !is_array($v)) ? $k.'='.$v.'&' : '';
         }
 
         Log::debug('Wechat Generate Sign Content Before Trim', [$data, $buff]);
@@ -269,8 +255,6 @@ class Support
      * @author yansongda <me@yansongda.cn>
      *
      * @param string $contents
-     *
-     * @return string
      */
     public static function decryptRefundContents($contents): string
     {
@@ -290,8 +274,6 @@ class Support
      * @param array $data
      *
      * @throws InvalidArgumentException
-     *
-     * @return string
      */
     public static function toXml($data): string
     {
@@ -317,8 +299,6 @@ class Support
      * @param string $xml
      *
      * @throws InvalidArgumentException
-     *
-     * @return array
      */
     public static function fromXml($xml): array
     {
@@ -336,8 +316,8 @@ class Support
      *
      * @author yansongda <me@yansongda.cn>
      *
-     * @param null|string $key
-     * @param null|mixed  $default
+     * @param string|null $key
+     * @param mixed|null  $default
      *
      * @return mixed|null
      */
@@ -360,8 +340,6 @@ class Support
      * @author yansongda <me@yansongda.cn>
      *
      * @param string $type
-     *
-     * @return string
      */
     public static function getTypeName($type = ''): string
     {
@@ -396,8 +374,7 @@ class Support
      *
      * @author yansongda <me@yansongda.cn>
      *
-     * @param       $endpoint
-     * @param array $result
+     * @param $endpoint
      *
      * @throws GatewayException
      * @throws InvalidArgumentException
@@ -407,22 +384,16 @@ class Support
      */
     protected static function processingApiResult($endpoint, array $result)
     {
-        if (!isset($result['return_code']) || $result['return_code'] != 'SUCCESS') {
-            throw new GatewayException(
-                'Get Wechat API Error:'.($result['return_msg'] ?? $result['retmsg'] ?? ''),
-                $result
-            );
+        if (!isset($result['return_code']) || 'SUCCESS' != $result['return_code']) {
+            throw new GatewayException('Get Wechat API Error:'.($result['return_msg'] ?? $result['retmsg'] ?? ''), $result);
         }
 
-        if (isset($result['result_code']) && $result['result_code'] != 'SUCCESS') {
-            throw new BusinessException(
-                'Wechat Business Error: '.$result['err_code'].' - '.$result['err_code_des'],
-                $result
-            );
+        if (isset($result['result_code']) && 'SUCCESS' != $result['result_code']) {
+            throw new BusinessException('Wechat Business Error: '.$result['err_code'].' - '.$result['err_code_des'], $result);
         }
 
-        if ($endpoint === 'pay/getsignkey' ||
-            strpos($endpoint, 'mmpaymkttransfers') !== false ||
+        if ('pay/getsignkey' === $endpoint ||
+            false !== strpos($endpoint, 'mmpaymkttransfers') ||
             self::generateSign($result) === $result['sign']) {
             return new Collection($result);
         }
@@ -446,9 +417,9 @@ class Support
      */
     private static function setDevKey()
     {
-        if (self::$instance->mode == Wechat::MODE_DEV) {
+        if (Wechat::MODE_DEV == self::$instance->mode) {
             $data = [
-                'mch_id'    => self::$instance->mch_id,
+                'mch_id' => self::$instance->mch_id,
                 'nonce_str' => Str::random(),
             ];
             $data['sign'] = self::generateSign($data);
@@ -465,8 +436,6 @@ class Support
      * Set Http options.
      *
      * @author yansongda <me@yansongda.cn>
-     *
-     * @return self
      */
     private function setHttpOptions(): self
     {
