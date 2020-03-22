@@ -20,6 +20,7 @@ Route::get('/', function () {
 });
 
 // 支付通知
-Route::any('notify/alipay', 'NotifyController@notifyAlipay'); // 异步通知 - 支付宝
-Route::any('notify/wechat', 'NotifyController@notifyWechat'); // 异步通知 - 微信
-Route::any('return/alipay', 'NotifyController@returnAlipay'); // 同步返回 - 支付宝
+Route::any('notify/alipay', 'NotifyController@notifyAlipay'); // 异步通知 - 支付宝 - 支付
+Route::any('return/alipay', 'NotifyController@returnAlipay'); // 同步返回 - 支付宝 - 跳转
+Route::any('notify/wechat', 'NotifyController@notifyWechat'); // 异步通知 - 微信 - 支付
+Route::any('notify/wechat_refund', 'NotifyController@notifyWechatRefund'); // 异步通知 - 微信 - 退款

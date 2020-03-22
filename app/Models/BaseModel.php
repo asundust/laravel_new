@@ -5,12 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class BaseModel
+ * App\Models\BaseModel
  *
- * @package App\Models
- * @method status_name
- *
- * @property $id
+ * @property-read mixed $status_name
+ * @mixin \Eloquent
  */
 class BaseModel extends Model
 {

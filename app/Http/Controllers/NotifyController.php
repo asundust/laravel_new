@@ -6,13 +6,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Service\Pay\AlipayService;
 use App\Http\Controllers\Service\Pay\WechatPayService;
+use Exception;
 
 class NotifyController
 {
     /**
-     * 微信异步通知入口
+     * 微信异步通知入口 - 支付
      *
-     * @return string|\Symfony\Component\HttpFoundation\Response
+     * @return string
+     * @throws Exception
      */
     public function notifyWechat()
     {
@@ -20,10 +22,21 @@ class NotifyController
     }
 
     /**
+     * 微信异步通知入口 - 退款
+     *
+     * @return string
+     * @throws Exception
+     */
+    public function notifyWechatRefund()
+    {
+        return (new WechatPayService())->notifyRefund();
+    }
+
+    /**
      * 支付宝异步通知入口
      *
-     * @return string|\Symfony\Component\HttpFoundation\Response
      * @return string
+     * @throws Exception
      */
     public function notifyAlipay()
     {
@@ -33,7 +46,7 @@ class NotifyController
     /**
      * 支付宝同步通知入口
      *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return mixed
      */
     public function returnAlipay()
     {

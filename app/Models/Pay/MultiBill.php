@@ -2,9 +2,61 @@
 
 namespace App\Models\Pay;
 
+use App\Events\BillPayedEvent;
+use App\Events\BillRefundedEvent;
+use App\Http\Controllers\Service\Pay\AlipayService;
+use App\Http\Controllers\Service\Pay\WechatPayService;
 use App\Models\BaseModel;
 use App\Models\BaseModelTrait;
 
+/**
+ * App\Models\Pay\MultiBill
+ *
+ * @property int $id
+ * @property string $billable_type 多态模型名称
+ * @property string|null $billable_id 多态模型id
+ * @property int|null $user_id 用户id
+ * @property string|null $openid Openid(微信支付涉及)
+ * @property string|null $title 订单名称
+ * @property int|null $pay_way 支付方式(1微信，2支付宝)
+ * @property float $pay_amount 支付发起金额
+ * @property string $pay_no 商户订单号
+ * @property string|null $pay_service_no 支付商订单号
+ * @property string|null $pay_at 支付成功时间
+ * @property int $bill_status 账单状态(0未支付成功过，1支付成功过)
+ * @property int $pay_status 支付状态(1未支付，2付款成功，3付款失败，4付款取消)
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $billable
+ * @property-read mixed $bill_status_name
+ * @property-read mixed $can_refund_amount
+ * @property-read mixed $pay_status_name
+ * @property-read mixed $pay_way_name
+ * @property-read mixed $refunded_amount
+ * @property-read mixed $refunding_amount
+ * @property-read mixed $status_name
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Pay\MultiRefundBill[] $refundBills
+ * @property-read int|null $refund_bills_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereBillStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereBillableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereBillableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereOpenid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill wherePayAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill wherePayAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill wherePayNo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill wherePayServiceNo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill wherePayStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill wherePayWay($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereUserId($value)
+ * @mixin \Eloquent
+ */
 class MultiBill extends BaseModel
 {
     use BaseModelTrait;
@@ -20,25 +72,32 @@ class MultiBill extends BaseModel
         2 => 'alipay',
     ];
 
-    const STATUS = [
+    const BILL_STATUS = [
+        0 => '未支付成功过',
+        1 => '支付成功过',
+    ];
+
+    const PAY_STATUS = [
         1 => '未支付',
         2 => '付款成功',
         3 => '付款失败',
         4 => '付款取消',
-        5 => '退款中',
-        6 => '退款成功',
-        7 => '退款失败',
+        5 => '部分退款',
+        6 => '全额退款',
     ];
 
     protected static function boot()
     {
         parent::boot();
-        static::creating(function (MultiBill $bill) {
+        static::creating(function (self $bill) {
             if (!$bill->pay_no) {
-                $bill->pay_no = self::getNewNumber(self::class);
+                $bill->pay_no = self::getNewNumber('', 'pay_no');
             }
-            if (!$bill->status) {
-                $bill->status = 1;
+            if (!$bill->bill_status) {
+                $bill->bill_status = 0;
+            }
+            if (!$bill->pay_status) {
+                $bill->pay_status = 1;
             }
         });
     }
@@ -54,6 +113,42 @@ class MultiBill extends BaseModel
         return self::PAY_WAY[$this->pay_way] ?? '';
     }
 
+    // 账单状态名称 bill_status_name
+    public function getBillStatusNameAttribute()
+    {
+        return self::BILL_STATUS[$this->bill_status] ?? '';
+    }
+
+    // 支付状态名称 pay_status_name
+    public function getPayStatusNameAttribute()
+    {
+        return self::PAY_STATUS[$this->pay_status] ?? '';
+    }
+
+    // 关联退款表
+    public function refundBills()
+    {
+        return $this->hasMany(MultiRefundBill::class, 'multi_bill_id');
+    }
+
+    // 已退款的金额 refunded_amount
+    public function getRefundedAmountAttribute()
+    {
+        return $this->refundBills->where('refund_status', 2)->sum('refund_amount');
+    }
+
+    // 退款中的金额 refunding_amount
+    public function getRefundingAmountAttribute()
+    {
+        return $this->refundBills->where('refund_status', 1)->sum('refund_amount');
+    }
+
+    // 可退款的金额 can_refund_amount
+    public function getCanRefundAmountAttribute()
+    {
+        return $this->pay_amount - $this->refunded_amount - $this->refunding_amount;
+    }
+
     /**
      * 支付回调通知处理 - 异步
      *
@@ -65,33 +160,34 @@ class MultiBill extends BaseModel
     {
         $bill = self::where('pay_no', $data->pay_no)->where('pay_way', $payWay)->first();
         if (!$bill) {
-            pl('找不到支付订单信息：' . $data->pay_no, self::PAY_WAY_ALIAS[$payWay] . '-notify-err', 'pay');
+            pl('找不到支付订单信息：' . $data->pay_no, self::PAY_WAY_ALIAS[$payWay] . '-notify', 'pay');
             return true;
         }
 
-        if ($bill->status != 1) {
-            // 本地订单状态已取消，安排退款
-            if ($bill->status == 4) {
+        if ($bill->pay_status != 1) {
+            // [3付款失败,4付款取消] 安排退款
+            if (in_array($bill->pay_status, [3, 4])) {
                 // todo
                 return true;
             }
-            pl('订单状态非未支付：' . $data->pay_no . '，订单状态：' . $bill->status_name, self::PAY_WAY_ALIAS[$payWay] . '-notify-comment', 'pay');
+            pl('订单状态非未支付：' . $data->pay_no . '，订单状态：' . $bill->pay_status_name, self::PAY_WAY_ALIAS[$payWay] . '-notify-comment', 'pay');
             return true;
         }
-        if ($bill->amount != $data->amount) {
-            pl('订单支付金额不一致：' . $data->pay_no . '，订单金额：' . $bill->amount . '，回调金额：' . $data->amount, self::PAY_WAY_ALIAS[$payWay] . '-notify-comment', 'pay');
+        if ($bill->pay_amount != $data->pay_amount) {
+            pl('订单支付金额不一致：' . $data->pay_no . '，订单金额：' . $bill->pay_amount . '，回调金额：' . $data->amount, self::PAY_WAY_ALIAS[$payWay] . '-notify-comment', 'pay');
             return false;
         }
 
         $bill->fill([
             'pay_service_no' => $data->pay_service_no,
             'pay_at' => now(),
-            'status' => 2,
+            'bill_status' => 1,
+            'pay_status' => 2,
         ]);
 
         $bill->save();
 
-        $bill->billable->handlePay($bill);
+        event(new BillPayedEvent($bill));
 
         return true;
     }
@@ -108,6 +204,88 @@ class MultiBill extends BaseModel
         if (!$bill) {
             abort('404', '订单不翼而飞了 :(');
         }
-        return $bill->billable->payResult();
+
+        if (method_exists($bill->billable, 'payResult')) {
+            return $bill->billable->payResult();
+        }
+
+        return $bill->pay_status_name . ':)';
+    }
+
+    /**
+     * 退款操作
+     *
+     * @param $refundAmount
+     * @return array
+     */
+    public function toRefund($refundAmount)
+    {
+        $data = [
+            'refund_amount' => $refundAmount
+        ];
+        switch ($this->pay_way) {
+            case 1:
+                $refundBill = $this->refundBills()->create($data);
+                $result = (new WechatPayService())->refund([
+                    'pay_amount' => $this->pay_amount,
+                    'refund_amount' => $refundBill->refund_amount,
+                    'pay_no' => $this->pay_no,
+                    'refund_no' => $refundBill->refund_no,
+                ]);
+                if ($result['code'] == 0) {
+                    if ($result['data']['refund_service_no'] ?? '') {
+                        $refundBill->refund_service_no = $result['data']['refund_service_no'];
+                    }
+                    $refundBill->save();
+                    return [
+                        'code' => 0,
+                        'msg' => $result['msg'],
+                    ];
+                }
+                $refundBill->refund_status = 3;
+                $refundBill->save();
+                return $result;
+                break;
+            case 2:
+
+                $refundBill = $this->refundBills()->create($data);
+                $result = (new AlipayService())->refund([
+                    'refund_amount' => $refundBill->refund_amount,
+                    'pay_no' => $this->pay_no,
+                    'refund_no' => $refundBill->refund_no,
+                ]);
+                if ($result['code'] == 0) {
+                    $oldRefundBills = $this->refundBills()->get();
+                    $sum = $oldRefundBills->count() > 0 ? $oldRefundBills->where('refund_status', 2)->sum('refund_amount') : 0;
+                    if ($result['data']['refund_amount'] == $refundBill->refund_amount + $sum) {
+                        if ($result['data']['refund_no'] ?? '') {
+                            $refundBill->refund_no = $data['refund_no'];
+                        }
+                        if ($result['data']['refund_service_no'] ?? '') {
+                            $refundBill->refund_service_no = $result['data']['refund_service_no'];
+                        }
+                        $refundBill->refund_at = $result['data']['refund_at'];
+                        $refundBill->refund_status = 2;
+                        $refundBill->save();
+                        event(new BillRefundedEvent($refundBill));
+                        return [
+                            'code' => 0,
+                            'msg' => $result['msg'],
+                        ];
+                    }
+                    $refundBill->refund_status = 3;
+                    $refundBill->save();
+                    return [
+                        'code' => 1,
+                        'msg' => '退款金额不一致',
+                        'service_code' => '',
+                        'service_msg' => '',
+                    ];
+                }
+                $refundBill->refund_status = 3;
+                $refundBill->save();
+                return $result;
+                break;
+        }
     }
 }

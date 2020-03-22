@@ -17,7 +17,6 @@ use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Foundation\Mix;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Queue\CallQueuedClosure;
-use Illuminate\Queue\SerializableClosure;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\HtmlString;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
@@ -300,13 +299,13 @@ if (! function_exists('cookie')) {
      * @param  int  $minutes
      * @param  string|null  $path
      * @param  string|null  $domain
-     * @param  bool  $secure
+     * @param  bool|null  $secure
      * @param  bool  $httpOnly
      * @param  bool  $raw
      * @param  string|null  $sameSite
      * @return \Illuminate\Cookie\CookieJar|\Symfony\Component\HttpFoundation\Cookie
      */
-    function cookie($name = null, $value = null, $minutes = 0, $path = null, $domain = null, $secure = false, $httpOnly = true, $raw = false, $sameSite = null)
+    function cookie($name = null, $value = null, $minutes = 0, $path = null, $domain = null, $secure = null, $httpOnly = true, $raw = false, $sameSite = null)
     {
         $cookie = app(CookieFactory::class);
 
@@ -387,7 +386,7 @@ if (! function_exists('dispatch')) {
     function dispatch($job)
     {
         if ($job instanceof Closure) {
-            $job = new CallQueuedClosure(new SerializableClosure($job));
+            $job = CallQueuedClosure::create($job);
         }
 
         return new PendingDispatch($job);
