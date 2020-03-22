@@ -49,7 +49,7 @@ return [
         /*
          * Whether all SQL queries should be logged
          */
-        'enabled' => env('SQL_LOGGER_ALL_QUERIES_ENABLED', true),
+        'enabled' => env('SQL_LOGGER_ALL_QUERIES_ENABLED', false),
 
         /*
          * Whether log (for all queries, not for slow queries) should be overridden.
@@ -78,7 +78,7 @@ return [
          * also slow queries in separate file or you might to want log only slow
          * queries)
          */
-        'enabled' => env('SQL_LOGGER_SLOW_QUERIES_ENABLED', true),
+        'enabled' => env('SQL_LOGGER_SLOW_QUERIES_ENABLED', false),
 
         /*
          * Time of query (in milliseconds) when this query is considered as slow
