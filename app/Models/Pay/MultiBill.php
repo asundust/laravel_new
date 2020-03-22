@@ -247,7 +247,81 @@ class MultiBill extends BaseModel
                 return $result;
                 break;
             case 2:
+                $refundBill = $this->refundBills()->create($data);
+                $result = (new AlipayService())->refund([
+                    'refund_amount' => $refundBill->refund_amount,
+                    'pay_no' => $this->pay_no,
+                    'refund_no' => $refundBill->refund_no,
+                ]);
+                if ($result['code'] == 0) {
+                    $oldRefundBills = $this->refundBills()->get();
+                    $sum = $oldRefundBills->count() > 0 ? $oldRefundBills->where('refund_status', 2)->sum('refund_amount') : 0;
+                    if ($result['data']['refund_amount'] == $refundBill->refund_amount + $sum) {
+                        if ($result['data']['refund_no'] ?? '') {
+                            $refundBill->refund_no = $data['refund_no'];
+                        }
+                        if ($result['data']['refund_service_no'] ?? '') {
+                            $refundBill->refund_service_no = $result['data']['refund_service_no'];
+                        }
+                        $refundBill->refund_at = $result['data']['refund_at'];
+                        $refundBill->refund_status = 2;
+                        $refundBill->save();
+                        event(new BillRefundedEvent($refundBill));
+                        return [
+                            'code' => 0,
+                            'msg' => $result['msg'],
+                        ];
+                    }
+                    $refundBill->refund_status = 3;
+                    $refundBill->save();
+                    return [
+                        'code' => 1,
+                        'msg' => '退款金额不一致',
+                        'service_code' => '',
+                        'service_msg' => '',
+                    ];
+                }
+                $refundBill->refund_status = 3;
+                $refundBill->save();
+                return $result;
+                break;
+        }
+    }
 
+    /**
+     * 已有退款订单再次请求
+     *
+     * @param MultiRefundBill $refundBill
+     * @return array|mixed
+     */
+    public function toRefundResend($refundBill)
+    {
+        $data = [
+            'refund_amount' => $refundBill->refund_amount
+        ];
+        switch ($this->pay_way) {
+            case 1:
+                $result = (new WechatPayService())->refund([
+                    'pay_amount' => $this->pay_amount,
+                    'refund_amount' => $refundBill->refund_amount,
+                    'pay_no' => $this->pay_no,
+                    'refund_no' => $refundBill->refund_no,
+                ]);
+                if ($result['code'] == 0) {
+                    if ($result['data']['refund_service_no'] ?? '') {
+                        $refundBill->refund_service_no = $result['data']['refund_service_no'];
+                    }
+                    $refundBill->save();
+                    return [
+                        'code' => 0,
+                        'msg' => $result['msg'],
+                    ];
+                }
+                $refundBill->refund_status = 3;
+                $refundBill->save();
+                return $result;
+                break;
+            case 2:
                 $refundBill = $this->refundBills()->create($data);
                 $result = (new AlipayService())->refund([
                     'refund_amount' => $refundBill->refund_amount,

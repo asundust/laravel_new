@@ -75,10 +75,11 @@ class MultiRefundBill extends BaseModel
             pl('找不到退款订单信息：' . $data->refund_no, 'wechat' . '-notify', 'pay');
             return true;
         }
-        if ($refundBill->refund_status != 1) {
-            pl('退款订单状态非退款中：' . $data->refund_no . '，订单状态：' . $refundBill->refund_status_name, 'wechat' . '-notify-comment', 'pay');
-            return true;
-        }
+        // 如果误操作关闭了退款，此时订单照常退款了理应正常更新掉退款状态，方便查证
+        // if ($refundBill->refund_status != 1) {
+        //     pl('退款订单状态非退款中：' . $data->refund_no . '，订单状态：' . $refundBill->refund_status_name, 'wechat' . '-notify-comment', 'pay');
+        //     return true;
+        // }
         if ($refundBill->refund_amount != $data->refund_amount) {
             pl('退款订单金额不一致：' . $data->refund_no . '，订单金额：' . $refundBill->refund_no . '，回调金额：' . $data->refund_no, 'wechat' . '-notify', 'pay');
             return false;
