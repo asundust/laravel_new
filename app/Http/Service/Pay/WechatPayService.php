@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Service\Pay;
+namespace App\Http\Service\Pay;
 
 use App\Models\Pay\MultiBill;
 use App\Models\Pay\MultiRefundBill;
@@ -195,7 +195,7 @@ class WechatPayService
             DB::rollBack();
             return '';
         } catch (Exception $e) {
-            pl('微信回调失败：' . $e->getMessage(), 'wechat-notify', 'pay');
+            pl('微信回调失败：' . $e->getMessage(), 'wechat-notify-refund', 'pay');
             DB::rollBack();
             return '';
         }

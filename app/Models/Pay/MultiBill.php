@@ -4,8 +4,8 @@ namespace App\Models\Pay;
 
 use App\Events\BillPayedEvent;
 use App\Events\BillRefundedEvent;
-use App\Http\Controllers\Service\Pay\AlipayService;
-use App\Http\Controllers\Service\Pay\WechatPayService;
+use App\Http\Service\Pay\AlipayService;
+use App\Http\Service\Pay\WechatPayService;
 use App\Models\BaseModel;
 use App\Models\BaseModelTrait;
 

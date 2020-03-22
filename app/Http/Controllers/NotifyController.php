@@ -4,8 +4,8 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Controllers\Service\Pay\AlipayService;
-use App\Http\Controllers\Service\Pay\WechatPayService;
+use App\Http\Service\Pay\AlipayService;
+use App\Http\Service\Pay\WechatPayService;
 use Exception;
 
 class NotifyController

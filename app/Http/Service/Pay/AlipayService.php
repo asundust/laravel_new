@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Service\Pay;
+namespace App\Http\Service\Pay;
 
 use App\Models\Pay\MultiBill;
 use Exception;
@@ -137,6 +137,15 @@ class AlipayService
         DB::beginTransaction();
         try {
             $data = $alipay->verify(); // 是的，验签就这么简单！
+            // 根据支付宝的文档 退款会有异步消息发送，但不作为参考，故丢弃此部分消息。参见下方链接
+            // https://opensupport.alipay.com/support/knowCategory/27585/29211
+            // https://opensupport.alipay.com/support/knowledge/27585/201602348776
+            // https://opensupport.alipay.com/support/knowledge/27585/201602240500
+            if (isset($data->gmt_refund)) {
+                // pl($data->all(), 'alipay-notify-refund', 'pay');
+                DB::commit();
+                return '';
+            }
             if ($data->app_id == config('pay.alipay.app_id') && in_array($data->trade_status, ['TRADE_SUCCESS', 'TRADE_FINISHED'])) {
                 $data->pay_no = $data->out_trade_no; // 统一变量名，支付商户订单号
                 $data->pay_service_no = $data->trade_no; // 统一变量名，支付商订单号
