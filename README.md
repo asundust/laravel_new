@@ -21,14 +21,14 @@
 
 其他命令`php artisan`查看。
 
-### Demo
+## Demo
 
 基于此项目写的一个简单收款和管理[Demo](https://pay.leeay.com/pay)，带有前台`/pay`和后台`/admin/orders`，由于限制，仅有部分支付功能
 
 项目开源(同步[github.com/asundust/laravel_pay_demo](https://github.com/asundust/laravel_pay_demo)和[gitee.com/asundust/laravel_pay_demo](https://gitee.com/asundust/laravel_pay_demo))
 
 
-### 支付
+## 支付
 
 内置了一个用于测试订单支付的`app/Models/Pay/DemoOrder`Model
 参照下面的可以发起测试支付
