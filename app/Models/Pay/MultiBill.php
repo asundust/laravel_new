@@ -8,6 +8,8 @@ use App\Http\Service\Pay\AlipayService;
 use App\Http\Service\Pay\WechatPayService;
 use App\Models\BaseModel;
 use App\Models\BaseModelTrait;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 /**
  * App\Models\Pay\MultiBill
@@ -32,6 +34,7 @@ use App\Models\BaseModelTrait;
  * @property-read mixed $can_refund_amount
  * @property-read mixed $pay_status_name
  * @property-read mixed $pay_way_name
+ * @property-read mixed $pay_way_alias
  * @property-read mixed $refunded_amount
  * @property-read mixed $refunding_amount
  * @property-read mixed $status_name
@@ -113,6 +116,12 @@ class MultiBill extends BaseModel
         return self::PAY_WAY[$this->pay_way] ?? '';
     }
 
+    // 支付方式别名 pay_way_alias
+    public function getPayWayAliasAttribute()
+    {
+        return self::PAY_WAY_ALIAS[$this->pay_way] ?? '';
+    }
+
     // 账单状态名称 bill_status_name
     public function getBillStatusNameAttribute()
     {
@@ -158,9 +167,10 @@ class MultiBill extends BaseModel
      */
     public static function handleNotify($data, int $payWay)
     {
+        /* @var self $bill */
         $bill = self::where('pay_no', $data->pay_no)->where('pay_way', $payWay)->first();
         if (!$bill) {
-            pl('找不到支付订单信息：' . $data->pay_no, self::PAY_WAY_ALIAS[$payWay] . '-notify', 'pay');
+            pl('找不到支付订单信息：' . $data->pay_no, $bill->pay_way_alias . '-notify', 'pay');
             return true;
         }
 
@@ -170,11 +180,11 @@ class MultiBill extends BaseModel
                 // todo
                 return true;
             }
-            pl('订单状态非未支付：' . $data->pay_no . '，订单状态：' . $bill->pay_status_name, self::PAY_WAY_ALIAS[$payWay] . '-notify-comment', 'pay');
+            pl('订单状态非未支付：' . $data->pay_no . '，订单状态：' . $bill->pay_status_name, $bill->pay_way_alias . '-notify-comment', 'pay');
             return true;
         }
         if ($bill->pay_amount != $data->pay_amount) {
-            pl('订单支付金额不一致：' . $data->pay_no . '，订单金额：' . $bill->pay_amount . '，回调金额：' . $data->amount, self::PAY_WAY_ALIAS[$payWay] . '-notify-comment', 'pay');
+            pl('订单支付金额不一致：' . $data->pay_no . '，订单金额：' . $bill->pay_amount . '，回调金额：' . $data->amount, $bill->pay_way_alias . '-notify-comment', 'pay');
             return false;
         }
 
@@ -216,7 +226,10 @@ class MultiBill extends BaseModel
      * 退款操作
      *
      * @param $refundAmount
-     * @return array
+     * @return array|mixed
+     * @throws \Yansongda\Pay\Exceptions\InvalidArgumentException
+     * @throws \Yansongda\Pay\Exceptions\InvalidConfigException
+     * @throws \Yansongda\Pay\Exceptions\InvalidSignException
      */
     public function toRefund($refundAmount)
     {
@@ -293,6 +306,9 @@ class MultiBill extends BaseModel
      *
      * @param MultiRefundBill $refundBill
      * @return array|mixed
+     * @throws \Yansongda\Pay\Exceptions\InvalidArgumentException
+     * @throws \Yansongda\Pay\Exceptions\InvalidConfigException
+     * @throws \Yansongda\Pay\Exceptions\InvalidSignException
      */
     public function toRefundResend($refundBill)
     {
@@ -360,6 +376,46 @@ class MultiBill extends BaseModel
                 $refundBill->save();
                 return $result;
                 break;
+        }
+    }
+
+    /**
+     * 订单支付检查
+     *
+     * @return array
+     */
+    public function toPayFind()
+    {
+        DB::beginTransaction();
+        try {
+            switch ($this->pay_way) {
+                case 1:
+                    $wechatPayService = new WechatPayService();
+                    $data = $wechatPayService->payFind($this->pay_no);
+                    $result = $wechatPayService->payFindResultHandle($data);
+                    if ($result) {
+                        DB::commit();
+                        return ['code' => 0, 'msg' => '订单检查已支付'];
+                    }
+                    DB::rollBack();
+                    return ['code' => 1, 'msg' => '订单检查失败或未支付'];
+                    break;
+                case 2:
+                    $alipayService = new AlipayService();
+                    $data = $alipayService->payFind($this->pay_no);
+                    $result = $alipayService->payFindResultHandle($data);
+                    if ($result) {
+                        DB::commit();
+                        return ['code' => 0, 'msg' => '订单检查已支付'];
+                    }
+                    DB::rollBack();
+                    return ['code' => 1, 'msg' => '订单检查失败或未支付'];
+                    break;
+            }
+        } catch (Exception $e) {
+            pl($this->pay_way_name . '支付订单' . $this->pay_no . '支付检查失败：' . $e->getMessage(), $this->pay_way_alias . '-pay-find-err', 'pay');
+            DB::rollBack();
+            return ['code' => 1, 'msg' => '订单支付失败'];
         }
     }
 }

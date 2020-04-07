@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInita0ef333b8be16317a15e74eb82803542
+class ComposerStaticInit9fe27d7236d516e7eb1e71bdb10a4fce
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -4966,6 +4966,7 @@ class ComposerStaticInita0ef333b8be16317a15e74eb82803542
         'Psy\\Exception\\RuntimeException' => __DIR__ . '/..' . '/psy/psysh/src/Exception/RuntimeException.php',
         'Psy\\Exception\\ThrowUpException' => __DIR__ . '/..' . '/psy/psysh/src/Exception/ThrowUpException.php',
         'Psy\\Exception\\TypeErrorException' => __DIR__ . '/..' . '/psy/psysh/src/Exception/TypeErrorException.php',
+        'Psy\\Exception\\UnexpectedTargetException' => __DIR__ . '/..' . '/psy/psysh/src/Exception/UnexpectedTargetException.php',
         'Psy\\ExecutionClosure' => __DIR__ . '/..' . '/psy/psysh/src/ExecutionClosure.php',
         'Psy\\ExecutionLoopClosure' => __DIR__ . '/..' . '/psy/psysh/src/ExecutionLoopClosure.php',
         'Psy\\ExecutionLoop\\AbstractListener' => __DIR__ . '/..' . '/psy/psysh/src/ExecutionLoop/AbstractListener.php',
@@ -4995,6 +4996,7 @@ class ComposerStaticInita0ef333b8be16317a15e74eb82803542
         'Psy\\Reflection\\ReflectionConstant_' => __DIR__ . '/..' . '/psy/psysh/src/Reflection/ReflectionConstant_.php',
         'Psy\\Reflection\\ReflectionLanguageConstruct' => __DIR__ . '/..' . '/psy/psysh/src/Reflection/ReflectionLanguageConstruct.php',
         'Psy\\Reflection\\ReflectionLanguageConstructParameter' => __DIR__ . '/..' . '/psy/psysh/src/Reflection/ReflectionLanguageConstructParameter.php',
+        'Psy\\Reflection\\ReflectionNamespace' => __DIR__ . '/..' . '/psy/psysh/src/Reflection/ReflectionNamespace.php',
         'Psy\\Shell' => __DIR__ . '/..' . '/psy/psysh/src/Shell.php',
         'Psy\\Sudo' => __DIR__ . '/..' . '/psy/psysh/src/Sudo.php',
         'Psy\\Sudo\\SudoVisitor' => __DIR__ . '/..' . '/psy/psysh/src/Sudo/SudoVisitor.php',
@@ -6033,7 +6035,6 @@ class ComposerStaticInita0ef333b8be16317a15e74eb82803542
         'Tymon\\JWTAuth\\Payload' => __DIR__ . '/..' . '/tymon/jwt-auth/src/Payload.php',
         'Tymon\\JWTAuth\\Providers\\AbstractServiceProvider' => __DIR__ . '/..' . '/tymon/jwt-auth/src/Providers/AbstractServiceProvider.php',
         'Tymon\\JWTAuth\\Providers\\Auth\\Illuminate' => __DIR__ . '/..' . '/tymon/jwt-auth/src/Providers/Auth/Illuminate.php',
-        'Tymon\\JWTAuth\\Providers\\Auth\\Sentinel' => __DIR__ . '/..' . '/tymon/jwt-auth/src/Providers/Auth/Sentinel.php',
         'Tymon\\JWTAuth\\Providers\\JWT\\Lcobucci' => __DIR__ . '/..' . '/tymon/jwt-auth/src/Providers/JWT/Lcobucci.php',
         'Tymon\\JWTAuth\\Providers\\JWT\\Namshi' => __DIR__ . '/..' . '/tymon/jwt-auth/src/Providers/JWT/Namshi.php',
         'Tymon\\JWTAuth\\Providers\\JWT\\Provider' => __DIR__ . '/..' . '/tymon/jwt-auth/src/Providers/JWT/Provider.php',
@@ -6203,10 +6204,10 @@ class ComposerStaticInita0ef333b8be16317a15e74eb82803542
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInita0ef333b8be16317a15e74eb82803542::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInita0ef333b8be16317a15e74eb82803542::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInita0ef333b8be16317a15e74eb82803542::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInita0ef333b8be16317a15e74eb82803542::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit9fe27d7236d516e7eb1e71bdb10a4fce::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit9fe27d7236d516e7eb1e71bdb10a4fce::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit9fe27d7236d516e7eb1e71bdb10a4fce::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit9fe27d7236d516e7eb1e71bdb10a4fce::$classMap;
 
         }, null, ClassLoader::class);
     }

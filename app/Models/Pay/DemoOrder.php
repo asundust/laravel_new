@@ -123,6 +123,8 @@ class DemoOrder extends BaseModel
             'pay_at' => $bill->pay_at,
             'status' => 1,
         ]);
+        // 发送Server酱推送通知
+        sc_send($bill->pay_way_name . '有一笔新的收款' . money_show($this->payed_amount) . '元', $bill->pay_way_name . '于 ' . $bill->pay_at . ' 收款：￥' . money_show($this->payed_amount));
     }
 
     /**
