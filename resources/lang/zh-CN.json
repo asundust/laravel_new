@@ -48,6 +48,6 @@
     "CSRF token mismatch.": "网页已过期，请刷新网页。",
     "The given data was invalid.": "提交的数据验证不通过。",
     "Id": "编号",
-    "Created at": "更新时间",
+    "Created at": "创建时间",
     "Updated at": "更新时间"
 }
