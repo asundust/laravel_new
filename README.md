@@ -9,6 +9,11 @@
 关于`Composer源`的声明：由于连接性的问题故使用的是`阿里云Composer源`(本地全局更改，非项目更改)，故产生的`composer.lock`文件会有`阿里云Composer源`的链接。
 
 
+## 快速开始
+
+复制`.env.example`到`.env`文件，在`.env`文件里配置好数据库配置，在命令行里键入`php artisan system install`即可。
+
+
 ## 使用
 
 内置了vendor环境，如不需要，请去`.gitignore`内添加`/vendor`即可。
