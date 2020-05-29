@@ -11,12 +11,12 @@
 
 ## 快速开始
 
-复制`.env.example`到`.env`文件，在`.env`文件里配置好数据库配置，在命令行里键入`php artisan system install`即可。
+复制`.env.example`到`.env`文件，在`.env`文件里配置好数据库配置，在命令行里执行`php artisan system install`即可。
 
 
 ## 使用
 
-内置了vendor环境，如不需要，请去`.gitignore`内添加`/vendor`即可。
+内置了vendor环境，如不需要，请去`.gitignore`内添加`/vendor`，在命令行里执行`git rm -r --cached ./vendor`，然后再提交到git库即可。
 
 
 一键安装/更新命令 `php artisan system install`，`php artisan system update`。
