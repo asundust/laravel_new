@@ -2,6 +2,7 @@
 
 /**
  * Laravel-admin - admin builder based on Laravel.
+ *
  * @author z-song <https://github.com/z-song>
  *
  * Bootstraper for Admin.
@@ -19,3 +20,7 @@
  */
 
 Encore\Admin\Form::forget(['map', 'editor']);
+
+// select 汉化
+Admin::js('/vendor/laravel-admin/AdminLTE/plugins/select2/select2.full.min.js');
+Admin::js('/vendor/laravel-admin/AdminLTE/plugins/select2/i18n/zh-CN.js');

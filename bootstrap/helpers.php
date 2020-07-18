@@ -27,8 +27,8 @@ if (!function_exists('curl_post_url')) {
      * CURL_POST
      *
      * @param $url
-     * @param  array  $data
-     * @param  array  $httpHeader
+     * @param array $data
+     * @param array $httpHeader
      * @return mixed
      */
     function curl_post_url($url, $data = [], $httpHeader = [])
@@ -65,10 +65,10 @@ if (!function_exists('pl')) {
     /**
      * 快速日志打印
      *
-     * @param  string  $message  日志信息
-     * @param  string  $name  日志文件名
-     * @param  string  $path  日志写入路径
-     * @param  int  $max  该目录下最大日志文件数
+     * @param string $message 日志信息
+     * @param string $name 日志文件名
+     * @param string $path 日志写入路径
+     * @param int $max 该目录下最大日志文件数
      */
     function pl($message = '', $name = 'test', $path = '', $max = 30)
     {
@@ -76,9 +76,9 @@ if (!function_exists('pl')) {
             $path = $name;
         }
         config([
-            'logging.channels.'.$path.'_'.$name => [
+            'logging.channels.' . $path . '_' . $name => [
                 'driver' => 'daily',
-                'path' => storage_path('logs/'.$path.'/'.$name.'.log'),
+                'path' => storage_path('logs/' . $path . '/' . $name . '.log'),
                 'level' => 'debug',
             ],
         ]);
@@ -87,14 +87,14 @@ if (!function_exists('pl')) {
             $first = Illuminate\Support\Arr::first(debug_backtrace());
             if (is_array($first) && isset($first['file']) && isset($first['line'])) {
                 $str = substr(str_replace(base_path(), '', $first['file']), 1);
-                $type = "On {$first['line']} Line At [{$str}] ".PHP_EOL;
+                $type = "On {$first['line']} Line At [{$str}] " . PHP_EOL;
             }
         }
         if (!is_array($message)) {
-            $type = $type.$message;
+            $type = $type . $message;
             $message = [];
         }
-        log_channel($path.'_'.$name)->info($type, $message);
+        log_channel($path . '_' . $name)->info($type, $message);
     }
 }
 
@@ -102,9 +102,9 @@ if (!function_exists('api_res')) {
     /**
      * 封装返回数据
      *
-     * @param  string  $msg
-     * @param  array  $data
-     * @param  int  $code
+     * @param string $msg
+     * @param array $data
+     * @param int $code
      *
      * @return array
      */
@@ -117,9 +117,9 @@ if (!function_exists('api_res')) {
 if (!function_exists('api_ok')) {
     /**
      * 封装返回数据-成功
-     * @param  string|array  $msg
-     * @param  array|int  $data
-     * @param  int  $code
+     * @param string|array $msg
+     * @param array|int $data
+     * @param int $code
      *
      * @return array
      */
@@ -137,7 +137,7 @@ if (!function_exists('da')) {
      * dd打印封装 不断点
      * 如果能转成toArray()则转成数组
      *
-     * @param  mixed  $args
+     * @param mixed $args
      */
     function da(...$args)
     {
@@ -157,7 +157,7 @@ if (!function_exists('dad')) {
      * dd打印封装 并断点
      * 如果能转成toArray()则转成数组
      *
-     * @param  mixed  $args
+     * @param mixed $args
      */
     function dad(...$args)
     {
@@ -171,7 +171,7 @@ if (!function_exists('ma')) {
      * 移动版dd打印封装 不断点
      * 如果能转成toArray()则转成数组
      *
-     * @param  mixed  $args
+     * @param mixed $args
      */
     function ma(...$args)
     {
@@ -185,7 +185,7 @@ if (!function_exists('mad')) {
      * 移动版dd打印封装 并断点
      * 如果能转成toArray()则转成数组
      *
-     * @param  mixed  $args
+     * @param mixed $args
      */
     function mad(...$args)
     {
@@ -198,7 +198,7 @@ if (!function_exists('is_time_string')) {
     /**
      * 判断字符串是否为时间格式
      *
-     * @param  string  $var
+     * @param string $var
      * @return bool
      */
     function is_time_string($var)
@@ -216,7 +216,7 @@ if (!function_exists('admin_switch_arr')) {
      * admin系统的switch选项
      *
      * @param $arr
-     * @param  bool  $isOpposite
+     * @param bool $isOpposite
      * @return array
      */
     function admin_switch_arr($arr, $isOpposite = true)
@@ -236,7 +236,7 @@ if (!function_exists('console_line')) {
      * 命令行模式中, 打印需要的数据
      *
      * @param $text
-     * @param  string  $type
+     * @param string $type
      */
     function console_line($text, $type = 'line')
     {
@@ -246,7 +246,7 @@ if (!function_exists('console_line')) {
             ];
             $code = $types[$type] ?? '37';
             // 30黑色，31红色，32绿色，33黄色，34蓝色，35洋红，36青色，37白色，
-            echo chr(27)."[".$code."m"."$text".chr(27)."[0m".PHP_EOL;
+            echo chr(27) . "[" . $code . "m" . "$text" . chr(27) . "[0m" . PHP_EOL;
         }
     }
 }
@@ -285,3 +285,35 @@ if (!function_exists('console_question')) {
         console_line($text, 'question');
     }
 }
+
+if (!function_exists('sc_send')) {
+    /**
+     * Server酱推送
+     *
+     * @param $text
+     * @param string $desc
+     * @param string $key
+     * @return bool|false|string
+     */
+    function sc_send($text, $desc = '', $key = '')
+    {
+        if (!$key) {
+            $key = config('sc_send_key');
+        }
+        if (!$key) {
+            return false;
+        }
+        $context = stream_context_create([
+            'http' => [
+                'method' => 'POST',
+                'header' => 'Content-type: application/x-www-form-urlencoded',
+                'content' => http_build_query([
+                    'text' => $text,
+                    'desp' => $desc
+                ])
+            ]
+        ]);
+        return $result = file_get_contents('https://sc.ftqq.com/' . $key . '.send', false, $context);
+    }
+}
+

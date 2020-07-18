@@ -112,6 +112,16 @@ class DemoOrder extends BaseModel
     }
 
     /**
+     * 获取支付结果页面链接
+     *
+     * @return string
+     */
+    public function payResultUrl()
+    {
+        return route('web.pay_result', ['id' => $this->id]);
+    }
+
+    /**
      * 支付成功处理
      *
      * @param MultiBill $bill
@@ -123,6 +133,8 @@ class DemoOrder extends BaseModel
             'pay_at' => $bill->pay_at,
             'status' => 1,
         ]);
+        // 发送Server酱推送通知
+        sc_send(config('app.name') . $bill->pay_way_name . '有一笔新的收款' . money_show($this->payed_amount) . '元', $bill->pay_way_name . '于 ' . $bill->pay_at . ' 收款：￥' . money_show($this->payed_amount));
     }
 
     /**
@@ -130,7 +142,7 @@ class DemoOrder extends BaseModel
      */
     public function payResult()
     {
-        return redirect(route('web.pay_result', ['id' => $this->id]));
+        return redirect($this->payResultUrl());
     }
 
     /**

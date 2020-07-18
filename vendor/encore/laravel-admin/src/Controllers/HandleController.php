@@ -7,7 +7,9 @@ use Encore\Admin\Actions\GridAction;
 use Encore\Admin\Actions\Response;
 use Encore\Admin\Actions\RowAction;
 use Encore\Admin\Widgets\Form;
+use Encore\Admin\Widgets\Selectable\Selectable;
 use Exception;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -142,5 +144,49 @@ class HandleController extends Controller
         }
 
         return $args;
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return mixed|string|string[]
+     */
+    public function handleSelectable(Request $request)
+    {
+        $class = $request->get('selectable');
+        $multiple = $request->get('multiple', 0);
+
+        $class = str_replace('_', '\\', $class);
+
+        if (class_exists($class)) {
+            /** @var Selectable $selectable */
+            $selectable = new $class();
+
+            return $selectable->render($multiple);
+        }
+
+        return $class;
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return mixed|string|string[]
+     */
+    public function handleRenderable(Request $request)
+    {
+        $class = $request->get('renderable');
+        $key = $request->get('key');
+
+        $class = str_replace('_', '\\', $class);
+
+        if (class_exists($class)) {
+            /** @var Renderable $selectable */
+            $renderable = new $class();
+
+            return $renderable->render($key);
+        }
+
+        return $class;
     }
 }

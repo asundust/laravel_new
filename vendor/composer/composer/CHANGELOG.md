@@ -1,3 +1,52 @@
+### [1.10.9] 2020-07-16
+
+  * Fixed Bitbucket redirect loop when credentials are outdated
+  * Fixed GitLab auth prompt wording
+  * Fixed `self-update` handling of files requiring admin permissions to write to on Windows (it now does a UAC prompt)
+  * Fixed parsing issues in funding.yml files
+
+### [1.10.8] 2020-06-24
+
+  * Fixed compatibility issue with git being configured to show signatures by default
+  * Fixed discarding of local changes when updating packages to include untracked files
+  * Several minor fixes
+
+### [1.10.7] 2020-06-03
+
+  * Fixed PHP 8 deprecations
+  * Fixed detection of pcntl_signal being in disabled_functions when pcntl_async_signal is allowed
+
+### [1.10.6] 2020-05-06
+
+  * Fixed version guessing to take composer-runtime-api and composer-plugin-api requirements into account to avoid selecting packages which require Composer 2
+  * Fixed package name validation to allow several dashes following each other
+  * Fixed post-status-cmd script not firing when there were no changes to be displayed
+  * Fixed composer-runtime-api support on Composer 1.x, the package is now present as 1.0.0
+  * Fixed support for composer show --name-only --self
+  * Fixed detection of GitLab URLs when handling authentication in some cases
+
+### [1.10.5] 2020-04-10
+
+  * Fixed self-update on PHP <5.6, seriously please upgrade people, it's time
+  * Fixed 1.10.2 regression with PATH resolution in scripts
+
+### [1.10.4] 2020-04-09
+
+  * Fixed 1.10.2 regression in path symlinking with absolute path repos
+
+### [1.10.3] 2020-04-09
+
+  * Fixed invalid --2 flag warning in `self-update` when no channel is requested
+
+### [1.10.2] 2020-04-09
+
+  * Added --1 flag to `self-update` command which can be added to automated self-update runs to make sure it won't automatically jump to 2.0 once that is released
+  * Fixed path repository symlinks being made relative when the repo url is defined as absolute paths
+  * Fixed potential issues when using "composer ..." in scripts and composer/composer was also required in the project
+  * Fixed 1.10.0 regression when downloading GitHub archives from non-API URLs
+  * Fixed handling of malformed info in fund command
+  * Fixed Symfony5 compatibility issues in a few commands
+
 ### [1.10.1] 2020-03-13
 
   * Fixed path repository warning on empty path when using wildcards
@@ -824,6 +873,15 @@
 
   * Initial release
 
+[1.10.9]: https://github.com/composer/composer/compare/1.10.8...1.10.9
+[1.10.8]: https://github.com/composer/composer/compare/1.10.7...1.10.8
+[1.10.7]: https://github.com/composer/composer/compare/1.10.6...1.10.7
+[1.10.6]: https://github.com/composer/composer/compare/1.10.5...1.10.6
+[1.10.5]: https://github.com/composer/composer/compare/1.10.4...1.10.5
+[1.10.4]: https://github.com/composer/composer/compare/1.10.3...1.10.4
+[1.10.3]: https://github.com/composer/composer/compare/1.10.2...1.10.3
+[1.10.2]: https://github.com/composer/composer/compare/1.10.1...1.10.2
+[1.10.1]: https://github.com/composer/composer/compare/1.10.0...1.10.1
 [1.10.0]: https://github.com/composer/composer/compare/1.10.0-RC...1.10.0
 [1.10.0-RC]: https://github.com/composer/composer/compare/1.9.3...1.10.0-RC
 [1.9.3]: https://github.com/composer/composer/compare/1.9.2...1.9.3

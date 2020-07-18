@@ -159,7 +159,7 @@ php composer.phar update
 > if the `composer.lock` has not been updated since changes were made to the
 > `composer.json` that might affect dependency resolution.
 
-If you only want to install or update one dependency, you can whitelist them:
+If you only want to install or update one dependency, you can allow them:
 
 ```sh
 php composer.phar update monolog/monolog [...]
@@ -241,7 +241,7 @@ be in your project root, on the same level as `vendor` directory is. An example
 filename would be `src/Foo.php` containing an `Acme\Foo` class.
 
 After adding the [`autoload`](04-schema.md#autoload) field, you have to re-run
-this command :
+this command:
 
 ```sh
 php composer.phar dump-autoload

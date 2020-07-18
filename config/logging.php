@@ -96,13 +96,11 @@ return [
             'handler' => NullHandler::class,
         ],
 
-	// 自定义
-        // sql日志
-        'sql' => [
+        'query_detector' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/sql/sql.log'),
+            'path' => storage_path('logs/query_detector/log.log'),
             'level' => 'debug',
-            'days' => 3,
+            'days' => 14,
         ],
     ],
 

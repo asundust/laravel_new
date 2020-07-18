@@ -33,7 +33,7 @@ If you rather want this information to be written to your `laravel.log` file, wr
 You can publish the package's configuration using this command:
 
 ```bash
-php artisan vendor:publish --provider=BeyondCode\QueryDetector\QueryDetectorServiceProvider
+php artisan vendor:publish --provider="BeyondCode\QueryDetector\QueryDetectorServiceProvider"
 ```
 
 This will add the `querydetector.php` file in your config directory with the following contents:
@@ -52,7 +52,7 @@ return [
      * Threshold level for the N+1 query detection. If a relation query will be
      * executed more then this amount, the detector will notify you about it.
      */
-    'threshold' => 1,
+    'threshold' => (int) env('QUERY_DETECTOR_TRESHOLD', 1),
 
     /*
      * Here you can whitelist model relations.

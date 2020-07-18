@@ -6,10 +6,15 @@ use Illuminate\Database\Seeder;
 class AdminConfigSeeder extends Seeder
 {
     public static $configArr = [
+        // [
+        //     'description' => '是否强制HTTPS请求(0否，1是)',
+        //     'name' => 'force_https',
+        //     'value' => '0',
+        // ],
         [
-            'description' => '是否强制HTTPS请求(0否，1是)',
-            'name' => 'force_https',
-            'value' => '0',
+            'description' => 'Server酱推送密钥(请关注“方糖”公众号)',
+            'name' => 'sc_send_key',
+            'value' => '',
         ],
     ];
 

@@ -1,6 +1,18 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/tinker/compare/v2.3.0...2.x)
+## [Unreleased](https://github.com/laravel/tinker/compare/v2.4.1...2.x)
+
+
+## [v2.4.1 (2020-07-07)](https://github.com/laravel/tinker/compare/v2.4.0...v2.4.1)
+
+### Fixed
+- Fixed execute not unregistering loader and exit code ([#100](https://github.com/laravel/tinker/pull/100))
+
+
+## [v2.4.0 (2020-04-07)](https://github.com/laravel/tinker/compare/v2.3.0...v2.4.0)
+
+### Changed
+- Forward input options to psysh ([#98](https://github.com/laravel/tinker/pull/98))
 
 
 ## [v2.3.0 (2020-03-17)](https://github.com/laravel/tinker/compare/v2.2.0...v2.3.0)

@@ -79,6 +79,16 @@ abstract class AbstractDisplayer
     }
 
     /**
+     * @param mixed $key
+     *
+     * @return mixed
+     */
+    public function getAttribute($key)
+    {
+        return $this->row->getAttribute($key);
+    }
+
+    /**
      * Get url path of current resource.
      *
      * @return string
@@ -86,6 +96,22 @@ abstract class AbstractDisplayer
     public function getResource()
     {
         return $this->grid->resource();
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->getColumn()->getName();
+    }
+
+    /**
+     * @return string
+     */
+    public function getClassName()
+    {
+        return $this->getColumn()->getClassName();
     }
 
     /**

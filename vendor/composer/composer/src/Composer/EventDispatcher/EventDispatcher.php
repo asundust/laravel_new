@@ -247,6 +247,13 @@ class EventDispatcher
                     }
                 }
 
+                // if composer is being executed, make sure it runs the expected composer from current path
+                // resolution, even if bin-dir contains composer too because the project requires composer/composer
+                // see https://github.com/composer/composer/issues/8748
+                if (substr($exec, 0, 9) === 'composer ') {
+                    $exec = $this->getPhpExecCommand() . ' ' . ProcessExecutor::escape(getenv('COMPOSER_BINARY')) . substr($exec, 8);
+                }
+
                 if (0 !== ($exitCode = $this->process->execute($exec))) {
                     $this->io->writeError(sprintf('<error>Script %s handling the %s event returned with error code '.$exitCode.'</error>', $callable, $event->getName()), true, IOInterface::QUIET);
 
@@ -319,13 +326,22 @@ class EventDispatcher
             return $event;
         }
 
-        $typehint = $reflected->getClass();
-
-        if (!$typehint instanceof \ReflectionClass) {
-            return $event;
+        $expected = null;
+        $isClass = false;
+        if (\PHP_VERSION_ID >= 70000) {
+            $reflectionType = $reflected->getType();
+            if ($reflectionType) {
+                $expected = $reflectionType instanceof \ReflectionNamedType ? $reflectionType->getName() : (string)$reflectionType;
+                $isClass = !$reflectionType->isBuiltin();
+            }
+        } else {
+            $expected = $reflected->getClass() ? $reflected->getClass()->getName() : null;
+            $isClass = null !== $expected;
         }
 
-        $expected = $typehint->getName();
+        if (!$isClass) {
+            return $event;
+        }
 
         // BC support
         if (!$event instanceof $expected && $expected === 'Composer\Script\CommandEvent') {

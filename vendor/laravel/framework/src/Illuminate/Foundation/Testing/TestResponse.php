@@ -684,7 +684,7 @@ class TestResponse implements ArrayAccess
      */
     public function assertJsonCount(int $count, $key = null)
     {
-        if ($key) {
+        if (! is_null($key)) {
             PHPUnit::assertCount(
                 $count, data_get($this->json(), $key),
                 "Failed to assert that the response count matched the expected {$count}"
@@ -997,7 +997,7 @@ class TestResponse implements ArrayAccess
 
         if (is_null($value)) {
             PHPUnit::assertTrue(
-                $this->session()->getOldInput($key),
+                $this->session()->hasOldInput($key),
                 "Session is missing expected key [{$key}]."
             );
         } elseif ($value instanceof Closure) {
@@ -1029,7 +1029,7 @@ class TestResponse implements ArrayAccess
             if (is_int($key)) {
                 PHPUnit::assertTrue($errors->has($value), "Session missing error: $value");
             } else {
-                PHPUnit::assertContains($value, $errors->get($key, $format));
+                PHPUnit::assertContains(is_bool($value) ? (string) $value : $value, $errors->get($key, $format));
             }
         }
 

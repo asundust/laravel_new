@@ -73,18 +73,15 @@ annotations of a class. A common one is
     $property = $reflectionClass->getProperty('bar');
 
     $reader = new AnnotationReader();
-    $myAnnotation = $reader->getPropertyAnnotation($property, 'bar');
+    $myAnnotation = $reader->getPropertyAnnotation($property, MyAnnotation::class);
 
     echo $myAnnotation->myProperty; // result: "value"
-
-A reader has multiple methods to access the annotations of a class.
 
 Note that ``AnnotationRegistry::registerLoader('class_exists')`` only works
 if you already have an autoloader configured (i.e. composer autoloader).
 Otherwise, :ref:`please take a look to the other annotation autoload mechanisms <annotations>`.
 
-A reader has multiple methods to access the annotations
-of a class.
+A reader has multiple methods to access the annotations of a class.
 
 :ref:`Read more about handling annotations. <annotations>`
 
