@@ -2,10 +2,16 @@
 
 In this repository, you can find the lang files for the framework PHP, [Laravel 4/5/6/7](https://laravel.com).
 
+## New
+
+* in version 6.1, we propose a new file by language: `validation-inline.php` ( see #1268 )
+* in version 7, we propose new directory names to follow ISO-15897 ( see #1269 )
+
 ## Install
 
 #### Via Composer
-* For Laravel 7.x : run `composer require caouecs/laravel-lang:~6.0` in your project folder
+* For Laravel 7.x and new directory names : run `composer require caouecs/laravel-lang:~7.0` in your project folder
+* For Laravel 7.x : run `composer require caouecs/laravel-lang:~6.1` in your project folder
 * For Laravel 6.x : run `composer require caouecs/laravel-lang:~5.0` in your project folder
 * For Laravel 5.8 : run `composer require caouecs/laravel-lang:~4.0` in your project folder
 * For Laravel 5.1-5.7 : run `composer require caouecs/laravel-lang:~3.0` in your project folder
@@ -54,7 +60,6 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 * [LaravelLang by ARCANEDEV](https://github.com/ARCANEDEV/LaravelLang) - Translations manager and checker for Laravel.
 * [Laravel-lang by overtrue](https://github.com/overtrue/laravel-lang) - Command to add languages in your project.
-* [laravel-lang-installer by ablunier](https://github.com/ablunier/laravel-lang-installer) - Command for easily add languages to a Laravel project.
 * [laravel-lang-publisher by Andrey Helldar](https://github.com/andrey-helldar/laravel-lang-publisher) - Easy installation and update of translation files for your project.
 
 ## Credits

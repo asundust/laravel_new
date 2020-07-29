@@ -34,10 +34,5 @@ class AppServiceProvider extends ServiceProvider
         if (class_exists('\Encore\Admin\Config\Config') && \Illuminate\Support\Facades\Schema::hasTable(config('admin.extensions.config.table', 'admin_config'))) {
             \Encore\Admin\Config\Config::load();
         }
-
-        // // 强制https // use Illuminate\Support\Facades\URL
-        // if (config('force_https') == 1) {
-        //     URL::forceScheme('https');
-        // }
     }
 }

@@ -66,9 +66,6 @@ class SystemCommand extends Command
                     '--tag' => 'laravel-admin-assets',
                     '--force' => true
                 ]);
-                Artisan::call('vendor:publish', [
-                    '--tag' => 'laravel-admin-chartjs',
-                ]);
                 Artisan::call('admin:minify', [
                     '--clear' => true
                 ]);
@@ -96,9 +93,6 @@ class SystemCommand extends Command
                 Artisan::call('vendor:publish', [
                     '--tag' => 'laravel-admin-assets',
                     '--force' => true
-                ]);
-                Artisan::call('vendor:publish', [
-                    '--tag' => 'laravel-admin-chartjs',
                 ]);
                 Artisan::call('admin:minify', [
                     '--clear' => true

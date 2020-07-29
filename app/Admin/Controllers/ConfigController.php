@@ -66,11 +66,11 @@ class ConfigController extends BaseConfigController
             ->header('网站配置')
             ->description('详情')
             ->body(Admin::show(ConfigModel::findOrFail($id), function (Show $show) {
-                $show->id('ID');
-                $show->name('名称');
-                $show->value('值');
-                $show->description('描述');
-                $show->sort('排序');
+                $show->field('id', 'ID');
+                $show->field('name', '名称');
+                $show->field('value', '值');
+                $show->field('description', '描述');
+                $show->field('sort', '排序');
                 // $show->created_at('创建时间');
                 // $show->updated_at('更新时间');
             }));
@@ -80,13 +80,13 @@ class ConfigController extends BaseConfigController
     {
         $grid = new Grid(new ConfigModel());
 
-        $grid->id('ID')->sortable();
-        $grid->name('名称')->display(function ($name) {
+        $grid->column('id', 'ID')->sortable();
+        $grid->column('name', '名称')->display(function ($name) {
             return "<a tabindex=\"0\" class=\"btn btn-xs btn-twitter\" role=\"button\" data-toggle=\"popover\" data-html=true title=\"用法\" data-content=\"<code>config('$name');</code>\">$name</a>";
         });
-        $grid->value('值')->editable();
-        $grid->description('描述');
-        $grid->sort('排序');
+        $grid->column('value', '值')->editable();
+        $grid->column('description', '描述');
+        $grid->column('sort', '排序');
 
         // $grid->created_at('创建时间');
         // $grid->updated_at('更新时间');
@@ -108,10 +108,10 @@ class ConfigController extends BaseConfigController
         $form = new Form(new ConfigModel());
 
         $form->display('id', 'ID');
-        $form->text('name', '名称')->rules('required');
+        $form->display('name', '名称')->rules('required');
         $form->textarea('value', '值')->rules('required');
-        $form->textarea('description', '描述');
-        $form->number('sort', '排序')->default(0);
+        $form->display('description', '描述');
+        $form->display('sort', '排序')->default(0);
 
         // $form->display('created_at', '创建时间');
         // $form->display('updated_at', '更新时间');

@@ -86,9 +86,9 @@ class LoadEnvironmentVariables
     protected function createDotenv($app)
     {
         return Dotenv::create(
+            Env::getRepository(),
             $app->environmentPath(),
-            $app->environmentFile(),
-            Env::getFactory()
+            $app->environmentFile()
         );
     }
 
@@ -105,6 +105,6 @@ class LoadEnvironmentVariables
         $output->writeln('The environment file is invalid!');
         $output->writeln($e->getMessage());
 
-        die(1);
+        exit(1);
     }
 }

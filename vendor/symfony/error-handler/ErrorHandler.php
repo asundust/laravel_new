@@ -91,7 +91,7 @@ class ErrorHandler
     private $tracedErrors = 0x77FB; // E_ALL - E_STRICT - E_PARSE
     private $screamedErrors = 0x55; // E_ERROR + E_CORE_ERROR + E_COMPILE_ERROR + E_PARSE
     private $loggedErrors = 0;
-    private $traceReflector;
+    private $configureException;
     private $debug;
 
     private $isRecursive = 0;
@@ -187,8 +187,14 @@ class ErrorHandler
             $this->bootstrappingLogger = $bootstrappingLogger;
             $this->setDefaultLogger($bootstrappingLogger);
         }
-        $this->traceReflector = new \ReflectionProperty('Exception', 'trace');
-        $this->traceReflector->setAccessible(true);
+        $traceReflector = new \ReflectionProperty('Exception', 'trace');
+        $traceReflector->setAccessible(true);
+        $this->configureException = \Closure::bind(static function ($e, $trace, $file = null, $line = null) use ($traceReflector) {
+            $traceReflector->setValue($e, $trace);
+            $e->file = $file ?? $e->file;
+            $e->line = $line ?? $e->line;
+        }, null, new class() extends \Exception {
+        });
         $this->debug = $debug;
     }
 
@@ -423,18 +429,6 @@ class ErrorHandler
         }
         $scope = $this->scopedErrors & $type;
 
-        if (4 < $numArgs = \func_num_args()) {
-            $context = $scope ? (func_get_arg(4) ?: []) : [];
-        } else {
-            $context = [];
-        }
-
-        if (isset($context['GLOBALS']) && $scope) {
-            $e = $context;                  // Whatever the signature of the method,
-            unset($e['GLOBALS'], $context); // $context is always a reference in 5.3
-            $context = $e;
-        }
-
         if (false !== strpos($message, "@anonymous\0")) {
             $logMessage = $this->parseAnonymousClass($message);
         } else {
@@ -473,9 +467,9 @@ class ErrorHandler
             if ($throw || $this->tracedErrors & $type) {
                 $backtrace = $errorAsException->getTrace();
                 $lightTrace = $this->cleanTrace($backtrace, $type, $file, $line, $throw);
-                $this->traceReflector->setValue($errorAsException, $lightTrace);
+                ($this->configureException)($errorAsException, $lightTrace, $file, $line);
             } else {
-                $this->traceReflector->setValue($errorAsException, []);
+                ($this->configureException)($errorAsException, []);
                 $backtrace = [];
             }
         }
@@ -495,6 +489,8 @@ class ErrorHandler
                         // given a caught $e exception in __toString(), quitting the method with
                         // `return trigger_error($e, E_USER_ERROR);` allows this error handler
                         // to make $e get through the __toString() barrier.
+
+                        $context = 4 < \func_num_args() ? (func_get_arg(4) ?: []) : [];
 
                         foreach ($context as $e) {
                             if ($e instanceof \Throwable && $e->__toString() === $message) {
@@ -736,7 +732,7 @@ class ErrorHandler
     /**
      * Cleans the trace by removing function arguments and the frames added by the error handler and DebugClassLoader.
      */
-    private function cleanTrace(array $backtrace, int $type, string $file, int $line, bool $throw): array
+    private function cleanTrace(array $backtrace, int $type, string &$file, int &$line, bool $throw): array
     {
         $lightTrace = $backtrace;
 
@@ -744,6 +740,19 @@ class ErrorHandler
             if (isset($backtrace[$i]['file'], $backtrace[$i]['line']) && $backtrace[$i]['line'] === $line && $backtrace[$i]['file'] === $file) {
                 $lightTrace = \array_slice($lightTrace, 1 + $i);
                 break;
+            }
+        }
+        if (E_USER_DEPRECATED === $type) {
+            for ($i = 0; isset($lightTrace[$i]); ++$i) {
+                if (!isset($lightTrace[$i]['file'], $lightTrace[$i]['line'], $lightTrace[$i]['function'])) {
+                    continue;
+                }
+                if (!isset($lightTrace[$i]['class']) && 'trigger_deprecation' === $lightTrace[$i]['function']) {
+                    $file = $lightTrace[$i]['file'];
+                    $line = $lightTrace[$i]['line'];
+                    $lightTrace = \array_slice($lightTrace, 1 + $i);
+                    break;
+                }
             }
         }
         if (class_exists(DebugClassLoader::class, false)) {

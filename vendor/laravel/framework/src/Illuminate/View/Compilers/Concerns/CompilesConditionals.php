@@ -48,6 +48,47 @@ trait CompilesConditionals
     }
 
     /**
+     * Compile the env statements into valid PHP.
+     *
+     * @param  string  $environments
+     * @return string
+     */
+    protected function compileEnv($environments)
+    {
+        return "<?php if(app()->environment{$environments}): ?>";
+    }
+
+    /**
+     * Compile the end-env statements into valid PHP.
+     *
+     * @return string
+     */
+    protected function compileEndEnv()
+    {
+        return '<?php endif; ?>';
+    }
+
+    /**
+     * Compile the production statements into valid PHP.
+     *
+     * @return string
+     */
+    protected function compileProduction()
+    {
+        return "<?php if(app()->environment('production')): ?>";
+    }
+
+    /**
+     * Compile the end-production statements into valid PHP.
+     *
+     * @return string
+     */
+    protected function compileEndProduction()
+    {
+        return '<?php endif; ?>';
+    }
+
+    /**
      * Compile the if-guest statements into valid PHP.
      *
      * @param  string|null  $guard
@@ -92,6 +133,17 @@ trait CompilesConditionals
     protected function compileHasSection($expression)
     {
         return "<?php if (! empty(trim(\$__env->yieldContent{$expression}))): ?>";
+    }
+
+    /**
+     * Compile the section-missing statements into valid PHP.
+     *
+     * @param  string  $expression
+     * @return string
+     */
+    protected function compileSectionMissing($expression)
+    {
+        return "<?php if (empty(trim(\$__env->yieldContent{$expression}))): ?>";
     }
 
     /**

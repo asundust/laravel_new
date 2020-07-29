@@ -42,7 +42,7 @@ return [
          * - [separator] - extra separator line to make it easier to see where next query starts
          * - \n - new line separator.
          */
-        'entry_format' => env('SQL_LOGGER_FORMAT_ENTRY_FORMAT', "/* [origin]\n   [编号 [query_nr]] - [datetime] [[query_time]] */\n[query]\n[separator]\n"),
+        'entry_format' => env('SQL_LOGGER_FORMAT_ENTRY_FORMAT', "/* [origin]\n   编号 [query_nr] - [datetime] [[query_time]] */\n[query]\n[separator]\n"),
     ],
 
     'all_queries' => [
@@ -69,7 +69,7 @@ return [
          * Log file name without extension - elements between [ and ] characters will be parsed
          * according to format used by http://php.net/manual/en/function.date.php
          */
-        'file_name' => env('SQL_LOGGER_ALL_QUERIES_FILE_NAME', '[Y-m-d]'),
+        'file_name' => env('SQL_LOGGER_ALL_QUERIES_FILE_NAME', '[Y-m-d]-log'),
     ],
 
     'slow_queries' => [
@@ -95,6 +95,6 @@ return [
          * Slow log file name without extension - elements between [ and ] characters will be parsed
          * according to format used by http://php.net/manual/en/function.date.php
          */
-        'file_name' => env('SQL_LOGGER_SLOW_QUERIES_FILE_NAME', 'slow-[Y-m-d]'),
+        'file_name' => env('SQL_LOGGER_SLOW_QUERIES_FILE_NAME', '[Y-m-d]-slow-log'),
     ],
 ];

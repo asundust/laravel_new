@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddSortColumnToAdminConfigsTable extends Migration
 {
@@ -14,6 +14,7 @@ class AddSortColumnToAdminConfigsTable extends Migration
     public function up()
     {
         Schema::table(config('admin.extensions.config.table', 'admin_config'), function (Blueprint $table) {
+            $table->string('value')->nullable()->change();
             $table->integer('sort')->nullable()->after('description');
         });
     }

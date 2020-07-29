@@ -1,0 +1,38 @@
+{
+    "name": "overtrue/laravel-lang",
+    "description": "List of 52 languages for Laravel 5",
+    "keywords": [
+        "laravel",
+        "languages",
+        "i18n",
+        "locale",
+        "overtrue"
+    ],
+    "require": {
+        "caouecs/laravel-lang": "~7.0",
+        "symfony/process": "^5.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Overtrue\\LaravelLang\\": "src/"
+        },
+        "files": ["src/helpers.php"]
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "overtrue",
+            "email": "anzhengchao@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Overtrue\\LaravelLang\\TranslationServiceProvider"
+            ]
+        }
+    },
+    "require-dev": {
+        "laravel/framework": "~7.0"
+    }
+}

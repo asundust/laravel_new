@@ -96,6 +96,10 @@ return [
             'handler' => NullHandler::class,
         ],
 
+        'emergency' => [
+            'path' => storage_path('logs/laravel.log'),
+        ],
+
         'query_detector' => [
             'driver' => 'daily',
             'path' => storage_path('logs/query_detector/log.log'),

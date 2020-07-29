@@ -70,7 +70,7 @@ if (!function_exists('pl')) {
      * @param string $path 日志写入路径
      * @param int $max 该目录下最大日志文件数
      */
-    function pl($message = '', $name = 'test', $path = '', $max = 30)
+    function pl($message = '', $name = 'test', $path = '', $max = 14)
     {
         if (strlen($path) == 0) {
             $path = $name;
@@ -80,21 +80,23 @@ if (!function_exists('pl')) {
                 'driver' => 'daily',
                 'path' => storage_path('logs/' . $path . '/' . $name . '.log'),
                 'level' => 'debug',
+                'days' => $max,
             ],
         ]);
         $type = '';
         if (function_exists('debug_backtrace') && debug_backtrace()) {
-            $first = Illuminate\Support\Arr::first(debug_backtrace());
+            $first = Arr::first(debug_backtrace());
             if (is_array($first) && isset($first['file']) && isset($first['line'])) {
                 $str = substr(str_replace(base_path(), '', $first['file']), 1);
-                $type = "On {$first['line']} Line At [{$str}] " . PHP_EOL;
+                $type = "{$str}:{$first['line']}";
             }
         }
         if (!is_array($message)) {
-            $type = $type . $message;
-            $message = [];
+            logger()->channel($path . '_' . $name)->info($type . PHP_EOL . $message);
+        } else {
+            logger()->channel($path . '_' . $name)->info($type);
+            logger()->channel($path . '_' . $name)->info($message);
         }
-        log_channel($path . '_' . $name)->info($type, $message);
     }
 }
 
