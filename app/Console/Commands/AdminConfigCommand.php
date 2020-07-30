@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Admin\AdminConfig;
 use Illuminate\Console\Command;
 
 class AdminConfigCommand extends Command
@@ -37,20 +38,20 @@ class AdminConfigCommand extends Command
      */
     public function handle()
     {
+        $adminConfigData = config('services.admin_configs');
         $type = $this->argument('type');
         switch ($type) {
             case 'new':
-                $result = $this->call('db:seed', [
-                    '--class' => 'AdminConfigSeeder'
-                ]);
-                if ($result !== false) {
-                    $this->info('Admin网站配置已同步');
-                } else {
-                    $this->error('Admin网站配置同步失败');
+                console_info('后台配置开始处理');
+                foreach ($adminConfigData as $key => $v) {
+                    console_info('　　　　当前处理：' . $v['name'] . ' ' . $v['description']);
+                    $config = AdminConfig::firstOrCreate(['name' => $v['name']], $v);
+                    $config->update(['sort' => $key + 1, 'description' => $v['description']]);
                 }
+                console_comment('　　　　处理完成' . PHP_EOL);
                 break;
             default:
-                $this->error("只允许type参数类型为“new”");
+                console_error("只允许type参数类型为“new”");
                 break;
         }
     }

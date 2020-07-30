@@ -6,10 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'AdminConfigSeeder' => $baseDir . '/database/seeds/AdminConfigSeeder.php',
-    'AdminMenusSeeder' => $baseDir . '/database/seeds/AdminMenusSeeder.php',
-    'AdminPermissionSeeder' => $baseDir . '/database/seeds/AdminPermissionSeeder.php',
-    'AdminRoleSeeder' => $baseDir . '/database/seeds/AdminRoleSeeder.php',
     'App\\Admin\\Controllers\\AuthController' => $baseDir . '/app/Admin/Controllers/AuthController.php',
     'App\\Admin\\Controllers\\ConfigController' => $baseDir . '/app/Admin/Controllers/ConfigController.php',
     'App\\Admin\\Controllers\\HomeController' => $baseDir . '/app/Admin/Controllers/HomeController.php',

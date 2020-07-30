@@ -2,8 +2,8 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\Admin\AdminConfig;
 use Encore\Admin\Config\ConfigController as BaseConfigController;
-use Encore\Admin\Config\ConfigModel;
 use Encore\Admin\Controllers\HasResourceActions;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
@@ -65,7 +65,7 @@ class ConfigController extends BaseConfigController
         return $content
             ->header('网站配置')
             ->description('详情')
-            ->body(Admin::show(ConfigModel::findOrFail($id), function (Show $show) {
+            ->body(Admin::show(AdminConfig()::findOrFail($id), function (Show $show) {
                 $show->field('id', 'ID');
                 $show->field('name', '名称');
                 $show->field('value', '值');
@@ -78,7 +78,7 @@ class ConfigController extends BaseConfigController
 
     public function grid()
     {
-        $grid = new Grid(new ConfigModel());
+        $grid = new Grid(new AdminConfig());
 
         $grid->column('id', 'ID')->sortable();
         $grid->column('name', '名称')->display(function ($name) {
@@ -105,7 +105,7 @@ class ConfigController extends BaseConfigController
 
     public function form()
     {
-        $form = new Form(new ConfigModel());
+        $form = new Form(new AdminConfig());
 
         $form->display('id', 'ID');
         $form->display('name', '名称')->rules('required');
