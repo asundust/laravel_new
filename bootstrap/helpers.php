@@ -1,53 +1,5 @@
 <?php
 
-if (!function_exists('curl_get_url')) {
-    /**
-     * CURL_GET
-     *
-     * @param $url
-     * @return bool|mixed|string
-     */
-    function curl_get_url($url)
-    {
-        $curl = curl_init();
-        $timeout = 5;
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, $timeout);
-        $file_contents = curl_exec($curl);
-        curl_close($curl);
-        return $file_contents;
-    }
-}
-
-if (!function_exists('curl_post_url')) {
-    /**
-     * CURL_POST
-     *
-     * @param $url
-     * @param array $data
-     * @param array $httpHeader
-     * @return mixed
-     */
-    function curl_post_url($url, $data = [], $httpHeader = [])
-    {
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $httpHeader);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_NOBODY, true);
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-        $return_str = curl_exec($curl);
-        curl_close($curl);
-        return $return_str;
-    }
-}
-
 if (!function_exists('log_channel')) {
     /**
      * 返回指定通道的日志实例
@@ -196,43 +148,6 @@ if (!function_exists('mad')) {
     }
 }
 
-if (!function_exists('is_time_string')) {
-    /**
-     * 判断字符串是否为时间格式
-     *
-     * @param string $var
-     * @return bool
-     */
-    function is_time_string($var)
-    {
-        if (!is_string($var)) {
-            return false;
-        }
-        $time = strtotime($var);
-        return date('Y-m-d', $time) == $var || date('Y-m-d H:i:s', $time) == $var;
-    }
-}
-
-if (!function_exists('admin_switch_arr')) {
-    /**
-     * admin系统的switch选项
-     *
-     * @param $arr
-     * @param bool $isOpposite
-     * @return array
-     */
-    function admin_switch_arr($arr, $isOpposite = true)
-    {
-        $keys = array_keys($arr);
-        $key1 = $isOpposite ? 1 : 0;
-        $key2 = $isOpposite ? 0 : 1;
-        return [
-            'on' => ['value' => $keys[$key1], 'text' => $arr[$keys[$key1]], 'color' => 'success'],
-            'off' => ['value' => $keys[$key2], 'text' => $arr[$keys[$key2]], 'color' => 'danger'],
-        ];
-    }
-}
-
 if (!function_exists('console_line')) {
     /**
      * 命令行模式中, 打印需要的数据
@@ -319,3 +234,22 @@ if (!function_exists('sc_send')) {
     }
 }
 
+if (!function_exists('admin_switch_arr')) {
+    /**
+     * admin系统的switch选项
+     *
+     * @param $arr
+     * @param bool $isOpposite
+     * @return array
+     */
+    function admin_switch_arr($arr, $isOpposite = true)
+    {
+        $keys = array_keys($arr);
+        $key1 = $isOpposite ? 1 : 0;
+        $key2 = $isOpposite ? 0 : 1;
+        return [
+            'on' => ['value' => $keys[$key1], 'text' => $arr[$keys[$key1]], 'color' => 'success'],
+            'off' => ['value' => $keys[$key2], 'text' => $arr[$keys[$key2]], 'color' => 'danger'],
+        ];
+    }
+}
