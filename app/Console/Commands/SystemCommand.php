@@ -43,6 +43,7 @@ class SystemCommand extends Command
             case 'ready':
                 if (!app()->isLocal()) {
                     $this->error('非法环境');
+
                     return false;
                 }
                 $this->comment('准备发布完成');
@@ -50,6 +51,7 @@ class SystemCommand extends Command
             case 'install':
                 if (file_exists(__DIR__ . '/../../../install.lock')) {
                     $this->error('如需重装，请删除“install.lock”文件！');
+
                     return false;
                 }
                 if (!$this->laravel['config']['app.key']) {
@@ -64,10 +66,10 @@ class SystemCommand extends Command
                 $this->comment('Admin安装完成' . PHP_EOL);
                 Artisan::call('vendor:publish', [
                     '--tag' => 'laravel-admin-assets',
-                    '--force' => true
+                    '--force' => true,
                 ]);
                 Artisan::call('admin:minify', [
-                    '--clear' => true
+                    '--clear' => true,
                 ]);
                 Artisan::call('admin:minify');
                 // Artisan::call('vendor:publish', [
@@ -76,7 +78,7 @@ class SystemCommand extends Command
                 // ]);
                 $this->comment('Admin视图更新完成' . PHP_EOL);
                 Artisan::call('admin:config', [
-                    'type' => 'new'
+                    'type' => 'new',
                 ]);
                 Artisan::call('admin:permission-update');
                 Artisan::call('admin:role-update');
@@ -92,10 +94,10 @@ class SystemCommand extends Command
                 Artisan::call('view:clear');
                 Artisan::call('vendor:publish', [
                     '--tag' => 'laravel-admin-assets',
-                    '--force' => true
+                    '--force' => true,
                 ]);
                 Artisan::call('admin:minify', [
-                    '--clear' => true
+                    '--clear' => true,
                 ]);
                 Artisan::call('admin:minify');
                 // Artisan::call('vendor:publish', [
@@ -104,7 +106,7 @@ class SystemCommand extends Command
                 // ]);
                 $this->comment('Admin视图更新完成' . PHP_EOL);
                 Artisan::call('admin:config', [
-                    'type' => 'new'
+                    'type' => 'new',
                 ]);
                 Artisan::call('admin:permission-update');
                 Artisan::call('admin:role-update');

@@ -44,7 +44,7 @@ class AdminMenuCommand extends Command
      */
     public function handle()
     {
-        $menu = new Menu;
+        $menu = new Menu();
 
         // 清空菜单表
         $menu->truncate();
@@ -145,7 +145,7 @@ class AdminMenuCommand extends Command
                         'title' => $v['title'],
                         'icon' => $v['icon'],
                         'uri' => $uriChild,
-                        'permission' => $v['permission']
+                        'permission' => $v['permission'],
                     ]);
                     if (count($v['roles'])) {
                         $menuChild->roles()->sync(Role::whereIn('slug', $v['roles'])->pluck('id')->toArray());
@@ -158,16 +158,17 @@ class AdminMenuCommand extends Command
     }
 
     /**
-     * 获取URI
+     * 获取URI.
      *
      * @param $value
+     *
      * @return string
      */
     private function getUri($value)
     {
         switch ($value['type']) {
             case 1:
-                return url('/') . (substr($value['uri'], 0, 1) == '/' ? $value['uri'] : '/' . $value['uri']);
+                return url('/') . ('/' == substr($value['uri'], 0, 1) ? $value['uri'] : '/' . $value['uri']);
                 break;
 
             default:

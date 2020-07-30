@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Laravel-admin name
@@ -57,7 +56,6 @@ return [
     |
     */
     'route' => [
-
         'prefix' => env('ADMIN_ROUTE_PREFIX', 'admin'),
 
         'namespace' => 'App\\Admin\\Controllers',
@@ -109,7 +107,6 @@ return [
     |
     */
     'auth' => [
-
         'controller' => App\Admin\Controllers\AuthController::class,
 
         'guard' => 'admin',
@@ -152,7 +149,6 @@ return [
     |
     */
     'upload' => [
-
         // Disk in `config/filesystem.php`.
         'disk' => 'admin',
 
@@ -172,7 +168,6 @@ return [
     |
     */
     'database' => [
-
         // Database connection for following tables.
         'connection' => '',
 
@@ -209,7 +204,6 @@ return [
     |
     */
     'operation_log' => [
-
         'enable' => true,
 
         /*
@@ -347,12 +341,9 @@ return [
     |--------------------------------------------------------------------------
     */
     'minify_assets' => [
-
         // Assets will not be minified.
         'excepts' => [
-
         ],
-
     ],
 
     /*

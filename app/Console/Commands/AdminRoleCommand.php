@@ -45,11 +45,11 @@ class AdminRoleCommand extends Command
         foreach ($adminRoleData as $role) {
             console_info('　　　　当前处理：' . $role['name'] . ' ' . $role['slug']);
             $result = Role::firstOrCreate(Arr::only($role, ['name', 'slug']));
-            if ($result != false) {
+            if (false != $result) {
                 if (count($role['permissions']) > 0) {
                     $result->permissions()->sync(Permission::whereIn('slug', $role['permissions'])->get());
                 }
-                $count++;
+                ++$count;
             }
         }
         console_comment('　　　　　处理完成：共' . $count . '条' . PHP_EOL);

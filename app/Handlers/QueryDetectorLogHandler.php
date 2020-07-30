@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Handlers;
-
 
 use BeyondCode\QueryDetector\Outputs\Output;
 use Illuminate\Support\Collection;
@@ -13,7 +11,6 @@ class QueryDetectorLogHandler implements Output
 {
     public function boot()
     {
-        //
     }
 
     public function output(Collection $detectedQueries, Response $response)

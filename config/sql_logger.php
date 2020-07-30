@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'general' => [
         /*
          * Directory where log files will be saved
