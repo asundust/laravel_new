@@ -18,7 +18,7 @@ class TestController extends Controller
 
     public function test($name = '')
     {
-        if (strlen($name) == 0) {
+        if (0 == strlen($name)) {
             $name = 'a';
         }
         $result = $this->$name();
@@ -35,6 +35,5 @@ class TestController extends Controller
 
     public function a()
     {
-        //
     }
 }

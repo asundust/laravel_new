@@ -10,14 +10,14 @@ use Illuminate\Queue\SerializesModels;
 
 class BillRefundedEvent
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     public $refundBill;
 
     /**
      * Create a new event instance.
-     *
-     * @param MultiRefundBill $refundBill
      */
     public function __construct(MultiRefundBill $refundBill)
     {

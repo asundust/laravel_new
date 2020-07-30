@@ -13,7 +13,7 @@ return [
      * Threshold level for the N+1 query detection. If a relation query will be
      * executed more then this amount, the detector will notify you about it.
      */
-    'threshold' => (int)env('QUERY_DETECTOR_TRESHOLD', 1),
+    'threshold' => (int) env('QUERY_DETECTOR_TRESHOLD', 1),
 
     /*
      * Here you can whitelist model relations.
@@ -60,6 +60,6 @@ return [
     'output' => [
         \BeyondCode\QueryDetector\Outputs\Alert::class,
         // \BeyondCode\QueryDetector\Outputs\Log::class,
-        QueryDetectorLogHandler::class
-    ]
+        QueryDetectorLogHandler::class,
+    ],
 ];

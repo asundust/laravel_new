@@ -2,9 +2,10 @@
 
 if (!function_exists('log_channel')) {
     /**
-     * 返回指定通道的日志实例
+     * 返回指定通道的日志实例.
      *
      * @param $channel
+     *
      * @return mixed
      */
     function log_channel($channel)
@@ -15,16 +16,16 @@ if (!function_exists('log_channel')) {
 
 if (!function_exists('pl')) {
     /**
-     * 快速日志打印
+     * 快速日志打印.
      *
      * @param string $message 日志信息
-     * @param string $name 日志文件名
-     * @param string $path 日志写入路径
-     * @param int $max 该目录下最大日志文件数
+     * @param string $name    日志文件名
+     * @param string $path    日志写入路径
+     * @param int    $max     该目录下最大日志文件数
      */
     function pl($message = '', $name = 'test', $path = '', $max = 14)
     {
-        if (strlen($path) == 0) {
+        if (0 == strlen($path)) {
             $path = $name;
         }
         config([
@@ -54,11 +55,11 @@ if (!function_exists('pl')) {
 
 if (!function_exists('api_res')) {
     /**
-     * 封装返回数据
+     * 封装返回数据.
      *
      * @param string $msg
-     * @param array $data
-     * @param int $code
+     * @param array  $data
+     * @param int    $code
      *
      * @return array
      */
@@ -71,9 +72,10 @@ if (!function_exists('api_res')) {
 if (!function_exists('api_ok')) {
     /**
      * 封装返回数据-成功
+     *
      * @param string|array $msg
-     * @param array|int $data
-     * @param int $code
+     * @param array|int    $data
+     * @param int          $code
      *
      * @return array
      */
@@ -82,6 +84,7 @@ if (!function_exists('api_ok')) {
         if (is_string($msg)) {
             return api_res($msg, $data, $code);
         }
+
         return api_res('', $msg, is_int($data) ? $data : $code);
     }
 }
@@ -89,41 +92,40 @@ if (!function_exists('api_ok')) {
 if (!function_exists('da')) {
     /**
      * dd打印封装 不断点
-     * 如果能转成toArray()则转成数组
+     * 如果能转成toArray()则转成数组.
      *
      * @param mixed $args
      */
     function da(...$args)
     {
-        $varDumper = new Symfony\Component\VarDumper\VarDumper;
+        $varDumper = new Symfony\Component\VarDumper\VarDumper();
         foreach ($args as $x) {
             if (method_exists($x, 'toArray')) {
                 $x = $x->toArray();
             }
             $varDumper->dump($x);
         }
-
     }
 }
 
 if (!function_exists('dad')) {
     /**
      * dd打印封装 并断点
-     * 如果能转成toArray()则转成数组
+     * 如果能转成toArray()则转成数组.
      *
      * @param mixed $args
      */
     function dad(...$args)
     {
         da(...$args);
-        die(1);
+        exit(1);
     }
 }
 
 if (!function_exists('ma')) {
     /**
      * 移动版dd打印封装 不断点
-     * 如果能转成toArray()则转成数组
+     * 如果能转成toArray()则转成数组.
      *
      * @param mixed $args
      */
@@ -137,20 +139,20 @@ if (!function_exists('ma')) {
 if (!function_exists('mad')) {
     /**
      * 移动版dd打印封装 并断点
-     * 如果能转成toArray()则转成数组
+     * 如果能转成toArray()则转成数组.
      *
      * @param mixed $args
      */
     function mad(...$args)
     {
         ma(...$args);
-        die(1);
+        exit(1);
     }
 }
 
 if (!function_exists('console_line')) {
     /**
-     * 命令行模式中, 打印需要的数据
+     * 命令行模式中, 打印需要的数据.
      *
      * @param $text
      * @param string $type
@@ -163,7 +165,7 @@ if (!function_exists('console_line')) {
             ];
             $code = $types[$type] ?? '37';
             // 30黑色，31红色，32绿色，33黄色，34蓝色，35洋红，36青色，37白色，
-            echo chr(27) . "[" . $code . "m" . "$text" . chr(27) . "[0m" . PHP_EOL;
+            echo chr(27) . '[' . $code . 'm' . "$text" . chr(27) . '[0m' . PHP_EOL;
         }
     }
 }
@@ -210,6 +212,7 @@ if (!function_exists('sc_send')) {
      * @param $text
      * @param string $desc
      * @param string $key
+     *
      * @return bool|false|string
      */
     function sc_send($text, $desc = '', $key = '')
@@ -226,20 +229,22 @@ if (!function_exists('sc_send')) {
                 'header' => 'Content-type: application/x-www-form-urlencoded',
                 'content' => http_build_query([
                     'text' => $text,
-                    'desp' => $desc
-                ])
-            ]
+                    'desp' => $desc,
+                ]),
+            ],
         ]);
+
         return $result = file_get_contents('https://sc.ftqq.com/' . $key . '.send', false, $context);
     }
 }
 
 if (!function_exists('admin_switch_arr')) {
     /**
-     * admin系统的switch选项
+     * admin系统的switch选项.
      *
      * @param $arr
      * @param bool $isOpposite
+     *
      * @return array
      */
     function admin_switch_arr($arr, $isOpposite = true)
@@ -247,6 +252,7 @@ if (!function_exists('admin_switch_arr')) {
         $keys = array_keys($arr);
         $key1 = $isOpposite ? 1 : 0;
         $key2 = $isOpposite ? 0 : 1;
+
         return [
             'on' => ['value' => $keys[$key1], 'text' => $arr[$keys[$key1]], 'color' => 'success'],
             'off' => ['value' => $keys[$key2], 'text' => $arr[$keys[$key2]], 'color' => 'danger'],

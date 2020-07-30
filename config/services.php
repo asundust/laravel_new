@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
@@ -50,7 +49,6 @@ return [
             'uri' => '',
             'permission' => '',
             'roles' => [
-
             ],
             'data' => [
                 [
@@ -60,10 +58,9 @@ return [
                     'uri' => 'config',
                     'permission' => '',
                     'roles' => [
-
                     ],
                 ],
-            ]
+            ],
         ],
     ],
     // Admin后台权限

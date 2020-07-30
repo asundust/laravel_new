@@ -14,13 +14,11 @@ class BillRefundedHandleListener
      */
     public function __construct()
     {
-        //
     }
 
     /**
      * Handle the event.
      *
-     * @param BillRefundedEvent $event
      * @return void
      */
     public function handle(BillRefundedEvent $event)

@@ -18,7 +18,6 @@ class ConfigController extends BaseConfigController
     /**
      * Index interface.
      *
-     * @param Content $content
      * @return Content
      */
     public function index(Content $content)
@@ -33,7 +32,6 @@ class ConfigController extends BaseConfigController
      * Edit interface.
      *
      * @param int $id
-     * @param Content $content
      *
      * @return Content
      */
@@ -47,8 +45,6 @@ class ConfigController extends BaseConfigController
 
     /**
      * Create interface.
-     *
-     * @param Content $content
      *
      * @return Content
      */

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers;
-
 
 use App\Http\Service\Pay\AlipayService;
 use App\Http\Service\Pay\WechatPayService;
@@ -11,9 +9,10 @@ use Exception;
 class NotifyController
 {
     /**
-     * 微信异步通知入口 - 支付
+     * 微信异步通知入口 - 支付.
      *
      * @return string
+     *
      * @throws Exception
      */
     public function notifyWechat()
@@ -22,9 +21,10 @@ class NotifyController
     }
 
     /**
-     * 微信异步通知入口 - 退款
+     * 微信异步通知入口 - 退款.
      *
      * @return string
+     *
      * @throws Exception
      */
     public function notifyWechatRefund()
@@ -33,9 +33,10 @@ class NotifyController
     }
 
     /**
-     * 支付宝异步通知入口
+     * 支付宝异步通知入口.
      *
      * @return string
+     *
      * @throws Exception
      */
     public function notifyAlipay()
@@ -44,7 +45,7 @@ class NotifyController
     }
 
     /**
-     * 支付宝同步通知入口
+     * 支付宝同步通知入口.
      *
      * @return mixed
      */

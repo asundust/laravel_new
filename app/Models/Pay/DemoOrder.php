@@ -7,26 +7,27 @@ use App\Models\BaseModelTrait;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * App\Models\Pay\DemoOrder
+ * App\Models\Pay\DemoOrder.
  *
- * @property int $id
- * @property int $user_id 用户id
- * @property string $number 订单号
- * @property string $title 订单名称
- * @property float $price 价格
- * @property string|null $pay_at 支付时间
- * @property int $status 状态(0未付款，1已付款)
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Pay\MultiBill $bill
- * @property-read \App\Models\Pay\MultiBill $billed
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Pay\MultiBill[] $bills
- * @property-read int|null $bills_count
- * @property-read mixed $can_refund_amount
- * @property-read mixed $payed_amount
- * @property-read mixed $refunded_amount
- * @property-read mixed $refunding_amount
- * @property-read mixed $status_name
+ * @property int                                                                  $id
+ * @property int                                                                  $user_id           用户id
+ * @property string                                                               $number            订单号
+ * @property string                                                               $title             订单名称
+ * @property float                                                                $price             价格
+ * @property string|null                                                          $pay_at            支付时间
+ * @property int                                                                  $status            状态(0未付款，1已付款)
+ * @property \Illuminate\Support\Carbon|null                                      $created_at
+ * @property \Illuminate\Support\Carbon|null                                      $updated_at
+ * @property \App\Models\Pay\MultiBill                                            $bill
+ * @property \App\Models\Pay\MultiBill                                            $billed
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Pay\MultiBill[] $bills
+ * @property int|null                                                             $bills_count
+ * @property mixed                                                                $can_refund_amount
+ * @property mixed                                                                $payed_amount
+ * @property mixed                                                                $refunded_amount
+ * @property mixed                                                                $refunding_amount
+ * @property mixed                                                                $status_name
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\DemoOrder newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\DemoOrder newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\DemoOrder query()
@@ -112,7 +113,7 @@ class DemoOrder extends BaseModel
     }
 
     /**
-     * 获取支付结果页面链接
+     * 获取支付结果页面链接.
      *
      * @return string
      */
@@ -122,7 +123,7 @@ class DemoOrder extends BaseModel
     }
 
     /**
-     * 支付成功处理
+     * 支付成功处理.
      *
      * @param MultiBill $bill
      */
@@ -138,7 +139,7 @@ class DemoOrder extends BaseModel
     }
 
     /**
-     * 支付宝支付成功处理同步页
+     * 支付宝支付成功处理同步页.
      */
     public function payResult()
     {
@@ -146,16 +147,16 @@ class DemoOrder extends BaseModel
     }
 
     /**
-     * 退款处理
+     * 退款处理.
      *
      * @param MultiBill $bill
      */
     public function handleRefunded($bill)
     {
-        if ($bill->pay_status == 5) {
+        if (5 == $bill->pay_status) {
             $this->status = 2;
             $this->save();
-        } elseif ($bill->pay_status == 6) {
+        } elseif (6 == $bill->pay_status) {
             $this->status = 3;
             $this->save();
         }

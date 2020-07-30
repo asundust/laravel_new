@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Standards Tree
@@ -154,7 +153,6 @@ return [
     */
 
     'middleware' => [
-
     ],
 
     /*
@@ -168,7 +166,7 @@ return [
     */
 
     'auth' => [
-        'jwt' => Dingo\Api\Auth\Provider\JWT::class
+        'jwt' => Dingo\Api\Auth\Provider\JWT::class,
     ],
 
     /*
@@ -183,7 +181,6 @@ return [
     */
 
     'throttling' => [
-
     ],
 
     /*
@@ -214,19 +211,14 @@ return [
     'defaultFormat' => env('API_DEFAULT_FORMAT', 'json'),
 
     'formats' => [
-
         'json' => Dingo\Api\Http\Response\Format\Json::class,
-
     ],
 
     'formatsOptions' => [
-
         'json' => [
             'pretty_print' => env('API_JSON_FORMAT_PRETTY_PRINT_ENABLED', false),
             'indent_style' => env('API_JSON_FORMAT_INDENT_STYLE', 'space'),
             'indent_size' => env('API_JSON_FORMAT_INDENT_SIZE', 2),
         ],
-
     ],
-
 ];

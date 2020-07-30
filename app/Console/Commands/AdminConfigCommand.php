@@ -51,7 +51,7 @@ class AdminConfigCommand extends Command
                 console_comment('　　　　处理完成' . PHP_EOL);
                 break;
             default:
-                console_error("只允许type参数类型为“new”");
+                console_error('只允许type参数类型为“new”');
                 break;
         }
     }

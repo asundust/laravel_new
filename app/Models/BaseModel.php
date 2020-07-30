@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\BaseModel
+ * App\Models\BaseModel.
  *
- * @property-read mixed $status_name
+ * @property mixed $status_name
  * @mixin \Eloquent
  */
 class BaseModel extends Model

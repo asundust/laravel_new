@@ -10,14 +10,14 @@ use Illuminate\Queue\SerializesModels;
 
 class BillPayedEvent
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     public $bill;
 
     /**
      * Create a new event instance.
-     *
-     * @param MultiBill $bill
      */
     public function __construct(MultiBill $bill)
     {

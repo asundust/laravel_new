@@ -16,12 +16,14 @@ class WechatPayService
     /**
      * 发起支付请求
      *
-     * @param array $data
-     * ['pay_no' => '商户单号', 'pay_amount' => '金额', 'title' => '订单名称']
+     * @param array  $data
+     *                        ['pay_no' => '商户单号', 'pay_amount' => '金额', 'title' => '订单名称']
      * @param string $drive
-     * @param array $extData
+     * @param array  $extData
      * @param string $custom
+     *
      * @return mixed
+     *
      * @throws Exception
      */
     public function pay($data, $drive = '', $extData = [], $custom = '')
@@ -31,7 +33,7 @@ class WechatPayService
             'total_fee' => $data['pay_amount'] * 100,
             'body' => $data['title'],
         ];
-        if ($drive == 'mp') {
+        if ('mp' == $drive) {
             $order['openid'] = $data['openid'] ?? '';
         }
         if (strlen($custom) > 0) {
@@ -50,19 +52,22 @@ class WechatPayService
         }
 
         $wechat = Pay::wechat()->$drive($order);
-        if ($wechat->result_code == 'SUCCESS' && $wechat->return_code == 'SUCCESS') {
-            if ($wechat->trade_type == 'NATIVE') {
+        if ('SUCCESS' == $wechat->result_code && 'SUCCESS' == $wechat->return_code) {
+            if ('NATIVE' == $wechat->trade_type) {
                 return $wechat->only(['trade_type', 'code_url']);
             }
+
             return $wechat;
         }
+
         return $wechat;
     }
 
     /**
-     * 支付回调异步通知
+     * 支付回调异步通知.
      *
      * @return string
+     *
      * @throws Exception
      */
     public function notify()
@@ -71,30 +76,35 @@ class WechatPayService
         DB::beginTransaction();
         try {
             $data = $wechat->verify(); // 是的，验签就这么简单！
-            if ($data->return_code == 'SUCCESS' && $data->result_code == 'SUCCESS' && $data->appid == config('pay.wechat.app_id') && $data->mch_id == config('pay.wechat.mch_id')) {
+            if ('SUCCESS' == $data->return_code && 'SUCCESS' == $data->result_code && $data->appid == config('pay.wechat.app_id') && $data->mch_id == config('pay.wechat.mch_id')) {
                 $result = $this->paySuccessHandle($data);
                 if ($result) {
                     DB::commit();
+
                     return $wechat->success();
                 } else {
                     DB::rollBack();
+
                     return '';
                 }
             }
             Log::debug('Wechat notify verify fail', $data->all());
             DB::rollBack();
+
             return '';
         } catch (Exception $e) {
             pl('微信回调失败：' . $e->getMessage(), 'wechat-notify', 'pay');
             DB::rollBack();
+
             return '';
         }
     }
 
     /**
-     * 支付成功数据处理
+     * 支付成功数据处理.
      *
      * @param $data
+     *
      * @return bool
      */
     public function paySuccessHandle($data)
@@ -102,14 +112,17 @@ class WechatPayService
         $data->pay_no = $data->out_trade_no; // 统一变量名，支付商户订单号
         $data->pay_service_no = $data->transaction_id; // 统一变量名，支付商订单号
         $data->pay_amount = $data->total_fee / 100; // 统一变量名，订单金额
+
         return MultiBill::handleNotify($data, 1);
     }
 
     /**
-     * 支付订单查询
+     * 支付订单查询.
      *
      * @param $data
+     *
      * @return \Yansongda\Supports\Collection
+     *
      * @throws GatewayException
      * @throws \Yansongda\Pay\Exceptions\InvalidArgumentException
      * @throws \Yansongda\Pay\Exceptions\InvalidSignException
@@ -120,23 +133,26 @@ class WechatPayService
     }
 
     /**
-     * 支付订单查询结果处理
+     * 支付订单查询结果处理.
      *
      * @param $data
+     *
      * @return bool
      */
     public function payFindResultHandle($data)
     {
-        if ($data->return_code == 'SUCCESS' && $data->result_code == 'SUCCESS' && $data->appid == config('pay.wechat.app_id') && $data->mch_id == config('pay.wechat.mch_id')) {
+        if ('SUCCESS' == $data->return_code && 'SUCCESS' == $data->result_code && $data->appid == config('pay.wechat.app_id') && $data->mch_id == config('pay.wechat.mch_id')) {
             return $this->paySuccessHandle($data);
         }
+
         return false;
     }
 
     /**
-     * 退款回调异步通知
+     * 退款回调异步通知.
      *
      * @return string
+     *
      * @throws Exception
      */
     public function notifyRefund()
@@ -145,7 +161,7 @@ class WechatPayService
         DB::beginTransaction();
         try {
             $data = $wechat->verify(null, true); // 是的，验签就这么简单！
-            if ($data->return_code == 'SUCCESS' && $data->refund_status == 'SUCCESS' && $data->appid == config('pay.wechat.app_id') && $data->mch_id == config('pay.wechat.mch_id')) {
+            if ('SUCCESS' == $data->return_code && 'SUCCESS' == $data->refund_status && $data->appid == config('pay.wechat.app_id') && $data->mch_id == config('pay.wechat.mch_id')) {
                 $data->refund_no = $data->out_refund_no; // 统一变量名，支付商户退款订单号
                 $data->refund_service_no = $data->refund_id; // 统一变量名，支付商退款订单号
                 $data->refund_amount = $data->refund_fee / 100; // 统一变量名，退款金额
@@ -156,18 +172,22 @@ class WechatPayService
                 $result = MultiRefundBill::handleNotifyRrFund($data);
                 if ($result) {
                     DB::commit();
+
                     return $wechat->success();
                 } else {
                     DB::rollBack();
+
                     return '';
                 }
             }
             Log::debug('Wechat refund notify verify fail', $data->all());
             DB::rollBack();
+
             return '';
         } catch (Exception $e) {
             pl('微信回调失败：' . $e->getMessage(), 'wechat-notify-refund', 'pay');
             DB::rollBack();
+
             return '';
         }
     }
@@ -176,9 +196,11 @@ class WechatPayService
      * 发起退款请求
      *
      * @param array $data
-     * ['pay_amount' => '订单金额', 'refund_amount' => '退款金额', 'refund_no' => '退款单号', 'pay_no' => '商户单号', 'pay_service_no' => '微信订单号'](pay_no 和 pay_service_no 2选1)
+     *                       ['pay_amount' => '订单金额', 'refund_amount' => '退款金额', 'refund_no' => '退款单号', 'pay_no' => '商户单号', 'pay_service_no' => '微信订单号'](pay_no 和 pay_service_no 2选1)
      * @param array $extData
+     *
      * @return array
+     *
      * @throws \Yansongda\Pay\Exceptions\InvalidArgumentException
      * @throws \Yansongda\Pay\Exceptions\InvalidSignException
      */
@@ -201,6 +223,7 @@ class WechatPayService
         }
         try {
             $result = Pay::wechat()->refund($refund);
+
             return $this->refundResult($result);
         } catch (GatewayException $exception) {
             $return = [
@@ -210,19 +233,21 @@ class WechatPayService
                 'service_msg' => $exception->raw['err_code_des'] ?? $exception->raw['return_msg'],
             ];
             Log::debug('Wechat refund()', $return);
+
             return $return;
         }
     }
 
     /**
-     * 退款结果处理
+     * 退款结果处理.
      *
      * @param $result
+     *
      * @return array
      */
     private function refundResult($result)
     {
-        if ($result->return_code == 'SUCCESS' && $result->result_code == 'SUCCESS' && $result->appid == config('pay.wechat.app_id') && $result->mch_id == config('pay.wechat.mch_id')) {
+        if ('SUCCESS' == $result->return_code && 'SUCCESS' == $result->result_code && $result->appid == config('pay.wechat.app_id') && $result->mch_id == config('pay.wechat.mch_id')) {
             return [
                 'code' => 0,
                 'msg' => '退款申请成功',
@@ -244,14 +269,17 @@ class WechatPayService
             'service_msg' => $result->err_code_des ?? $result->return_msg,
         ];
         Log::debug('Wechat refundResult()', $return);
+
         return $return;
     }
 
     /**
-     * 退款订单查询
+     * 退款订单查询.
      *
      * @param $data
+     *
      * @return \Yansongda\Supports\Collection
+     *
      * @throws GatewayException
      * @throws \Yansongda\Pay\Exceptions\InvalidArgumentException
      * @throws \Yansongda\Pay\Exceptions\InvalidSignException
@@ -262,10 +290,12 @@ class WechatPayService
     }
 
     /**
-     * 转账订单查询
+     * 转账订单查询.
      *
      * @param $data
+     *
      * @return \Yansongda\Supports\Collection
+     *
      * @throws GatewayException
      * @throws \Yansongda\Pay\Exceptions\InvalidArgumentException
      * @throws \Yansongda\Pay\Exceptions\InvalidSignException
@@ -276,16 +306,18 @@ class WechatPayService
     }
 
     /**
-     * 查询订单
+     * 查询订单.
      *
      * @param string|array $data
-     * 支付 => 商户单号 | ['pay_no' => '商户单号', 'pay_service_no' => '微信订单号'](2选1)
-     * 退款 => 退款单号 | ['pay_no' => '商户单号', 'pay_service_no' => '微信订单号', 'refund_no' => '退款单号', 'pay_service_no' => '微信订单号'](4选1)
-     * 转账 => 转账单号 | ['transfer_no' => '转账单号']
-     * @param string $type
-     * '' => '支付', 'refund' => '退款', 'transfer' => '转账'
-     * @param array $extData
+     *                              支付 => 商户单号 | ['pay_no' => '商户单号', 'pay_service_no' => '微信订单号'](2选1)
+     *                              退款 => 退款单号 | ['pay_no' => '商户单号', 'pay_service_no' => '微信订单号', 'refund_no' => '退款单号', 'pay_service_no' => '微信订单号'](4选1)
+     *                              转账 => 转账单号 | ['transfer_no' => '转账单号']
+     * @param string       $type
+     *                              '' => '支付', 'refund' => '退款', 'transfer' => '转账'
+     * @param array        $extData
+     *
      * @return \Yansongda\Supports\Collection
+     *
      * @throws GatewayException
      * @throws \Yansongda\Pay\Exceptions\InvalidArgumentException
      * @throws \Yansongda\Pay\Exceptions\InvalidSignException
@@ -312,6 +344,7 @@ class WechatPayService
                         $order['refund_id'] = $data['refund_service_no'];
                     }
                 }
+
                 return $wechat->find($order, $type);
                 break;
             case 'transfer':
@@ -322,6 +355,7 @@ class WechatPayService
                         $order['partner_trade_no'] = $data['transfer_no'];
                     }
                 }
+
                 return $wechat->find($order, $type);
                 break;
             default:
@@ -335,6 +369,7 @@ class WechatPayService
                         $order['transaction_id'] = $data['pay_service_no'];
                     }
                 }
+
                 return $wechat->find($order);
                 break;
         }
