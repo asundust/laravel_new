@@ -31,6 +31,9 @@ class WechatPayService
             'total_fee' => $data['pay_amount'] * 100,
             'body' => $data['title'],
         ];
+        if ($drive == 'mp') {
+            $order['openid'] = $data['openid'] ?? '';
+        }
         if (strlen($custom) > 0) {
             $order['attach'] = urlencode($custom);
         }
@@ -51,9 +54,9 @@ class WechatPayService
             if ($wechat->trade_type == 'NATIVE') {
                 return $wechat->only(['trade_type', 'code_url']);
             }
-            return $wechat; // todo 暂时先这样处理，因为不知道其他的情况
+            return $wechat;
         }
-        throw new Exception('未知情况');
+        return $wechat;
     }
 
     /**
