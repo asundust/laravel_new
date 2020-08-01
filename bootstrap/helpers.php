@@ -29,9 +29,9 @@ if (!function_exists('pl')) {
             $path = $name;
         }
         config([
-            'logging.channels.' . $path . '_' . $name => [
+            'logging.channels.'.$path.'_'.$name => [
                 'driver' => 'daily',
-                'path' => storage_path('logs/' . $path . '/' . $name . '.log'),
+                'path' => storage_path('logs/'.$path.'/'.$name.'.log'),
                 'level' => 'debug',
                 'days' => $max,
             ],
@@ -45,10 +45,10 @@ if (!function_exists('pl')) {
             }
         }
         if (!is_array($message)) {
-            logger()->channel($path . '_' . $name)->info($type . PHP_EOL . $message);
+            logger()->channel($path.'_'.$name)->info($type.PHP_EOL.$message);
         } else {
-            logger()->channel($path . '_' . $name)->info($type);
-            logger()->channel($path . '_' . $name)->info($message);
+            logger()->channel($path.'_'.$name)->info($type);
+            logger()->channel($path.'_'.$name)->info($message);
         }
     }
 }
@@ -165,7 +165,7 @@ if (!function_exists('console_line')) {
             ];
             $code = $types[$type] ?? '37';
             // 30黑色，31红色，32绿色，33黄色，34蓝色，35洋红，36青色，37白色，
-            echo chr(27) . '[' . $code . 'm' . "$text" . chr(27) . '[0m' . PHP_EOL;
+            echo chr(27).'['.$code.'m'."$text".chr(27).'[0m'.PHP_EOL;
         }
     }
 }
@@ -234,7 +234,7 @@ if (!function_exists('sc_send')) {
             ],
         ]);
 
-        return $result = file_get_contents('https://sc.ftqq.com/' . $key . '.send', false, $context);
+        return $result = file_get_contents('https://sc.ftqq.com/'.$key.'.send', false, $context);
     }
 }
 

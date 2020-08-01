@@ -87,7 +87,7 @@ class AlipayService
 
             return '';
         } catch (Exception $e) {
-            pl('支付宝回调失败：' . $e->getMessage(), 'alipay-notify', 'pay');
+            pl('支付宝回调失败：'.$e->getMessage(), 'alipay-notify', 'pay');
             DB::rollBack();
 
             return '';
