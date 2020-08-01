@@ -18,16 +18,16 @@ class QueryDetectorLogHandler implements Output
         LaravelLog::channel('query_detector')->info('Detected N+1 Query');
 
         foreach ($detectedQueries as $detectedQuery) {
-            $logOutput = 'Model: ' . $detectedQuery['model'] . PHP_EOL;
+            $logOutput = 'Model: '.$detectedQuery['model'].PHP_EOL;
 
-            $logOutput .= 'Relation: ' . $detectedQuery['relation'] . PHP_EOL;
+            $logOutput .= 'Relation: '.$detectedQuery['relation'].PHP_EOL;
 
-            $logOutput .= 'Num-Called: ' . $detectedQuery['count'] . PHP_EOL;
+            $logOutput .= 'Num-Called: '.$detectedQuery['count'].PHP_EOL;
 
-            $logOutput .= 'Call-Stack:' . PHP_EOL;
+            $logOutput .= 'Call-Stack:'.PHP_EOL;
 
             foreach ($detectedQuery['sources'] as $source) {
-                $logOutput .= '#' . $source->index . ' ' . $source->name . ':' . $source->line . PHP_EOL;
+                $logOutput .= '#'.$source->index.' '.$source->name.':'.$source->line.PHP_EOL;
             }
 
             LaravelLog::channel('query_detector')->info($logOutput);

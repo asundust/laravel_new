@@ -49,7 +49,7 @@ class SystemCommand extends Command
                 $this->comment('准备发布完成');
                 break;
             case 'install':
-                if (file_exists(__DIR__ . '/../../../install.lock')) {
+                if (file_exists(__DIR__.'/../../../install.lock')) {
                     $this->error('如需重装，请删除“install.lock”文件！');
 
                     return false;
@@ -57,13 +57,13 @@ class SystemCommand extends Command
                 if (!$this->laravel['config']['app.key']) {
                     Artisan::call('key:generate --ansi');
                 }
-                $this->comment('Laravel Key 已生成' . PHP_EOL);
+                $this->comment('Laravel Key 已生成'.PHP_EOL);
                 if (!$this->laravel['config']['jwt.secret']) {
                     Artisan::call('jwt:secret-force');
                 }
-                $this->comment('JWT 密钥 已生成' . PHP_EOL);
+                $this->comment('JWT 密钥 已生成'.PHP_EOL);
                 Artisan::call('admin:install');
-                $this->comment('Admin安装完成' . PHP_EOL);
+                $this->comment('Admin安装完成'.PHP_EOL);
                 Artisan::call('vendor:publish', [
                     '--tag' => 'laravel-admin-assets',
                     '--force' => true,
@@ -76,7 +76,7 @@ class SystemCommand extends Command
                 //     '--tag' => 'laravel-admin-lang',
                 //     '--force' => true
                 // ]);
-                $this->comment('Admin视图更新完成' . PHP_EOL);
+                $this->comment('Admin视图更新完成'.PHP_EOL);
                 Artisan::call('admin:config', [
                     'type' => 'new',
                 ]);
@@ -84,13 +84,13 @@ class SystemCommand extends Command
                 Artisan::call('admin:role-update');
                 Artisan::call('admin:menu-update');
                 Artisan::call('queue:restart');
-                console_comment('队列已重启' . PHP_EOL);
-                file_put_contents('install.lock', 'Install on ' . date('Y-m-d H:i:s'));
+                console_comment('队列已重启'.PHP_EOL);
+                file_put_contents('install.lock', 'Install on '.date('Y-m-d H:i:s'));
                 $this->comment('安装完成:)');
                 break;
             case 'update':
                 Artisan::call('migrate');
-                $this->comment('数据库迁移完成' . PHP_EOL);
+                $this->comment('数据库迁移完成'.PHP_EOL);
                 Artisan::call('view:clear');
                 Artisan::call('vendor:publish', [
                     '--tag' => 'laravel-admin-assets',
@@ -104,7 +104,7 @@ class SystemCommand extends Command
                 //     '--tag' => 'laravel-admin-lang',
                 //     '--force' => true
                 // ]);
-                $this->comment('Admin视图更新完成' . PHP_EOL);
+                $this->comment('Admin视图更新完成'.PHP_EOL);
                 Artisan::call('admin:config', [
                     'type' => 'new',
                 ]);
@@ -112,7 +112,7 @@ class SystemCommand extends Command
                 Artisan::call('admin:role-update');
                 Artisan::call('admin:menu-update');
                 Artisan::call('queue:restart');
-                console_comment('队列已重启' . PHP_EOL);
+                console_comment('队列已重启'.PHP_EOL);
                 $this->comment('更新完成:)');
                 break;
 

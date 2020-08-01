@@ -25,7 +25,7 @@ class TestController extends Controller
         if (!empty($result)) {
             return $result;
         }
-        dd('结束运行方法：' . $name);
+        dd('结束运行方法：'.$name);
     }
 
     // public function a()

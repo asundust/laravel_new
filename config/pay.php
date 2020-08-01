@@ -6,10 +6,10 @@ return [
         'app_id' => env('ALI_APP_ID', ''),
 
         // 支付宝异步通知地址
-        'notify_url' => env('APP_URL') . '/notify/alipay',
+        'notify_url' => env('APP_URL').'/notify/alipay',
 
         // 支付成功后同步通知地址
-        'return_url' => env('APP_URL') . '/return/alipay',
+        'return_url' => env('APP_URL').'/return/alipay',
 
         // 阿里公共密钥，验证签名时使用
         'ali_public_key' => env('ALI_PUBLIC_KEY', ''),
@@ -43,10 +43,10 @@ return [
         'mch_id' => env('WECHAT_MCH_ID', ''),
 
         // 微信支付异步通知地址
-        'notify_url' => env('APP_URL') . '/notify/wechat',
+        'notify_url' => env('APP_URL').'/notify/wechat',
 
         // 微信退款异步通知地址 自定义的,无法和原先的异步兼容 请求时需带上这个值
-        'notify_refund_url' => env('APP_URL') . '/notify/wechat_refund',
+        'notify_refund_url' => env('APP_URL').'/notify/wechat_refund',
 
         // 微信支付签名秘钥
         'key' => env('WECHAT_KEY', ''),
