@@ -38,10 +38,10 @@ class BillRefundedHandleListener
                     $bill->billable->handleRefunded($bill);
                 }
             } else {
-                pl('退款id:' . $event->refundBill->id . '|支付id' . $bill->id . '|支付订单号' . $bill->pay_no . '|' . '!!!退款总金额超过支付金额!!!', 'refund_bill', 'bill');
+                pl('退款id:'.$event->refundBill->id.'|支付id'.$bill->id.'|支付订单号'.$bill->pay_no.'|'.'!!!退款总金额超过支付金额!!!', 'refund_bill', 'bill');
             }
         } else {
-            pl('退款id:' . $event->refundBill->id . '|支付id:' . $event->refundBill->multi_bill_id . '|' . '!!!支付订单信息不存在!!!', 'refund_bill', 'bill');
+            pl('退款id:'.$event->refundBill->id.'|支付id:'.$event->refundBill->multi_bill_id.'|'.'!!!支付订单信息不存在!!!', 'refund_bill', 'bill');
         }
     }
 }
