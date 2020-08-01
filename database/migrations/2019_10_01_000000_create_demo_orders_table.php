@@ -14,7 +14,7 @@ class CreateDemoOrdersTable extends Migration
     public function up()
     {
         Schema::create('demo_orders', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id('id');
             $table->integer('user_id')->index()->comment('用户id');
             $table->string('number')->index()->comment('订单号');
             $table->string('title')->index()->comment('订单名称');

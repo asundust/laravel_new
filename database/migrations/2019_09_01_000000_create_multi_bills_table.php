@@ -14,7 +14,7 @@ class CreateMultiBillsTable extends Migration
     public function up()
     {
         Schema::create('multi_bills', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id('id');
             $table->string('billable_type')->index()->comment('多态模型名称');
             $table->string('billable_id')->nullable()->default(null)->index()->comment('多态模型id');
             $table->integer('user_id')->nullable()->default(null)->index()->comment('用户id');

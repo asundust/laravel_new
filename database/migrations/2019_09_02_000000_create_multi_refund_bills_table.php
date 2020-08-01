@@ -14,7 +14,7 @@ class CreateMultiRefundBillsTable extends Migration
     public function up()
     {
         Schema::create('multi_refund_bills', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id('id');
             $table->bigInteger('multi_bill_id')->index()->comment('支付订单号id');
             $table->decimal('refund_amount', 12, 2)->comment('退款发起金额');
             $table->string('refund_no')->nullable()->default(null)->unique()->comment('退款商户订单号');
