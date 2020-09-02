@@ -31,6 +31,6 @@ class BillPayedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('BillPayed' . $this->bill->id);
+        return new PrivateChannel('BillPayed'.$this->bill->id);
     }
 }

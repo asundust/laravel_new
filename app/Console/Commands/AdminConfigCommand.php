@@ -44,11 +44,11 @@ class AdminConfigCommand extends Command
             case 'new':
                 console_info('后台配置开始处理');
                 foreach ($adminConfigData as $key => $v) {
-                    console_info('　　　　当前处理：' . $v['name'] . ' ' . $v['description']);
+                    console_info('　　　　当前处理：'.$v['name'].' '.$v['description']);
                     $config = AdminConfig::firstOrCreate(['name' => $v['name']], $v);
                     $config->update(['sort' => $key + 1, 'description' => $v['description']]);
                 }
-                console_comment('　　　　处理完成' . PHP_EOL);
+                console_comment('　　　　处理完成'.PHP_EOL);
                 break;
             default:
                 console_error('只允许type参数类型为“new”');

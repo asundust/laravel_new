@@ -31,6 +31,6 @@ class BillRefundedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('BillRefunded' . $this->refundBill->id);
+        return new PrivateChannel('BillRefunded'.$this->refundBill->id);
     }
 }
