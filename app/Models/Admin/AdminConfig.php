@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 
 /**
- * App\Models\Admin\AdminConfig
+ * App\Models\Admin\AdminConfig.
  *
  * @property int         $id
  * @property string      $name
@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
  * @property int|null    $sort
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @method static Builder|AdminConfig newModelQuery()
  * @method static Builder|AdminConfig newQuery()
  * @method static Builder|AdminConfig query()
