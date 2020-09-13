@@ -3,22 +3,25 @@
 namespace App\Models\User;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * App\Models\User\User.
  *
- * @property int                                                                                                       $id
- * @property string                                                                                                    $name
- * @property string                                                                                                    $email
- * @property \Illuminate\Support\Carbon|null                                                                           $email_verified_at
- * @property string                                                                                                    $password
- * @property string|null                                                                                               $remember_token
- * @property \Illuminate\Support\Carbon|null                                                                           $created_at
- * @property \Illuminate\Support\Carbon|null                                                                           $updated_at
- * @property \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
- * @property int|null                                                                                                  $notifications_count
+ * @property int                                                   $id
+ * @property string                                                $name
+ * @property string                                                $email
+ * @property Carbon|null                                           $email_verified_at
+ * @property string                                                $password
+ * @property string|null                                           $remember_token
+ * @property Carbon|null                                           $created_at
+ * @property Carbon|null                                           $updated_at
+ * @property DatabaseNotificationCollection|DatabaseNotification[] $notifications
+ * @property int|null                                              $notifications_count
  * @mixin \Eloquent
  */
 class User extends Authenticatable implements JWTSubject

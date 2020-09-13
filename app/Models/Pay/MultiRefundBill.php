@@ -4,35 +4,38 @@ namespace App\Models\Pay;
 
 use App\Events\BillRefundedEvent;
 use App\Models\BaseModel;
+use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 
 /**
  * App\Models\Pay\MultiRefundBill.
  *
- * @property int                             $id
- * @property int                             $multi_bill_id      支付订单号id
- * @property float                           $refund_amount      退款发起金额
- * @property string|null                     $refund_no          退款商户订单号
- * @property string|null                     $refund_service_no  退款支付商订单号
- * @property string|null                     $refund_at          退款到账时间
- * @property int                             $refund_status      退款状态(1退款中，2退款成功，3退款失败，4退款取消)
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property mixed                           $refund_status_name
- * @property mixed                           $status_name
+ * @property int         $id
+ * @property int         $multi_bill_id      支付订单号id
+ * @property float       $refund_amount      退款发起金额
+ * @property string|null $refund_no          退款商户订单号
+ * @property string|null $refund_service_no  退款支付商订单号
+ * @property string|null $refund_at          退款到账时间
+ * @property int         $refund_status      退款状态(1退款中，2退款成功，3退款失败，4退款取消)
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property mixed       $refund_status_name
+ * @property mixed       $status_name
  *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiRefundBill newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiRefundBill newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiRefundBill query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiRefundBill whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiRefundBill whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiRefundBill whereMultiBillId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiRefundBill whereRefundAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiRefundBill whereRefundAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiRefundBill whereRefundNo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiRefundBill whereRefundServiceNo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiRefundBill whereRefundStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiRefundBill whereUpdatedAt($value)
- * @mixin \Eloquent
+ * @method static Builder|MultiRefundBill newModelQuery()
+ * @method static Builder|MultiRefundBill newQuery()
+ * @method static Builder|MultiRefundBill query()
+ * @method static Builder|MultiRefundBill whereCreatedAt($value)
+ * @method static Builder|MultiRefundBill whereId($value)
+ * @method static Builder|MultiRefundBill whereMultiBillId($value)
+ * @method static Builder|MultiRefundBill whereRefundAmount($value)
+ * @method static Builder|MultiRefundBill whereRefundAt($value)
+ * @method static Builder|MultiRefundBill whereRefundNo($value)
+ * @method static Builder|MultiRefundBill whereRefundServiceNo($value)
+ * @method static Builder|MultiRefundBill whereRefundStatus($value)
+ * @method static Builder|MultiRefundBill whereUpdatedAt($value)
+ * @mixin Eloquent
  */
 class MultiRefundBill extends BaseModel
 {
@@ -74,7 +77,7 @@ class MultiRefundBill extends BaseModel
     {
         $refundBill = self::where('refund_no', $data->refund_no)->first();
         if (!$refundBill) {
-            pl('找不到退款订单信息：'.$data->refund_no, 'wechat'.'-notify', 'pay');
+            pl('找不到退款订单信息：' . $data->refund_no, 'wechat' . '-notify', 'pay');
 
             return true;
         }
@@ -84,7 +87,7 @@ class MultiRefundBill extends BaseModel
         //     return true;
         // }
         if ($refundBill->refund_amount != $data->refund_amount) {
-            pl('退款订单金额不一致：'.$data->refund_no.'，订单金额：'.$refundBill->refund_no.'，回调金额：'.$data->refund_no, 'wechat'.'-notify', 'pay');
+            pl('退款订单金额不一致：' . $data->refund_no . '，订单金额：' . $refundBill->refund_no . '，回调金额：' . $data->refund_no, 'wechat' . '-notify', 'pay');
 
             return false;
         }

@@ -8,58 +8,63 @@ use App\Http\Service\Pay\AlipayService;
 use App\Http\Service\Pay\WechatPayService;
 use App\Models\BaseModel;
 use App\Models\BaseModelTrait;
+use Eloquent;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 /**
  * App\Models\Pay\MultiBill.
  *
- * @property int                                                                        $id
- * @property string                                                                     $billable_type      多态模型名称
- * @property string|null                                                                $billable_id        多态模型id
- * @property int|null                                                                   $user_id            用户id
- * @property string|null                                                                $openid             Openid(微信支付涉及)
- * @property string|null                                                                $title              订单名称
- * @property int|null                                                                   $pay_way            支付方式(1微信，2支付宝)
- * @property float                                                                      $pay_amount         支付发起金额
- * @property string                                                                     $pay_no             商户订单号
- * @property string|null                                                                $pay_service_no     支付商订单号
- * @property string|null                                                                $pay_at             支付成功时间
- * @property int                                                                        $bill_status        账单状态(0未支付成功过，1支付成功过)
- * @property int                                                                        $pay_status         支付状态(1未支付，2付款成功，3付款失败，4付款取消)
- * @property \Illuminate\Support\Carbon|null                                            $created_at
- * @property \Illuminate\Support\Carbon|null                                            $updated_at
- * @property \Illuminate\Database\Eloquent\Model|\Eloquent                              $billable
- * @property mixed                                                                      $bill_status_name
- * @property mixed                                                                      $can_refund_amount
- * @property mixed                                                                      $pay_status_name
- * @property mixed                                                                      $pay_way_name
- * @property mixed                                                                      $pay_way_alias
- * @property mixed                                                                      $refunded_amount
- * @property mixed                                                                      $refunding_amount
- * @property mixed                                                                      $status_name
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Pay\MultiRefundBill[] $refundBills
- * @property int|null                                                                   $refund_bills_count
+ * @property int                          $id
+ * @property string                       $billable_type      多态模型名称
+ * @property string|null                  $billable_id        多态模型id
+ * @property int|null                     $user_id            用户id
+ * @property string|null                  $openid             Openid(微信支付涉及)
+ * @property string|null                  $title              订单名称
+ * @property int|null                     $pay_way            支付方式(1微信，2支付宝)
+ * @property float                        $pay_amount         支付发起金额
+ * @property string                       $pay_no             商户订单号
+ * @property string|null                  $pay_service_no     支付商订单号
+ * @property string|null                  $pay_at             支付成功时间
+ * @property int                          $bill_status        账单状态(0未支付成功过，1支付成功过)
+ * @property int                          $pay_status         支付状态(1未支付，2付款成功，3付款失败，4付款取消)
+ * @property Carbon|null                  $created_at
+ * @property Carbon|null                  $updated_at
+ * @property Model|Eloquent               $billable
+ * @property mixed                        $bill_status_name
+ * @property mixed                        $can_refund_amount
+ * @property mixed                        $pay_status_name
+ * @property mixed                        $pay_way_name
+ * @property mixed                        $pay_way_alias
+ * @property mixed                        $refunded_amount
+ * @property mixed                        $refunding_amount
+ * @property mixed                        $status_name
+ * @property Collection|MultiRefundBill[] $refundBills
+ * @property int|null                     $refund_bills_count
  *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereBillStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereBillableId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereBillableType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereOpenid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill wherePayAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill wherePayAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill wherePayNo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill wherePayServiceNo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill wherePayStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill wherePayWay($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pay\MultiBill whereUserId($value)
- * @mixin \Eloquent
+ * @method static Builder|MultiBill newModelQuery()
+ * @method static Builder|MultiBill newQuery()
+ * @method static Builder|MultiBill query()
+ * @method static Builder|MultiBill whereBillStatus($value)
+ * @method static Builder|MultiBill whereBillableId($value)
+ * @method static Builder|MultiBill whereBillableType($value)
+ * @method static Builder|MultiBill whereCreatedAt($value)
+ * @method static Builder|MultiBill whereId($value)
+ * @method static Builder|MultiBill whereOpenid($value)
+ * @method static Builder|MultiBill wherePayAmount($value)
+ * @method static Builder|MultiBill wherePayAt($value)
+ * @method static Builder|MultiBill wherePayNo($value)
+ * @method static Builder|MultiBill wherePayServiceNo($value)
+ * @method static Builder|MultiBill wherePayStatus($value)
+ * @method static Builder|MultiBill wherePayWay($value)
+ * @method static Builder|MultiBill whereTitle($value)
+ * @method static Builder|MultiBill whereUpdatedAt($value)
+ * @method static Builder|MultiBill whereUserId($value)
+ * @mixin Eloquent
  */
 class MultiBill extends BaseModel
 {
@@ -171,7 +176,7 @@ class MultiBill extends BaseModel
         /* @var self $bill */
         $bill = self::where('pay_no', $data->pay_no)->where('pay_way', $payWay)->first();
         if (!$bill) {
-            pl('找不到支付订单信息：'.$data->pay_no, $bill->pay_way_alias.'-notify', 'pay');
+            pl('找不到支付订单信息：' . $data->pay_no, $bill->pay_way_alias . '-notify', 'pay');
 
             return true;
         }
@@ -182,12 +187,12 @@ class MultiBill extends BaseModel
                 // todo
                 return true;
             }
-            pl('订单状态非未支付：'.$data->pay_no.'，订单状态：'.$bill->pay_status_name, $bill->pay_way_alias.'-notify-comment', 'pay');
+            pl('订单状态非未支付：' . $data->pay_no . '，订单状态：' . $bill->pay_status_name, $bill->pay_way_alias . '-notify-comment', 'pay');
 
             return true;
         }
         if ($bill->pay_amount != $data->pay_amount) {
-            pl('订单支付金额不一致：'.$data->pay_no.'，订单金额：'.$bill->pay_amount.'，回调金额：'.$data->amount, $bill->pay_way_alias.'-notify-comment', 'pay');
+            pl('订单支付金额不一致：' . $data->pay_no . '，订单金额：' . $bill->pay_amount . '，回调金额：' . $data->amount, $bill->pay_way_alias . '-notify-comment', 'pay');
 
             return false;
         }
@@ -224,7 +229,7 @@ class MultiBill extends BaseModel
             return $bill->billable->payResult();
         }
 
-        return $bill->pay_status_name.':)';
+        return $bill->pay_status_name . ':)';
     }
 
     /**
@@ -243,9 +248,10 @@ class MultiBill extends BaseModel
         $data = [
             'refund_amount' => $refundAmount,
         ];
+        /* @var MultiRefundBill $refundBill */
+        $refundBill = $this->refundBills()->create($data);
         switch ($this->pay_way) {
             case 1:
-                $refundBill = $this->refundBills()->create($data);
                 $result = (new WechatPayService())->refund([
                     'pay_amount' => $this->pay_amount,
                     'refund_amount' => $refundBill->refund_amount,
@@ -269,7 +275,6 @@ class MultiBill extends BaseModel
                 return $result;
                 break;
             case 2:
-                $refundBill = $this->refundBills()->create($data);
                 $result = (new AlipayService())->refund([
                     'refund_amount' => $refundBill->refund_amount,
                     'pay_no' => $this->pay_no,
@@ -399,9 +404,10 @@ class MultiBill extends BaseModel
     }
 
     /**
-     * 订单支付检查.
+     * 订单支付检查
      *
      * @return array
+     * @throws Exception
      */
     public function toPayFind()
     {
@@ -436,7 +442,7 @@ class MultiBill extends BaseModel
                     break;
             }
         } catch (Exception $e) {
-            pl($this->pay_way_name.'支付订单'.$this->pay_no.'支付检查失败：'.$e->getMessage(), $this->pay_way_alias.'-pay-find-err', 'pay');
+            pl($this->pay_way_name . '支付订单' . $this->pay_no . '支付检查失败：' . $e->getMessage(), $this->pay_way_alias . '-pay-find-err', 'pay');
             DB::rollBack();
 
             return ['code' => 1, 'msg' => '订单支付失败'];
