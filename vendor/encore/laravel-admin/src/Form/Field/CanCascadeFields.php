@@ -102,12 +102,14 @@ trait CanCascadeFields
      */
     protected function applyCascadeConditions()
     {
-        $this->form->fields()
-            ->filter(function (Form\Field $field) {
-                return $field instanceof CascadeGroup
-                    && $field->dependsOn($this)
-                    && $this->hitsCondition($field);
-            })->each->visiable();
+        if ($this->form) {
+            $this->form->fields()
+                ->filter(function (Form\Field $field) {
+                    return $field instanceof CascadeGroup
+                        && $field->dependsOn($this)
+                        && $this->hitsCondition($field);
+                })->each->visiable();
+        }
     }
 
     /**
@@ -144,6 +146,10 @@ trait CanCascadeFields
                 return !in_array($old, $value);
             case 'has':
                 return in_array($value, $old);
+            case 'oneIn':
+                return count(array_intersect($value, $old)) >= 1;
+            case 'oneNotIn':
+                return count(array_intersect($value, $old)) == 0;
             default:
                 throw new \Exception("Operator [$operator] not support.");
         }
@@ -169,7 +175,7 @@ trait CanCascadeFields
         })->toJson();
 
         $script = <<<SCRIPT
-(function () {
+;(function () {
     var operator_table = {
         '=': function(a, b) {
             if ($.isArray(a) && $.isArray(b)) {
@@ -192,6 +198,8 @@ trait CanCascadeFields
         'in': function(a, b) { return $.inArray(a, b) != -1; },
         'notIn': function(a, b) { return $.inArray(a, b) == -1; },
         'has': function(a, b) { return $.inArray(b, a) != -1; },
+        'oneIn': function(a, b) { return a.filter(v => b.includes(v)).length >= 1; },
+        'oneNotIn': function(a, b) { return a.filter(v => b.includes(v)).length == 0; },
     };
     var cascade_groups = {$cascadeGroups};
     $('{$this->getElementClassSelector()}').on('{$this->cascadeEvent}', function (e) {

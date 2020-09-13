@@ -68,6 +68,7 @@ return array(
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'Mnabialek\\LaravelVersion\\' => array($vendorDir . '/mnabialek/laravel-version/src'),
     'Mnabialek\\LaravelSqlLogger\\' => array($vendorDir . '/mnabialek/laravel-sql-logger/src'),
+    'League\\MimeTypeDetection\\' => array($vendorDir . '/league/mime-type-detection/src'),
     'League\\Fractal\\' => array($vendorDir . '/league/fractal/src'),
     'League\\Flysystem\\' => array($vendorDir . '/league/flysystem/src'),
     'League\\CommonMark\\' => array($vendorDir . '/league/commonmark/src'),

@@ -135,8 +135,36 @@ EOT
 
         $latest = $versionsUtil->getLatest();
         $latestStable = $versionsUtil->getLatest('stable');
+        try {
+            $latestPreview = $versionsUtil->getLatest('preview');
+        } catch (\UnexpectedValueException $e) {
+            $latestPreview = $latestStable;
+        }
         $latestVersion = $latest['version'];
         $updateVersion = $input->getArgument('version') ?: $latestVersion;
+        $currentMajorVersion = preg_replace('{^(\d+).*}', '$1', Composer::getVersion());
+        $updateMajorVersion = preg_replace('{^(\d+).*}', '$1', $updateVersion);
+        $previewMajorVersion = preg_replace('{^(\d+).*}', '$1', $latestPreview['version']);
+
+        if ($versionsUtil->getChannel() === 'stable' && !$input->getArgument('version')) {
+            // if requesting stable channel and no specific version, avoid automatically upgrading to the next major
+            // simply output a warning that the next major stable is available and let users upgrade to it manually
+            if ($currentMajorVersion < $updateMajorVersion) {
+                $skippedVersion = $updateVersion;
+
+                $versionsUtil->setChannel($currentMajorVersion);
+
+                $latest = $versionsUtil->getLatest();
+                $latestStable = $versionsUtil->getLatest('stable');
+                $latestVersion = $latest['version'];
+                $updateVersion = $latestVersion;
+
+                $io->writeError('<warning>A new stable major version of Composer is available ('.$skippedVersion.'), run "composer self-update --'.$updateMajorVersion.'" to update to it. See also https://github.com/composer/composer/releases for changelogs.</warning>');
+            } elseif ($currentMajorVersion < $previewMajorVersion) {
+                // promote next major version if available in preview
+                $io->writeError('<warning>A preview release of the next major version of Composer is available ('.$latestPreview['version'].'), run "composer self-update --preview" to give it a try. See also https://github.com/composer/composer/releases for changelogs.</warning>');
+            }
+        }
 
         if ($requestedChannel && is_numeric($requestedChannel) && substr($latestStable['version'], 0, 1) !== $requestedChannel) {
             $io->writeError('<warning>Warning: You forced the install of '.$latestVersion.' via --'.$requestedChannel.', but '.$latestStable['version'].' is the latest stable version. Updating to it via composer self-update --stable is recommended.</warning>');
@@ -243,7 +271,12 @@ TAGSPUBKEY
             $signature = json_decode($signature, true);
             $signature = base64_decode($signature['sha384']);
             $verified = 1 === openssl_verify(file_get_contents($tempFilename), $signature, $pubkeyid, $algo);
-            openssl_free_key($pubkeyid);
+
+            // PHP 8 automatically frees the key instance and deprecates the function
+            if (PHP_VERSION_ID < 80000) {
+                openssl_free_key($pubkeyid);
+            }
+
             if (!$verified) {
                 throw new \RuntimeException('The phar signature did not match the file you downloaded, this means your public keys are outdated or that the phar file is corrupt/has been modified');
             }
@@ -380,8 +413,8 @@ TAGSPUBKEY
             // see if we can run this operation as an Admin on Windows
             if (!is_writable(dirname($localFilename))
                 && $io->isInteractive()
-                && $this->isWindowsNonAdminUser($isCygwin)) {
-                return $this->tryAsWindowsAdmin($localFilename, $newFilename, $isCygwin);
+                && $this->isWindowsNonAdminUser()) {
+                return $this->tryAsWindowsAdmin($localFilename, $newFilename);
             }
 
             $action = 'Composer '.($backupTarget ? 'update' : 'rollback');
@@ -467,20 +500,16 @@ TAGSPUBKEY
     /**
      * Returns true if this is a non-admin Windows user account
      *
-     * @param null|bool $isCygwin Set by method
      * @return bool
      */
-    protected function isWindowsNonAdminUser(&$isCygwin)
+    protected function isWindowsNonAdminUser()
     {
-        $isCygwin = preg_match('/cygwin/i', php_uname());
-
-        if (!$isCygwin && !Platform::isWindows()) {
+        if (!Platform::isWindows()) {
             return false;
         }
 
         // fltmc.exe manages filter drivers and errors without admin privileges
-        $command = sprintf('%sfltmc.exe filters', $isCygwin ? 'cmd.exe /c ' : '');
-        exec($command, $output, $exitCode);
+        exec('fltmc.exe filters', $output, $exitCode);
 
         return $exitCode !== 0;
     }
@@ -492,10 +521,9 @@ TAGSPUBKEY
      *
      * @param string $localFilename The composer.phar location
      * @param string $newFilename The downloaded or backup phar
-     * @param bool $isCygwin Whether we are running on Cygwin
      * @return bool Whether composer.phar has been updated
      */
-    protected function tryAsWindowsAdmin($localFilename, $newFilename, $isCygwin)
+    protected function tryAsWindowsAdmin($localFilename, $newFilename)
     {
         $io = $this->getIO();
 
@@ -515,15 +543,9 @@ TAGSPUBKEY
 
         $checksum = hash_file('sha256', $newFilename);
 
-        // format the file names for cmd.exe
-        if ($isCygwin) {
-            $source = exec(sprintf("cygpath -w '%s'", $newFilename));
-            $destination = exec(sprintf("cygpath -w '%s'", $localFilename));
-        } else {
-            // cmd's internal move is fussy about backslashes
-            $source = str_replace('/', '\\', $newFilename);
-            $destination = str_replace('/', '\\', $localFilename);
-        }
+        // cmd's internal move is fussy about backslashes
+        $source = str_replace('/', '\\', $newFilename);
+        $destination = str_replace('/', '\\', $localFilename);
 
         $vbs = <<<EOT
 Set UAC = CreateObject("Shell.Application")
@@ -532,16 +554,7 @@ Wscript.Sleep(300)
 EOT;
 
         file_put_contents($script, $vbs);
-
-        if ($isCygwin) {
-            chmod($script, 0755);
-            $cygscript = sprintf('"%s"', exec(sprintf("cygpath -w '%s'", $script)));
-            $command = sprintf("cmd.exe /c '%s'", $cygscript);
-        } else {
-            $command = sprintf('"%s"', $script);
-        }
-
-        exec($command);
+        exec('"'.$script.'"');
         @unlink($script);
 
         // see if the file was moved

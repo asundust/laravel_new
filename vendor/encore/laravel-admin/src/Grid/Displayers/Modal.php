@@ -3,6 +3,7 @@
 namespace Encore\Admin\Grid\Displayers;
 
 use Encore\Admin\Admin;
+use Encore\Admin\Grid\Simple;
 use Illuminate\Contracts\Support\Renderable;
 
 class Modal extends AbstractDisplayer
@@ -24,24 +25,11 @@ class Modal extends AbstractDisplayer
         return route('admin.handle-renderable', compact('renderable'));
     }
 
-    protected function addRenderableModalScript()
-    {
-        $script = <<<SCRIPT
-(function () {
-    var modal = $('.grid-modal');
-
-    modal.on('show.bs.modal', function (e) {
-        var key = $(e.relatedTarget).data('key');
-        $.get('{$this->getLoadUrl()}'+'&key='+key, function (data) {
-            modal.find('.modal-body').html(data);
-        });
-    })
-})();
-SCRIPT;
-
-        Admin::script($script);
-    }
-
+    /**
+     * @param \Closure|string $callback
+     *
+     * @return mixed|string
+     */
     public function display($callback = null)
     {
         if (func_num_args() == 2) {
@@ -50,40 +38,23 @@ SCRIPT;
             $title = $this->trans('title');
         }
 
-        if (is_subclass_of($callback, Renderable::class)) {
-            $html = <<<'HTML'
-<div class="loading text-center">
-    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-</div>
-HTML;
+        $html = '';
+
+        if ($async = is_subclass_of($callback, Renderable::class)) {
             $this->renderable = $callback;
-            $this->addRenderableModalScript();
         } else {
-            $callback = $callback->bindTo($this->row);
-            $html = call_user_func_array($callback, [$this->row]);
+            $html = call_user_func_array($callback->bindTo($this->row), [$this->row]);
         }
 
-        $key = $this->getKey().'-'.str_replace('.', '_', $this->getColumn()->getName());
-
-        return <<<EOT
-<span data-toggle="modal" data-target="#grid-modal-{$key}" data-key="{$this->getKey()}">
-   <a href="javascript:void(0)"><i class="fa fa-clone"></i>&nbsp;&nbsp;{$this->value}</a>
-</span>
-
-<div class="modal grid-modal" id="grid-modal-{$key}" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">{$title}</h4>
-      </div>
-      <div class="modal-body">
-        {$html}
-      </div>
-    </div>
-  </div>
-</div>
-
-EOT;
+        return Admin::component('admin::components.column-modal', [
+            'url'     => $this->getLoadUrl(),
+            'async'   => $async,
+            'grid'    => is_subclass_of($callback, Simple::class),
+            'title'   => $title,
+            'html'    => $html,
+            'key'     => $this->getKey(),
+            'value'   => $this->value,
+            'name'    => $this->getKey().'-'.str_replace('.', '_', $this->getColumn()->getName()),
+        ]);
     }
 }

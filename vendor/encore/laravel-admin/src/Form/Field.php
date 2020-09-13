@@ -1211,7 +1211,7 @@ class Field implements Renderable
      *
      * @return mixed
      */
-    protected function getElementClassString()
+    public function getElementClassString()
     {
         $elementClass = $this->getElementClass();
 
@@ -1233,7 +1233,7 @@ class Field implements Renderable
      *
      * @return string|array
      */
-    protected function getElementClassSelector()
+    public function getElementClassSelector()
     {
         $elementClass = $this->getElementClass();
 
@@ -1344,7 +1344,7 @@ class Field implements Renderable
      *
      * @return $this
      */
-    protected function addVariables(array $variables = []): self
+    public function addVariables(array $variables = []): self
     {
         $this->variables = array_merge($this->variables, $variables);
 
@@ -1361,12 +1361,13 @@ class Field implements Renderable
 
     /**
      * @param array $labelClass
+     * @param bool  $replace
      *
      * @return self
      */
-    public function setLabelClass(array $labelClass): self
+    public function setLabelClass(array $labelClass, $replace = false): self
     {
-        $this->labelClass = $labelClass;
+        $this->labelClass = $replace ? $labelClass : array_merge($this->labelClass, $labelClass);
 
         return $this;
     }
@@ -1506,11 +1507,18 @@ class Field implements Renderable
 
         Admin::script($this->script);
 
-        return view($this->getView(), $this->variables());
+        return Admin::component($this->getView(), $this->variables());
     }
 
-    protected function fieldRender()
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
+     */
+    protected function fieldRender(array $variables = [])
     {
+        if (!empty($variables)) {
+            $this->addVariables($variables);
+        }
+
         return self::render();
     }
 

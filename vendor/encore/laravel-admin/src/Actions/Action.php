@@ -8,12 +8,12 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 
 /**
- * @method $this success($title, $text = '', $options = [])
- * @method $this error($title, $text = '', $options = [])
- * @method $this warning($title, $text = '', $options = [])
- * @method $this info($title, $text = '', $options = [])
- * @method $this question($title, $text = '', $options = [])
- * @method $this confirm($title, $text = '', $options = [])
+ * @method $this                success($title, $text = '', $options = [])
+ * @method $this                error($title, $text = '', $options = [])
+ * @method $this                warning($title, $text = '', $options = [])
+ * @method $this                info($title, $text = '', $options = [])
+ * @method $this                question($title, $text = '', $options = [])
+ * @method $this                confirm($title, $text = '', $options = [])
  * @method Field\Text           text($column, $label = '')
  * @method Field\Email          email($column, $label = '')
  * @method Field\Integer        integer($column, $label = '')
@@ -356,6 +356,10 @@ var actionResolver = function (data) {
 
                 if (then.action == 'location') {
                     window.location = then.value;
+                }
+
+                if (then.action == 'oepn') {
+                    window.open(this.value, '_blank');
                 }
             };
 

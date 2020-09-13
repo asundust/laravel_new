@@ -15,6 +15,7 @@ class Lexer
 
     protected $tokenMap;
     protected $dropTokens;
+    protected $identifierTokens;
 
     private $attributeStartLineUsed;
     private $attributeEndLineUsed;
@@ -34,24 +35,10 @@ class Lexer
      *                       first three. For more info see getNextToken() docs.
      */
     public function __construct(array $options = []) {
-        // Compatibility define for PHP < 7.4.
-        if (!defined('T_BAD_CHARACTER')) {
-            \define('T_BAD_CHARACTER', -1);
-        }
-
-        // Compatibility defines for PHP < 8.0.
-        if (!defined('T_NAME_QUALIFIED')) {
-            \define('T_NAME_QUALIFIED', -2);
-        }
-        if (!defined('T_NAME_FULLY_QUALIFIED')) {
-            \define('T_NAME_FULLY_QUALIFIED', -3);
-        }
-        if (!defined('T_NAME_RELATIVE')) {
-            \define('T_NAME_RELATIVE', -4);
-        }
-
         // Create Map from internal tokens to PhpParser tokens.
+        $this->defineCompatibilityTokens();
         $this->tokenMap = $this->createTokenMap();
+        $this->identifierTokens = $this->createIdentifierTokenMap();
 
         // map of tokens to drop while lexing (the map is only used for isset lookup,
         // that's why the value is simply set to 1; the value is never actually used.)
@@ -185,14 +172,13 @@ class Lexer
 
             // Emulate PHP 8 T_NAME_* tokens, by combining sequences of T_NS_SEPARATOR and T_STRING
             // into a single token.
-            // TODO: Also handle reserved keywords in namespaced names.
             if (\is_array($token)
-                    && ($token[0] === \T_NS_SEPARATOR || $token[0] === \T_STRING || $token[0] === \T_NAMESPACE)) {
+                    && ($token[0] === \T_NS_SEPARATOR || isset($this->identifierTokens[$token[0]]))) {
                 $lastWasSeparator = $token[0] === \T_NS_SEPARATOR;
                 $text = $token[1];
                 for ($j = $i + 1; isset($this->tokens[$j]); $j++) {
                     if ($lastWasSeparator) {
-                        if ($this->tokens[$j][0] !== \T_STRING) {
+                        if (!isset($this->identifierTokens[$this->tokens[$j][0]])) {
                             break;
                         }
                         $lastWasSeparator = false;
@@ -418,6 +404,36 @@ class Lexer
         return substr($textAfter, strlen($matches[0]));
     }
 
+    private function defineCompatibilityTokens() {
+        // PHP 7.4
+        if (!defined('T_BAD_CHARACTER')) {
+            \define('T_BAD_CHARACTER', -1);
+        }
+        if (!defined('T_FN')) {
+            \define('T_FN', -2);
+        }
+        if (!defined('T_COALESCE_EQUAL')) {
+            \define('T_COALESCE_EQUAL', -3);
+        }
+
+        // PHP 8.0
+        if (!defined('T_NAME_QUALIFIED')) {
+            \define('T_NAME_QUALIFIED', -4);
+        }
+        if (!defined('T_NAME_FULLY_QUALIFIED')) {
+            \define('T_NAME_FULLY_QUALIFIED', -5);
+        }
+        if (!defined('T_NAME_RELATIVE')) {
+            \define('T_NAME_RELATIVE', -6);
+        }
+        if (!defined('T_MATCH')) {
+            \define('T_MATCH', -7);
+        }
+        if (!defined('T_NULLSAFE_OBJECT_OPERATOR')) {
+            \define('T_NULLSAFE_OBJECT_OPERATOR', -8);
+        }
+    }
+
     /**
      * Creates the token map.
      *
@@ -463,10 +479,30 @@ class Lexer
         }
 
         // Assign tokens for which we define compatibility constants, as token_name() does not know them.
+        $tokenMap[\T_FN] = Tokens::T_FN;
+        $tokenMap[\T_COALESCE_EQUAL] = Tokens::T_COALESCE_EQUAL;
         $tokenMap[\T_NAME_QUALIFIED] = Tokens::T_NAME_QUALIFIED;
         $tokenMap[\T_NAME_FULLY_QUALIFIED] = Tokens::T_NAME_FULLY_QUALIFIED;
         $tokenMap[\T_NAME_RELATIVE] = Tokens::T_NAME_RELATIVE;
+        $tokenMap[\T_MATCH] = Tokens::T_MATCH;
+        $tokenMap[\T_NULLSAFE_OBJECT_OPERATOR] = Tokens::T_NULLSAFE_OBJECT_OPERATOR;
 
         return $tokenMap;
+    }
+
+    private function createIdentifierTokenMap(): array {
+        // Based on semi_reserved production.
+        return array_fill_keys([
+            \T_STRING,
+            \T_STATIC, \T_ABSTRACT, \T_FINAL, \T_PRIVATE, \T_PROTECTED, \T_PUBLIC,
+            \T_INCLUDE, \T_INCLUDE_ONCE, \T_EVAL, \T_REQUIRE, \T_REQUIRE_ONCE, \T_LOGICAL_OR, \T_LOGICAL_XOR, \T_LOGICAL_AND,
+            \T_INSTANCEOF, \T_NEW, \T_CLONE, \T_EXIT, \T_IF, \T_ELSEIF, \T_ELSE, \T_ENDIF, \T_ECHO, \T_DO, \T_WHILE,
+            \T_ENDWHILE, \T_FOR, \T_ENDFOR, \T_FOREACH, \T_ENDFOREACH, \T_DECLARE, \T_ENDDECLARE, \T_AS, \T_TRY, \T_CATCH,
+            \T_FINALLY, \T_THROW, \T_USE, \T_INSTEADOF, \T_GLOBAL, \T_VAR, \T_UNSET, \T_ISSET, \T_EMPTY, \T_CONTINUE, \T_GOTO,
+            \T_FUNCTION, \T_CONST, \T_RETURN, \T_PRINT, \T_YIELD, \T_LIST, \T_SWITCH, \T_ENDSWITCH, \T_CASE, \T_DEFAULT,
+            \T_BREAK, \T_ARRAY, \T_CALLABLE, \T_EXTENDS, \T_IMPLEMENTS, \T_NAMESPACE, \T_TRAIT, \T_INTERFACE, \T_CLASS,
+            \T_CLASS_C, \T_TRAIT_C, \T_FUNC_C, \T_METHOD_C, \T_LINE, \T_FILE, \T_DIR, \T_NS_C, \T_HALT_COMPILER, \T_FN,
+            \T_MATCH,
+        ], true);
     }
 }
