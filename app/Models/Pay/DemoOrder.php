@@ -126,13 +126,13 @@ class DemoOrder extends BaseModel
      */
     public function handlePied($bill)
     {
-        Cache::put('DemoOrder' . $this->id, 1, 600);
+        Cache::put('DemoOrder'.$this->id, 1, 600);
         $this->update([
             'pay_at' => $bill->pay_at,
             'status' => 1,
         ]);
         // 发送Server酱推送通知
-        sc_send(config('app.name') . $bill->pay_way_name . '有一笔新的收款' . money_show($this->payed_amount) . '元', $bill->pay_way_name . '于 ' . $bill->pay_at . ' 收款：￥' . money_show($this->payed_amount));
+        sc_send(config('app.name').$bill->pay_way_name.'有一笔新的收款'.money_show($this->payed_amount).'元', $bill->pay_way_name.'于 '.$bill->pay_at.' 收款：￥'.money_show($this->payed_amount));
     }
 
     /**
