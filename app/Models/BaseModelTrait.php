@@ -14,7 +14,7 @@ trait BaseModelTrait
      */
     public static function getNewNumber($model = '', $fieldName = 'number')
     {
-        $number = now()->format('ymdHis').rand(10000, 99999);
+        $number = now()->format('ymdHis') . rand(10000, 99999);
         if (empty($model)) {
             if (self::findNumber($number, '', $fieldName)) {
                 return self::getNewNumber();
@@ -31,7 +31,7 @@ trait BaseModelTrait
     /**
      * 根据订单号查询订单.
      *
-     * @param $number
+     * @param        $number
      * @param string $model
      * @param string $fieldName
      *
@@ -50,5 +50,17 @@ trait BaseModelTrait
     public function getStatusNameAttribute()
     {
         return self::STATUS[$this->status] ?? '';
+    }
+
+    // 创建时间的格式化 created_at_format
+    public function getCreatedAtFormatAttribute()
+    {
+        return $this->created_at->toDateTimeString();
+    }
+
+    // 创建时间的格式化 updated_at_format
+    public function getUpdatedAtFormatAttribute()
+    {
+        return $this->updated_at->toDateTimeString();
     }
 }

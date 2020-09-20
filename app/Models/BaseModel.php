@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Model;
  * App\Models\BaseModel.
  *
  * @property mixed $status_name
+ * @property mixed $created_at_format
+ * @property mixed $updated_at_format
  * @mixin Eloquent
  */
 class BaseModel extends Model

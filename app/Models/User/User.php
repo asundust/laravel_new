@@ -2,6 +2,9 @@
 
 namespace App\Models\User;
 
+use App\Models\BaseModelTrait;
+use DateTimeInterface;
+use Eloquent;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
@@ -22,11 +25,12 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property Carbon|null                                           $updated_at
  * @property DatabaseNotificationCollection|DatabaseNotification[] $notifications
  * @property int|null                                              $notifications_count
- * @mixin \Eloquent
+ * @mixin Eloquent
  */
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
+    use BaseModelTrait;
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
@@ -74,4 +78,14 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * 为数组 / JSON 序列化准备日期。
+     *
+     * @return string
+     */
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format($this->dateFormat ?: 'Y-m-d H:i:s');
+    }
 }
