@@ -32,8 +32,8 @@ class Cors implements HttpKernelInterface
         'allowedMethods'         => array(),
         'allowedOrigins'         => array(),
         'allowedOriginsPatterns' => array(),
-        'exposedHeaders'         => false,
-        'maxAge'                 => false,
+        'exposedHeaders'         => array(),
+        'maxAge'                 => 0,
         'supportsCredentials'    => false,
     );
 
@@ -45,19 +45,16 @@ class Cors implements HttpKernelInterface
 
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {
-        if (!$this->cors->isCorsRequest($request)) {
-            return $this->app->handle($request, $type, $catch);
-        }
-
         if ($this->cors->isPreflightRequest($request)) {
-            return $this->cors->handlePreflightRequest($request);
-        }
-
-        if (!$this->cors->isActualRequestAllowed($request)) {
-            return new Response('Not allowed.', 403);
+            $response = $this->cors->handlePreflightRequest($request);
+            return $this->cors->varyHeader($response, 'Access-Control-Request-Method');
         }
 
         $response = $this->app->handle($request, $type, $catch);
+
+        if ($request->getMethod() === 'OPTIONS') {
+            $this->cors->varyHeader($response, 'Access-Control-Request-Method');
+        }
 
         return $this->cors->addActualRequestHeaders($response, $request);
     }
