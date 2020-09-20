@@ -264,17 +264,17 @@
     },
     {
         "name": "beyondcode/laravel-dump-server",
-        "version": "1.4.0",
-        "version_normalized": "1.4.0.0",
+        "version": "1.5.0",
+        "version_normalized": "1.5.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/beyondcode/laravel-dump-server.git",
-            "reference": "1f1d18a2e43f96fd67c9f0269c53f8c3814867d9"
+            "reference": "1df6bb3bf13a2e818c1abbb7065ea362277be5c0"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/beyondcode/laravel-dump-server/zipball/1f1d18a2e43f96fd67c9f0269c53f8c3814867d9",
-            "reference": "1f1d18a2e43f96fd67c9f0269c53f8c3814867d9",
+            "url": "https://api.github.com/repos/beyondcode/laravel-dump-server/zipball/1df6bb3bf13a2e818c1abbb7065ea362277be5c0",
+            "reference": "1df6bb3bf13a2e818c1abbb7065ea362277be5c0",
             "shasum": "",
             "mirrors": [
                 {
@@ -284,17 +284,17 @@
             ]
         },
         "require": {
-            "illuminate/console": "5.6.*|5.7.*|5.8.*|^6.0|^7.0",
-            "illuminate/http": "5.6.*|5.7.*|5.8.*|^6.0|^7.0",
-            "illuminate/support": "5.6.*|5.7.*|5.8.*|^6.0|^7.0",
-            "php": "^7.1",
+            "illuminate/console": "5.6.*|5.7.*|5.8.*|^6.0|^7.0|^8.0",
+            "illuminate/http": "5.6.*|5.7.*|5.8.*|^6.0|^7.0|^8.0",
+            "illuminate/support": "5.6.*|5.7.*|5.8.*|^6.0|^7.0|^8.0",
+            "php": "^7.2.5",
             "symfony/var-dumper": "^5.0"
         },
         "require-dev": {
             "larapack/dd": "^1.0",
-            "phpunit/phpunit": "^7.0"
+            "phpunit/phpunit": "^7.0|^9.3"
         },
-        "time": "2020-03-04T15:23:26+00:00",
+        "time": "2020-09-14T07:14:12+00:00",
         "type": "library",
         "extra": {
             "laravel": {
@@ -453,57 +453,6 @@
                 "type": "tidelift"
             }
         ]
-    },
-    {
-        "name": "caouecs/laravel-lang",
-        "version": "7.0.3",
-        "version_normalized": "7.0.3.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/caouecs/lang.git",
-            "reference": "2cb9932f781415f1669ce27d29e5b86399ab164a"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/caouecs/lang/zipball/2cb9932f781415f1669ce27d29e5b86399ab164a",
-            "reference": "2cb9932f781415f1669ce27d29e5b86399ab164a",
-            "shasum": "",
-            "mirrors": [
-                {
-                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                    "preferred": true
-                }
-            ]
-        },
-        "require": {
-            "ext-json": "*"
-        },
-        "suggest": {
-            "andrey-helldar/laravel-lang-publisher": "Easy installation and update of translation files for your project",
-            "arcanedev/laravel-lang": "Translations manager and checker for Laravel 5",
-            "overtrue/laravel-lang": "Command to add languages in your project"
-        },
-        "time": "2020-08-23T08:17:21+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "caouecs",
-                "email": "caouecs@caouecs.net"
-            }
-        ],
-        "description": "Languages for Laravel",
-        "keywords": [
-            "lang",
-            "languages",
-            "laravel",
-            "lpm"
-        ],
-        "abandoned": "https://github.com/Laravel-Lang/lang"
     },
     {
         "name": "composer/ca-bundle",
@@ -1045,17 +994,17 @@
     },
     {
         "name": "dingo/blueprint",
-        "version": "v0.4.1",
-        "version_normalized": "0.4.1.0",
+        "version": "v0.4.2",
+        "version_normalized": "0.4.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/dingo/blueprint.git",
-            "reference": "a84221e01683957d19c9217fb6133f2a039081a3"
+            "reference": "c330027bc85ef76639b27a900f511ce4270e28bf"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/dingo/blueprint/zipball/a84221e01683957d19c9217fb6133f2a039081a3",
-            "reference": "a84221e01683957d19c9217fb6133f2a039081a3",
+            "url": "https://api.github.com/repos/dingo/blueprint/zipball/c330027bc85ef76639b27a900f511ce4270e28bf",
+            "reference": "c330027bc85ef76639b27a900f511ce4270e28bf",
             "shasum": "",
             "mirrors": [
                 {
@@ -1066,16 +1015,16 @@
         },
         "require": {
             "doctrine/annotations": "~1.2",
-            "illuminate/filesystem": "^7.0",
-            "illuminate/support": "^7.0",
+            "illuminate/filesystem": "^7.0|^8.0",
+            "illuminate/support": "^7.0|^8.0",
             "php": "^7.2.5",
             "phpdocumentor/reflection-docblock": "^3.1 || ^4.1 || ^5"
         },
         "require-dev": {
-            "phpunit/phpunit": "^6.5",
+            "phpunit/phpunit": "^6.5|^8.3|^9.0",
             "squizlabs/php_codesniffer": "~2.0"
         },
-        "time": "2020-03-14T07:33:47+00:00",
+        "time": "2020-09-13T12:32:17+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1958,17 +1907,17 @@
     },
     {
         "name": "facade/flare-client-php",
-        "version": "1.3.5",
-        "version_normalized": "1.3.5.0",
+        "version": "1.3.6",
+        "version_normalized": "1.3.6.0",
         "source": {
             "type": "git",
             "url": "https://github.com/facade/flare-client-php.git",
-            "reference": "25907a113bfc212a38d458ae365bfb902b4e7fb8"
+            "reference": "451fadf38e9f635e7f8e1f5b3cf5c9eb82f11799"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/facade/flare-client-php/zipball/25907a113bfc212a38d458ae365bfb902b4e7fb8",
-            "reference": "25907a113bfc212a38d458ae365bfb902b4e7fb8",
+            "url": "https://api.github.com/repos/facade/flare-client-php/zipball/451fadf38e9f635e7f8e1f5b3cf5c9eb82f11799",
+            "reference": "451fadf38e9f635e7f8e1f5b3cf5c9eb82f11799",
             "shasum": "",
             "mirrors": [
                 {
@@ -1987,11 +1936,10 @@
         },
         "require-dev": {
             "friendsofphp/php-cs-fixer": "^2.14",
-            "larapack/dd": "^1.1",
             "phpunit/phpunit": "^7.5.16",
             "spatie/phpunit-snapshot-assertions": "^2.0"
         },
-        "time": "2020-08-26T18:06:23+00:00",
+        "time": "2020-09-18T06:35:11+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2967,18 +2915,67 @@
         ]
     },
     {
-        "name": "laravel/framework",
-        "version": "v7.28.1",
-        "version_normalized": "7.28.1.0",
+        "name": "laravel-lang/lang",
+        "version": "7.0.4",
+        "version_normalized": "7.0.4.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/laravel/framework.git",
-            "reference": "f7493ab717ca2a9598b1db2d6a3bae8ac8c755e8"
+            "url": "https://github.com/Laravel-Lang/lang.git",
+            "reference": "48de35602d2bae883cbb6e48226b4749ae574c51"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/laravel/framework/zipball/f7493ab717ca2a9598b1db2d6a3bae8ac8c755e8",
-            "reference": "f7493ab717ca2a9598b1db2d6a3bae8ac8c755e8",
+            "url": "https://api.github.com/repos/Laravel-Lang/lang/zipball/48de35602d2bae883cbb6e48226b4749ae574c51",
+            "reference": "48de35602d2bae883cbb6e48226b4749ae574c51",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "ext-json": "*"
+        },
+        "suggest": {
+            "andrey-helldar/laravel-lang-publisher": "Easy installation and update of translation files for your project",
+            "arcanedev/laravel-lang": "Translations manager and checker for Laravel 5",
+            "overtrue/laravel-lang": "Command to add languages in your project"
+        },
+        "time": "2020-09-11T13:09:12+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Laravel-Lang Team"
+            }
+        ],
+        "description": "Languages for Laravel",
+        "keywords": [
+            "lang",
+            "languages",
+            "laravel",
+            "lpm"
+        ]
+    },
+    {
+        "name": "laravel/framework",
+        "version": "v7.28.3",
+        "version_normalized": "7.28.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/laravel/framework.git",
+            "reference": "b0942c391975972b1a54b2dc983e33a239f169a9"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/laravel/framework/zipball/b0942c391975972b1a54b2dc983e33a239f169a9",
+            "reference": "b0942c391975972b1a54b2dc983e33a239f169a9",
             "shasum": "",
             "mirrors": [
                 {
@@ -3098,7 +3095,7 @@
             "symfony/psr-http-message-bridge": "Required to use PSR-7 bridging features (^2.0).",
             "wildbit/swiftmailer-postmark": "Required to use Postmark mail driver (^3.0)."
         },
-        "time": "2020-09-09T15:02:46+00:00",
+        "time": "2020-09-17T14:23:26+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3279,17 +3276,17 @@
     },
     {
         "name": "league/commonmark",
-        "version": "1.5.4",
-        "version_normalized": "1.5.4.0",
+        "version": "1.5.5",
+        "version_normalized": "1.5.5.0",
         "source": {
             "type": "git",
             "url": "https://github.com/thephpleague/commonmark.git",
-            "reference": "21819c989e69bab07e933866ad30c7e3f32984ba"
+            "reference": "45832dfed6007b984c0d40addfac48d403dc6432"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/21819c989e69bab07e933866ad30c7e3f32984ba",
-            "reference": "21819c989e69bab07e933866ad30c7e3f32984ba",
+            "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/45832dfed6007b984c0d40addfac48d403dc6432",
+            "reference": "45832dfed6007b984c0d40addfac48d403dc6432",
             "shasum": "",
             "mirrors": [
                 {
@@ -3307,7 +3304,7 @@
         },
         "require-dev": {
             "cebe/markdown": "~1.0",
-            "commonmark/commonmark.js": "0.29.1",
+            "commonmark/commonmark.js": "0.29.2",
             "erusev/parsedown": "~1.0",
             "ext-json": "*",
             "github/gfm": "0.29.0",
@@ -3318,7 +3315,7 @@
             "scrutinizer/ocular": "^1.5",
             "symfony/finder": "^4.2"
         },
-        "time": "2020-08-18T01:19:12+00:00",
+        "time": "2020-09-13T14:44:46+00:00",
         "bin": [
             "bin/commonmark"
         ],
@@ -3612,17 +3609,17 @@
     },
     {
         "name": "mnabialek/laravel-sql-logger",
-        "version": "v2.2.6",
-        "version_normalized": "2.2.6.0",
+        "version": "v2.2.7",
+        "version_normalized": "2.2.7.0",
         "source": {
             "type": "git",
             "url": "https://github.com/mnabialek/laravel-sql-logger.git",
-            "reference": "5a044652792d93c0d3d4564694f28cd650110f12"
+            "reference": "6c30e7b1d07ba0ad0b7abf4327ecb722febbee15"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/mnabialek/laravel-sql-logger/zipball/5a044652792d93c0d3d4564694f28cd650110f12",
-            "reference": "5a044652792d93c0d3d4564694f28cd650110f12",
+            "url": "https://api.github.com/repos/mnabialek/laravel-sql-logger/zipball/6c30e7b1d07ba0ad0b7abf4327ecb722febbee15",
+            "reference": "6c30e7b1d07ba0ad0b7abf4327ecb722febbee15",
             "shasum": "",
             "mirrors": [
                 {
@@ -3632,20 +3629,20 @@
             ]
         },
         "require": {
-            "illuminate/container": "5.*|6.*|7.*",
-            "illuminate/filesystem": "5.*|6.*|7.*",
-            "illuminate/support": "5.*|6.*|7.*",
+            "illuminate/container": "5.*|6.*|7.*|8.*",
+            "illuminate/filesystem": "5.*|6.*|7.*|8.*",
+            "illuminate/support": "5.*|6.*|7.*|8.*",
             "mnabialek/laravel-version": "^1.0.3",
             "nesbot/carbon": "~1.0 || ^2.0"
         },
         "require-dev": {
             "friendsofphp/php-cs-fixer": "~2.5",
-            "laravel/framework": "^6.0",
+            "laravel/framework": "6.*|7.*|8.*",
             "mockery/mockery": "^1.0",
             "php-coveralls/php-coveralls": "^2.0",
             "phpunit/phpunit": "^6.5"
         },
-        "time": "2020-05-21T14:37:46+00:00",
+        "time": "2020-09-17T17:41:49+00:00",
         "type": "library",
         "extra": {
             "laravel": {
@@ -3692,17 +3689,17 @@
     },
     {
         "name": "mnabialek/laravel-version",
-        "version": "v1.0.3",
-        "version_normalized": "1.0.3.0",
+        "version": "v1.0.4",
+        "version_normalized": "1.0.4.0",
         "source": {
             "type": "git",
             "url": "https://github.com/mnabialek/laravel-version.git",
-            "reference": "51d7de0323521ae18d04685e664d23e86a32ce67"
+            "reference": "2b2c5bc8bee73cb25298019c91d1cab4ce9fa1a9"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/mnabialek/laravel-version/zipball/51d7de0323521ae18d04685e664d23e86a32ce67",
-            "reference": "51d7de0323521ae18d04685e664d23e86a32ce67",
+            "url": "https://api.github.com/repos/mnabialek/laravel-version/zipball/2b2c5bc8bee73cb25298019c91d1cab4ce9fa1a9",
+            "reference": "2b2c5bc8bee73cb25298019c91d1cab4ce9fa1a9",
             "shasum": "",
             "mirrors": [
                 {
@@ -3712,7 +3709,7 @@
             ]
         },
         "require": {
-            "illuminate/container": "5.*|6.*|7.*"
+            "illuminate/container": "5.*|6.*|7.*|8.*"
         },
         "require-dev": {
             "friendsofphp/php-cs-fixer": "^2.9",
@@ -3720,7 +3717,7 @@
             "php-coveralls/php-coveralls": "^2.0",
             "phpunit/phpunit": "^6.5"
         },
-        "time": "2020-03-22T14:03:12+00:00",
+        "time": "2020-09-17T17:04:45+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -4100,17 +4097,17 @@
     },
     {
         "name": "nesbot/carbon",
-        "version": "2.39.2",
-        "version_normalized": "2.39.2.0",
+        "version": "2.40.0",
+        "version_normalized": "2.40.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/briannesbitt/Carbon.git",
-            "reference": "326efde1bc09077a26cb77f6e2e32e13f06c27f2"
+            "reference": "6c7646154181013ecd55e80c201b9fd873c6ee5d"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/326efde1bc09077a26cb77f6e2e32e13f06c27f2",
-            "reference": "326efde1bc09077a26cb77f6e2e32e13f06c27f2",
+            "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/6c7646154181013ecd55e80c201b9fd873c6ee5d",
+            "reference": "6c7646154181013ecd55e80c201b9fd873c6ee5d",
             "shasum": "",
             "mirrors": [
                 {
@@ -4135,7 +4132,7 @@
             "phpunit/phpunit": "^7.5 || ^8.0",
             "squizlabs/php_codesniffer": "^3.4"
         },
-        "time": "2020-09-10T12:16:42+00:00",
+        "time": "2020-09-11T19:00:58+00:00",
         "bin": [
             "bin/carbon"
         ],
@@ -4197,17 +4194,17 @@
     },
     {
         "name": "nikic/php-parser",
-        "version": "v4.9.1",
-        "version_normalized": "4.9.1.0",
+        "version": "v4.10.0",
+        "version_normalized": "4.10.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/nikic/PHP-Parser.git",
-            "reference": "88e519766fc58bd46b8265561fb79b54e2e00b28"
+            "reference": "1c13d05035deff45f1230ca68bd7d74d621762d9"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/88e519766fc58bd46b8265561fb79b54e2e00b28",
-            "reference": "88e519766fc58bd46b8265561fb79b54e2e00b28",
+            "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/1c13d05035deff45f1230ca68bd7d74d621762d9",
+            "reference": "1c13d05035deff45f1230ca68bd7d74d621762d9",
             "shasum": "",
             "mirrors": [
                 {
@@ -4224,7 +4221,7 @@
             "ircmaxell/php-yacc": "^0.0.7",
             "phpunit/phpunit": "^6.5 || ^7.0 || ^8.0 || ^9.0"
         },
-        "time": "2020-08-30T16:15:20+00:00",
+        "time": "2020-09-19T14:52:48+00:00",
         "bin": [
             "bin/php-parse"
         ],
@@ -4404,17 +4401,17 @@
     },
     {
         "name": "overtrue/laravel-lang",
-        "version": "4.0.1",
-        "version_normalized": "4.0.1.0",
+        "version": "4.1.1",
+        "version_normalized": "4.1.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/overtrue/laravel-lang.git",
-            "reference": "8622a7d41fa52c502acaf63a4c416e849e02dfc7"
+            "reference": "8db02bb782ff3f27198740a7a5f47b8934f949ea"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/overtrue/laravel-lang/zipball/8622a7d41fa52c502acaf63a4c416e849e02dfc7",
-            "reference": "8622a7d41fa52c502acaf63a4c416e849e02dfc7",
+            "url": "https://api.github.com/repos/overtrue/laravel-lang/zipball/8db02bb782ff3f27198740a7a5f47b8934f949ea",
+            "reference": "8db02bb782ff3f27198740a7a5f47b8934f949ea",
             "shasum": "",
             "mirrors": [
                 {
@@ -4424,13 +4421,14 @@
             ]
         },
         "require": {
-            "caouecs/laravel-lang": "~7.0",
+            "ext-json": "*",
+            "laravel-lang/lang": "~7.0",
             "symfony/process": "^5.0.0"
         },
         "require-dev": {
-            "laravel/framework": "~7.0"
+            "laravel/framework": "~8.1"
         },
-        "time": "2020-07-21T06:36:31+00:00",
+        "time": "2020-09-16T03:00:55+00:00",
         "type": "library",
         "extra": {
             "laravel": {
@@ -4458,13 +4456,19 @@
                 "email": "anzhengchao@gmail.com"
             }
         ],
-        "description": "List of 52 languages for Laravel 5",
+        "description": "List of 75 languages for Laravel 4, 5, 6 and 7",
         "keywords": [
             "i18n",
             "languages",
             "laravel",
             "locale",
             "overtrue"
+        ],
+        "funding": [
+            {
+                "url": "https://www.patreon.com/overtrue",
+                "type": "patreon"
+            }
         ]
     },
     {
@@ -4697,17 +4701,17 @@
     },
     {
         "name": "phpdocumentor/reflection-docblock",
-        "version": "5.2.1",
-        "version_normalized": "5.2.1.0",
+        "version": "5.2.2",
+        "version_normalized": "5.2.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-            "reference": "d870572532cd70bc3fab58f2e23ad423c8404c44"
+            "reference": "069a785b2141f5bcf49f3e353548dc1cce6df556"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/d870572532cd70bc3fab58f2e23ad423c8404c44",
-            "reference": "d870572532cd70bc3fab58f2e23ad423c8404c44",
+            "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/069a785b2141f5bcf49f3e353548dc1cce6df556",
+            "reference": "069a785b2141f5bcf49f3e353548dc1cce6df556",
             "shasum": "",
             "mirrors": [
                 {
@@ -4726,7 +4730,7 @@
         "require-dev": {
             "mockery/mockery": "~1.3.2"
         },
-        "time": "2020-08-15T11:14:08+00:00",
+        "time": "2020-09-03T19:13:55+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -4757,17 +4761,17 @@
     },
     {
         "name": "phpdocumentor/type-resolver",
-        "version": "1.3.0",
-        "version_normalized": "1.3.0.0",
+        "version": "1.4.0",
+        "version_normalized": "1.4.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/phpDocumentor/TypeResolver.git",
-            "reference": "e878a14a65245fbe78f8080eba03b47c3b705651"
+            "reference": "6a467b8989322d92aa1c8bf2bebcc6e5c2ba55c0"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/e878a14a65245fbe78f8080eba03b47c3b705651",
-            "reference": "e878a14a65245fbe78f8080eba03b47c3b705651",
+            "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/6a467b8989322d92aa1c8bf2bebcc6e5c2ba55c0",
+            "reference": "6a467b8989322d92aa1c8bf2bebcc6e5c2ba55c0",
             "shasum": "",
             "mirrors": [
                 {
@@ -4783,7 +4787,7 @@
         "require-dev": {
             "ext-tokenizer": "*"
         },
-        "time": "2020-06-27T10:12:23+00:00",
+        "time": "2020-09-17T18:55:26+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
