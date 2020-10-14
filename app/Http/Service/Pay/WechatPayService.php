@@ -228,7 +228,7 @@ class WechatPayService
         } catch (GatewayException $exception) {
             $return = [
                 'code' => 1,
-                'msg' => $exception->raw['err_code_des'],
+                'msg' => $exception->raw['err_code_des'] ?? $exception->raw['return_msg'],
                 'service_code' => $exception->raw['err_code'] ?? $exception->raw['return_code'],
                 'service_msg' => $exception->raw['err_code_des'] ?? $exception->raw['return_msg'],
             ];
@@ -310,7 +310,7 @@ class WechatPayService
      *
      * @param string|array $data
      *                              支付 => 商户单号 | ['pay_no' => '商户单号', 'pay_service_no' => '微信订单号'](2选1)
-     *                              退款 => 退款单号 | ['pay_no' => '商户单号', 'pay_service_no' => '微信订单号', 'refund_no' => '退款单号', 'pay_service_no' => '微信订单号'](4选1)
+     *                              退款 => 退款单号 | ['pay_no' => '商户单号', 'pay_service_no' => '微信订单号', 'refund_no' => '退款单号', 'refund_service_no' => '微信退款订单号'](4选1)
      *                              转账 => 转账单号 | ['transfer_no' => '转账单号']
      * @param string       $type
      *                              '' => '支付', 'refund' => '退款', 'transfer' => '转账'

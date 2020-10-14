@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,8 +31,12 @@ class AppServiceProvider extends ServiceProvider
         Carbon::setLocale('zh');
 
         // 引入网站配置
-        if (class_exists('\Encore\Admin\Config\Config') && \Illuminate\Support\Facades\Schema::hasTable(config('admin.extensions.config.table', 'admin_config'))) {
-            \Encore\Admin\Config\Config::load();
+        try {
+            if (class_exists('\Encore\Admin\Config\Config') && \Illuminate\Support\Facades\Schema::hasTable(config('admin.extensions.config.table', 'admin_config'))) {
+                \Encore\Admin\Config\Config::load();
+            }
+        } catch (Exception $exception) {
+
         }
     }
 }
