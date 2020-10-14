@@ -36,7 +36,6 @@ class AppServiceProvider extends ServiceProvider
                 \Encore\Admin\Config\Config::load();
             }
         } catch (Exception $exception) {
-
         }
     }
 }
