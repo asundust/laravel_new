@@ -105,7 +105,7 @@ class ConfigController extends BaseConfigController
 
         $form->display('id', 'ID');
         $form->display('name', '名称')->rules('required');
-        $form->textarea('value', '值')->rules('required');
+        $form->textarea('value', '值');
         $form->display('description', '描述');
         $form->display('sort', '排序')->default(0);
 
