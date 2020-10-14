@@ -25,12 +25,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // 数据库字符串字段长度
-        Schema::defaultStringLength(191);
-        // Carbon中文
-        Carbon::setLocale('zh');
-
-        // 引入网站配置
+        // 引入Admin Config配置
         try {
             if (class_exists('\Encore\Admin\Config\Config') && \Illuminate\Support\Facades\Schema::hasTable(config('admin.extensions.config.table', 'admin_config'))) {
                 \Encore\Admin\Config\Config::load();
