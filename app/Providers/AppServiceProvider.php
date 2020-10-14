@@ -2,9 +2,7 @@
 
 namespace App\Providers;
 
-use Carbon\Carbon;
 use Exception;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
