@@ -212,6 +212,7 @@ if (!function_exists('sc_send')) {
      * @param        $text
      * @param string $desc
      * @param string $key
+     *
      * @return false|\Psr\Http\Message\ResponseInterface
      */
     function sc_send($text, $desc = '', $key = '')
@@ -230,11 +231,11 @@ if (!function_exists('sc_send')) {
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
             ],
-        ]))->post('https://sc.ftqq.com/' . $key . '.send', [
+        ]))->post('https://sc.ftqq.com/'.$key.'.send', [
             'form_params' => [
                 'text' => $text,
-                'desp' => $desc
-            ]
+                'desp' => $desc,
+            ],
         ]);
 
         return json_decode($response->getBody()->getContents(), true);
