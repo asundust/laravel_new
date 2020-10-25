@@ -77,11 +77,11 @@ class WechatPayService
         try {
             $data = $wechat->verify(); // 是的，验签就这么简单！
             if (
-                $data->return_code == 'SUCCESS'
-                && $data->result_code == 'SUCCESS'
+                'SUCCESS' == $data->return_code
+                && 'SUCCESS' == $data->result_code
                 && $data->appid == config('pay.wechat.app_id')
                 && $data->mch_id == config('pay.wechat.mch_id')
-                && $data->trade_state == 'SUCCESS'
+                && 'SUCCESS' == $data->trade_state
             ) {
                 $result = $this->paySuccessHandle($data);
                 if ($result) {
@@ -148,11 +148,11 @@ class WechatPayService
     public function payFindResultHandle($data)
     {
         if (
-            $data->return_code == 'SUCCESS'
-            && $data->result_code == 'SUCCESS'
+            'SUCCESS' == $data->return_code
+            && 'SUCCESS' == $data->result_code
             && $data->appid == config('pay.wechat.app_id')
             && $data->mch_id == config('pay.wechat.mch_id')
-            && $data->trade_state == 'SUCCESS'
+            && 'SUCCESS' == $data->trade_state
         ) {
             return $this->paySuccessHandle($data);
         }
@@ -174,8 +174,8 @@ class WechatPayService
         try {
             $data = $wechat->verify(null, true); // 是的，验签就这么简单！
             if (
-                $data->return_code == 'SUCCESS'
-                && $data->refund_status == 'SUCCESS'
+                'SUCCESS' == $data->return_code
+                && 'SUCCESS' == $data->refund_status
                 && $data->appid == config('pay.wechat.app_id')
                 && $data->mch_id == config('pay.wechat.mch_id')
             ) {
