@@ -154,7 +154,7 @@ class AlipayService
     public function payFindResultHandle($data)
     {
         if (
-            $data->code == '10000'
+            '10000' == $data->code
             && in_array($data->trade_status, ['TRADE_SUCCESS', 'TRADE_FINISHED'])
         ) {
             return $this->paySuccessHandle($data);
