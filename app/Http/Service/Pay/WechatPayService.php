@@ -76,7 +76,13 @@ class WechatPayService
         DB::beginTransaction();
         try {
             $data = $wechat->verify(); // 是的，验签就这么简单！
-            if ('SUCCESS' == $data->return_code && 'SUCCESS' == $data->result_code && $data->appid == config('pay.wechat.app_id') && $data->mch_id == config('pay.wechat.mch_id')) {
+            if (
+                $data->return_code == 'SUCCESS'
+                && $data->result_code == 'SUCCESS'
+                && $data->appid == config('pay.wechat.app_id')
+                && $data->mch_id == config('pay.wechat.mch_id')
+                && $data->trade_state == 'SUCCESS'
+            ) {
                 $result = $this->paySuccessHandle($data);
                 if ($result) {
                     DB::commit();
@@ -141,7 +147,13 @@ class WechatPayService
      */
     public function payFindResultHandle($data)
     {
-        if ('SUCCESS' == $data->return_code && 'SUCCESS' == $data->result_code && $data->appid == config('pay.wechat.app_id') && $data->mch_id == config('pay.wechat.mch_id')) {
+        if (
+            $data->return_code == 'SUCCESS'
+            && $data->result_code == 'SUCCESS'
+            && $data->appid == config('pay.wechat.app_id')
+            && $data->mch_id == config('pay.wechat.mch_id')
+            && $data->trade_state == 'SUCCESS'
+        ) {
             return $this->paySuccessHandle($data);
         }
 
@@ -161,7 +173,12 @@ class WechatPayService
         DB::beginTransaction();
         try {
             $data = $wechat->verify(null, true); // 是的，验签就这么简单！
-            if ('SUCCESS' == $data->return_code && 'SUCCESS' == $data->refund_status && $data->appid == config('pay.wechat.app_id') && $data->mch_id == config('pay.wechat.mch_id')) {
+            if (
+                $data->return_code == 'SUCCESS'
+                && $data->refund_status == 'SUCCESS'
+                && $data->appid == config('pay.wechat.app_id')
+                && $data->mch_id == config('pay.wechat.mch_id')
+            ) {
                 $data->refund_no = $data->out_refund_no; // 统一变量名，支付商户退款订单号
                 $data->refund_service_no = $data->refund_id; // 统一变量名，支付商退款订单号
                 $data->refund_amount = $data->refund_fee / 100; // 统一变量名，退款金额

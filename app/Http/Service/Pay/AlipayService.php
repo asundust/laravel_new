@@ -70,7 +70,10 @@ class AlipayService
 
                 return '';
             }
-            if ($data->app_id == config('pay.alipay.app_id') && in_array($data->trade_status, ['TRADE_SUCCESS', 'TRADE_FINISHED'])) {
+            if (
+                $data->app_id == config('pay.alipay.app_id')
+                && in_array($data->trade_status, ['TRADE_SUCCESS', 'TRADE_FINISHED'])
+            ) {
                 $result = $this->paySuccessHandle($data);
                 if ($result) {
                     DB::commit();
@@ -150,7 +153,10 @@ class AlipayService
      */
     public function payFindResultHandle($data)
     {
-        if ('10000' == $data->code && in_array($data->trade_status, ['TRADE_SUCCESS', 'TRADE_FINISHED'])) {
+        if (
+            $data->code == '10000'
+            && in_array($data->trade_status, ['TRADE_SUCCESS', 'TRADE_FINISHED'])
+        ) {
             return $this->paySuccessHandle($data);
         }
 
