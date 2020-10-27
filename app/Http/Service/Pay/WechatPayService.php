@@ -81,7 +81,7 @@ class WechatPayService
                 && 'SUCCESS' == $data->result_code
                 && $data->appid == config('pay.wechat.app_id')
                 && $data->mch_id == config('pay.wechat.mch_id')
-                && 'SUCCESS' == $data->trade_state
+                && isset($data->time_end)
             ) {
                 $result = $this->paySuccessHandle($data);
                 if ($result) {
@@ -153,6 +153,7 @@ class WechatPayService
             && $data->appid == config('pay.wechat.app_id')
             && $data->mch_id == config('pay.wechat.mch_id')
             && 'SUCCESS' == $data->trade_state
+            && isset($data->time_end)
         ) {
             return $this->paySuccessHandle($data);
         }
