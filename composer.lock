@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3e115697ca23778d0f8df9dff76ef3a3",
+    "content-hash": "b94803200140ac77c0e546af5fedca69",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3652,16 +3652,16 @@
         },
         {
             "name": "simplesoftwareio/simple-qrcode",
-            "version": "3.0.0",
+            "version": "4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SimpleSoftwareIO/simple-qrcode.git",
-                "reference": "151dd397426d9a6c0507c96e61ddd2ca1290ce1e"
+                "reference": "3b721089cc541f6c37f0a41b90377529af977948"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SimpleSoftwareIO/simple-qrcode/zipball/151dd397426d9a6c0507c96e61ddd2ca1290ce1e",
-                "reference": "151dd397426d9a6c0507c96e61ddd2ca1290ce1e",
+                "url": "https://api.github.com/repos/SimpleSoftwareIO/simple-qrcode/zipball/3b721089cc541f6c37f0a41b90377529af977948",
+                "reference": "3b721089cc541f6c37f0a41b90377529af977948",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3671,7 +3671,7 @@
                 ]
             },
             "require": {
-                "bacon/bacon-qr-code": "2.0.0",
+                "bacon/bacon-qr-code": "^2.0",
                 "ext-gd": "*",
                 "php": ">=7.2"
             },
@@ -3687,10 +3687,10 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "SimpleSoftwareIO\\QrCode\\ServiceProvider"
+                        "SimpleSoftwareIO\\QrCode\\QrCodeServiceProvider"
                     ],
                     "aliases": {
-                        "QrCode": "SimpleSoftwareIO\\QrCode\\Facade"
+                        "QrCode": "SimpleSoftwareIO\\QrCode\\Facades\\QrCode"
                     }
                 }
             },
@@ -3718,7 +3718,7 @@
                 "qrcode",
                 "wrapper"
             ],
-            "time": "2020-06-02T20:41:21+00:00"
+            "time": "2020-10-06T22:51:06+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",

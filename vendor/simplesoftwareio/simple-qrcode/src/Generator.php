@@ -162,7 +162,7 @@ class Generator
      *
      * @param string $text
      * @param string|null $filename
-     * @return void|string
+     * @return void|Illuminate\Support\HtmlString|string
      * @throws WriterException
      * @throws InvalidArgumentException
      */
@@ -179,6 +179,10 @@ class Generator
             file_put_contents($filename, $qrCode);
 
             return;
+        }
+
+        if (class_exists(\Illuminate\Support\HtmlString::class)) {
+            return new \Illuminate\Support\HtmlString($qrCode);
         }
 
         return $qrCode;
@@ -533,7 +537,7 @@ class Generator
      */
     public function createColor(int $red, int $green, int $blue, ?int $alpha = null): ColorInterface
     {
-        if (! $alpha) {
+        if (is_null($alpha)) {
             return new Rgb($red, $green, $blue);
         }
 
