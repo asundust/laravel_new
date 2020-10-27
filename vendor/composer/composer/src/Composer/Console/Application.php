@@ -22,6 +22,7 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Seld\JsonLint\ParsingException;
 use Composer\Command;
 use Composer\Composer;
 use Composer\Factory;
@@ -65,7 +66,7 @@ class Application extends BaseApplication
     /**
      * @var string Store the initial working directory at startup time
      */
-    private $initialWorkingDirectory = '';
+    private $initialWorkingDirectory;
 
     public function __construct()
     {
@@ -81,6 +82,13 @@ class Application extends BaseApplication
         }
 
         if (!$shutdownRegistered) {
+            if (function_exists('pcntl_async_signals') && function_exists('pcntl_signal')) {
+                pcntl_async_signals(true);
+                pcntl_signal(SIGINT, function ($sig) {
+                    exit(130);
+                });
+            }
+
             $shutdownRegistered = true;
 
             register_shutdown_function(function () {
@@ -163,7 +171,7 @@ class Application extends BaseApplication
             // abort when we reach the home dir or top of the filesystem
             while (dirname($dir) !== $dir && $dir !== $home) {
                 if (file_exists($dir.'/'.Factory::getComposerFile())) {
-                    if ($io->askConfirmation('<info>No composer.json in current directory, do you want to use the one at '.$dir.'?</info> [<comment>Y,n</comment>]? ', true)) {
+                    if ($io->askConfirmation('<info>No composer.json in current directory, do you want to use the one at '.$dir.'?</info> [<comment>Y,n</comment>]? ')) {
                         $oldWorkingDir = getcwd();
                         chdir($dir);
                     }
@@ -184,6 +192,20 @@ class Application extends BaseApplication
                 }
             } catch (NoSslException $e) {
                 // suppress these as they are not relevant at this point
+            } catch (ParsingException $e) {
+                $details = $e->getDetails();
+
+                $file = realpath(Factory::getComposerFile());
+
+                $line = null;
+                if ($details && isset($details['line'])) {
+                    $line = $details['line'];
+                }
+
+                $ghe = new GithubActionError($this->io);
+                $ghe->emit($e->getMessage(), $file, $line);
+
+                throw $e;
             }
 
             $this->hasPluginCommands = true;
@@ -230,6 +252,12 @@ class Application extends BaseApplication
                 if (function_exists('posix_getuid') && posix_getuid() === 0) {
                     if ($commandName !== 'self-update' && $commandName !== 'selfupdate') {
                         $io->writeError('<warning>Do not run Composer as root/super user! See https://getcomposer.org/root for details</warning>');
+
+                        if ($io->isInteractive()) {
+                            if (!$io->askConfirmation('<info>Continue as root/super user</info> [<comment>yes</comment>]? ')) {
+                                return 1;
+                            }
+                        }
                     }
                     if ($uid = (int) getenv('SUDO_UID')) {
                         // Silently clobber any sudo credentials on the invoking user to avoid privilege escalations later on
@@ -292,10 +320,15 @@ class Application extends BaseApplication
 
             return $result;
         } catch (ScriptExecutionException $e) {
-            return $e->getCode();
+            return (int) $e->getCode();
         } catch (\Exception $e) {
+            $ghe = new GithubActionError($this->io);
+            $ghe->emit($e->getMessage());
+
             $this->hintCommonErrors($e);
+
             restore_error_handler();
+
             throw $e;
         }
     }
@@ -440,7 +473,7 @@ class Application extends BaseApplication
             new Command\FundCommand(),
         ));
 
-        if ('phar:' === substr(__FILE__, 0, 5)) {
+        if (strpos(__FILE__, 'phar:') === 0) {
             $commands[] = new Command\SelfUpdateCommand();
         }
 
@@ -485,7 +518,7 @@ class Application extends BaseApplication
 
         $composer = $this->getComposer(false, false);
         if (null === $composer) {
-            $composer = Factory::createGlobal($this->io, false);
+            $composer = Factory::createGlobal($this->io);
         }
 
         if (null !== $composer) {
@@ -508,7 +541,7 @@ class Application extends BaseApplication
     }
 
     /**
-     * Get the working directoy at startup time
+     * Get the working directory at startup time
      *
      * @return string
      */

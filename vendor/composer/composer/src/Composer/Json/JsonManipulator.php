@@ -117,7 +117,7 @@ class JsonManipulator
     private function sortPackages(array &$packages = array())
     {
         $prefix = function ($requirement) {
-            if (preg_match(PlatformRepository::PLATFORM_PACKAGE_REGEX, $requirement)) {
+            if (PlatformRepository::isPlatformPackage($requirement)) {
                 return preg_replace(
                     array(
                         '/^php/',
@@ -167,15 +167,15 @@ class JsonManipulator
 
     public function addProperty($name, $value)
     {
-        if (substr($name, 0, 8) === 'suggest.') {
+        if (strpos($name, 'suggest.') === 0) {
             return $this->addSubNode('suggest', substr($name, 8), $value);
         }
 
-        if (substr($name, 0, 6) === 'extra.') {
+        if (strpos($name, 'extra.') === 0) {
             return $this->addSubNode('extra', substr($name, 6), $value);
         }
 
-        if (substr($name, 0, 8) === 'scripts.') {
+        if (strpos($name, 'scripts.') === 0) {
             return $this->addSubNode('scripts', substr($name, 8), $value);
         }
 
@@ -184,15 +184,15 @@ class JsonManipulator
 
     public function removeProperty($name)
     {
-        if (substr($name, 0, 8) === 'suggest.') {
+        if (strpos($name, 'suggest.') === 0) {
             return $this->removeSubNode('suggest', substr($name, 8));
         }
 
-        if (substr($name, 0, 6) === 'extra.') {
+        if (strpos($name, 'extra.') === 0) {
             return $this->removeSubNode('extra', substr($name, 6));
         }
 
-        if (substr($name, 0, 8) === 'scripts.') {
+        if (strpos($name, 'scripts.') === 0) {
             return $this->removeSubNode('scripts', substr($name, 8));
         }
 
@@ -356,6 +356,10 @@ class JsonManipulator
             $childrenClean = $children;
         }
 
+        if (!isset($childrenClean)) {
+            throw new \InvalidArgumentException("JsonManipulator: \$childrenClean is not defined. Please report at https://github.com/composer/composer/issues/new.");
+        }
+
         // no child data left, $name was the only key in
         $this->pregMatch('#^{ \s*? (?P<content>\S+.*?)? (?P<trailingspace>\s*) }$#sx', $childrenClean, $match);
         if (empty($match['content'])) {
@@ -381,7 +385,7 @@ class JsonManipulator
             if ($subName !== null) {
                 $curVal = json_decode($matches['content'], true);
                 unset($curVal[$name][$subName]);
-                $childrenClean = $that->format($curVal, 0);
+                $childrenClean = $that->format($curVal);
             }
 
             return $matches['start'] . $childrenClean . $matches['end'];

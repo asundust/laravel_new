@@ -1,6 +1,6 @@
 # Laravel-lang
 
-In this repository, you can find the lang files for the framework PHP, [Laravel 4/5/6/7](https://laravel.com).
+In this repository, you can find the lang files for the [Laravel Framework 4/5/6/7/8](https://laravel.com), [Laravel Jetstream](https://jetstream.laravel.com/1.x/introduction.html) and [Laravel Fortify](https://github.com/laravel/fortify).
 
 ## News
 
@@ -15,6 +15,7 @@ Install the Laravel-lang package to your Laravel project with composer using com
 
 | Laravel version                     | Composer command                                  |
 |-------------------------------------|---------------------------------------------------|
+| Laravel 8.x                         | `composer require laravel-lang/lang:~7.0` |
 | Laravel 7.x and new directory names | `composer require laravel-lang/lang:~7.0` |
 | Laravel 7.x                         | `composer require laravel-lang/lang:~6.1` |
 | Laravel 6.x                         | `composer require laravel-lang/lang:~5.0` |
@@ -35,7 +36,7 @@ Copy the folders (and JSON files) of languages that you want to use, into the di
 * Or download the [zip file](https://github.com/Laravel-Lang/lang/archive/master.zip)
 * Choose the branch:
     * `laravel4` for Laravel 4 project
-    * `master` for Laravel 5, 6, 7 projects
+    * `master` for Laravel 5, 6, 7, 8 projects
 * Copy the folders of languages that you want, in `resources/lang` folder of your Laravel application (or `app/lang` in Laravel 4).
 
 ### Via SVN

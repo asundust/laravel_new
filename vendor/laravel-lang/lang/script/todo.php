@@ -18,18 +18,41 @@ class Storage
 
     public function load(string $path)
     {
-        return include $this->realpath($path);
+        $include = $this->realpath($path);
+
+        return file_exists($include)
+            ? include $include
+            : null;
     }
 
     public function store(string $path, string $content): void
     {
-        $path = $this->realpath($path);
         file_put_contents($path, $content);
     }
 
     public function realpath(string $path): string
     {
         return realpath($path);
+    }
+
+    public function isExclusionList(string $language, $key): bool
+    {
+        if (is_string($key)) {
+            $exclude = $this->getExclusionList($language) ?? [];
+
+            if (in_array($key, $exclude, true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function getExclusionList(string $language, string $directory = __DIR__): ?array
+    {
+        return $this->load(
+            implode(DIRECTORY_SEPARATOR, [$directory, 'excludes', $language . '.php'])
+        );
     }
 }
 
@@ -39,13 +62,13 @@ class Output
 
     protected $eol = PHP_EOL;
 
-    protected $line = PHP_EOL.PHP_EOL;
+    protected $line = PHP_EOL . PHP_EOL;
 
     protected $columns = 10;
 
     public function add(string $language, string $value = null): void
     {
-        if (!array_key_exists($language, $this->items)) {
+        if (! array_key_exists($language, $this->items)) {
             $this->items[$language] = [];
         }
 
@@ -69,7 +92,7 @@ class Output
 
     protected function header(): string
     {
-        return '# Todo list'.$this->eol;
+        return '# Todo list' . $this->eol;
     }
 
     protected function summary(string $language): string
@@ -80,14 +103,16 @@ class Output
     protected function content(array $values): string
     {
         if ($this->isEmpty($values)) {
-            return $this->eol.'All lines are translated 😊'.$this->eol;
+            return $this->eol . 'All lines are translated 😊' . $this->eol;
         }
 
-        $content = implode($this->eol, $values);
+        $content       = implode($this->eol, $values);
+        $sumMissing    = count($values);
+        $sumNotPresent = $this->getSumNotPresent($values);
 
         return <<<HTML
 <details>
-<summary>show</summary>
+<summary>show<small> (all missing: $sumMissing, including not present: $sumNotPresent)</small></summary>
 
 {$content}
 
@@ -96,12 +121,25 @@ class Output
 HTML;
     }
 
+    protected function getSumNotPresent(array $data): int
+    {
+        $sum = 0;
+
+        foreach ($data as $value) {
+            if (strpos($value, ' : not present') !== false) {
+                $sum++;
+            }
+        }
+
+        return $sum;
+    }
+
     protected function table(): string
     {
         $result = '';
 
         $captions = implode('|', array_fill(0, $this->columns, ' '));
-        $divider = implode('|', array_fill(0, $this->columns, ':---:'));
+        $divider  = implode('|', array_fill(0, $this->columns, ':---:'));
 
         $result .= "|{$captions}|{$this->eol}";
         $result .= "|{$divider}|{$this->eol}";
@@ -110,11 +148,11 @@ HTML;
         $rows = array_chunk($keys, $this->columns);
 
         array_map(function ($row) use (&$result) {
-            $row = $this->tableHeaderValue($row);
-            $result .= $row.$this->eol;
+            $row    = $this->tableHeaderValue($row);
+            $result .= $row . $this->eol;
         }, $rows);
 
-        return $result.$this->eol.$this->eol;
+        return $result . $this->eol . $this->eol;
     }
 
     protected function tableHeaderValue(array $languages): string
@@ -153,8 +191,8 @@ class TodoGenerator
 
     public function __construct(string $basePath, Storage $storage, Output $output)
     {
-        $this->storage = $storage;
-        $this->output = $output;
+        $this->storage  = $storage;
+        $this->output   = $output;
         $this->basePath = $basePath;
 
         $this->load();
@@ -163,14 +201,14 @@ class TodoGenerator
     /**
      * Returns object.
      *
-     * @param string $basePath base path
+     * @param  string  $basePath base path
      *
      * @return TodoGenerator
      */
     public static function make(string $basePath): self
     {
         $storage = new Storage();
-        $output = new Output();
+        $output  = new Output();
 
         return new self($basePath, $storage, $output);
     }
@@ -178,7 +216,7 @@ class TodoGenerator
     /**
      * Save todo list.
      *
-     * @param string $path
+     * @param  string  $path
      */
     public function save(string $path): void
     {
@@ -191,7 +229,7 @@ class TodoGenerator
     private function load(): void
     {
         // Get English version
-        $english = $this->getTranslations('en');
+        $english   = $this->getTranslations('en');
         $languages = $this->getLanguages();
 
         $this->compareTranslations($languages, $english);
@@ -200,8 +238,8 @@ class TodoGenerator
     /**
      * Returns array of translations by language.
      *
-     * @param string $language  language code
-     * @param string $directory directory
+     * @param  string  $language language code
+     * @param  string  $directory directory
      *
      * @return array
      */
@@ -221,7 +259,7 @@ class TodoGenerator
     {
         $directoryJson = ('en' === $language) ? '/en/' : '/../json/';
 
-        return $directory.$directoryJson.$language.'.json';
+        return $directory . $directoryJson . $language . '.json';
     }
 
     private function getJsonContent(string $language, string $directory): ?array
@@ -246,10 +284,10 @@ class TodoGenerator
     private function getLanguages(): array
     {
         $directories = $this->storage->directories($this->basePath);
-        $result = [];
+        $result      = [];
 
         foreach ($directories as $directory) {
-            if (!$directory->isDot()) {
+            if (! $directory->isDot()) {
                 array_push($result, $directory->getFilename());
             }
         }
@@ -262,8 +300,8 @@ class TodoGenerator
     /**
      * Compare translations.
      *
-     * @param array $default   language by default
-     * @param array $languages others languages
+     * @param  array  $default language by default
+     * @param  array  $languages others languages
      */
     private function compareTranslations(array $languages, array $default)
     {
@@ -272,28 +310,58 @@ class TodoGenerator
 
             $current = $this->getTranslations($language, $this->basePath);
 
-            foreach ($default as $key => $values) {
-                array_map(function ($key2) use ($key, $current, $language, $default) {
-                    if (in_array($key2, ['custom', 'attributes'], true)) {
-                        return;
-                    }
-
-                    if (!isset($current[$key][$key2])) {
-                        $this->output->add(
-                            $language,
-                            " * {$key} : {$key2} : not present"
-                        );
-                    } elseif ($current[$key][$key2] === $default[$key][$key2]) {
-                        $this->output->add(
-                            $language,
-                            " * {$key} : {$key2}"
-                        );
-                    }
-                }, array_keys($values));
-            }
+            $this->generatingInfoList($default, $current, $language);
         }, $languages);
+    }
+
+    private function generatingInfoList($default, $current, $language)
+    {
+        $arrayDefault = $this->align($default, ['custom', 'attributes']);
+        $arrayCurrent = $this->align($current);
+
+        foreach ($arrayDefault as $key => $values) {
+            if (! isset($arrayCurrent[$key])) {
+                $this->output->add(
+                    $language,
+                    " * {$key} : not present"
+                );
+            } elseif ($arrayCurrent[$key] === $values) {
+                if (! $this->storage->isExclusionList($language, $arrayCurrent[$key])) {
+                    $this->output->add(
+                        $language,
+                        " * {$key}"
+                    );
+                }
+            }
+        }
+    }
+
+    private function align($items = [], $ignore = [], $prefix = '', $connector = ' : ')
+    {
+        $newArray = [];
+
+        if ( ! is_array($ignore)) {
+            $ignore = (array) $ignore;
+        }
+
+        foreach ($items as $key => $value) {
+            if( in_array($key, $ignore)) {
+                continue;
+            }
+
+            if (is_array($value) && ! empty($value)) {
+                $newArray = array_merge(
+                    $newArray,
+                    $this->align($value, $ignore, $prefix . $key . $connector, '.')
+                );
+            } else {
+                $newArray[$prefix.$key] = $value;
+            }
+        }
+
+        return $newArray;
     }
 }
 
-TodoGenerator::make(__DIR__.'/../src')
-    ->save(__DIR__.'/../todo.md');
+TodoGenerator::make(__DIR__ . '/../src')
+    ->save(__DIR__ . '/../todo.md');

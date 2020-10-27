@@ -75,7 +75,6 @@ allloadin
 AllSubmitter
 alyze\.info
 amagit
-^Amazon CloudFront$
 ^Amazon Simple Notification Service Agent$
 Anarchie
 AndroidDownloadManager
@@ -148,6 +147,7 @@ binlar
 biNu image cacher
 Bitacle
 biz_Directory
+BKCTwitterUnshortener\/
 Black Hole
 Blackboard Safeassign
 BlackWidow
@@ -369,6 +369,7 @@ FlipboardBrowserProxy
 FlipboardProxy
 FlipboardRSS
 Flock\/
+Florienzh\/
 fluffy
 Flunky
 flynxapp
@@ -659,6 +660,7 @@ LWP::Simple
 lycos
 LYT\.SR
 mabontland
+MacOutlook\/
 Mag-Net
 MagpieRSS
 Mail\.Ru
@@ -826,6 +828,7 @@ Pavuk
 PayPal IPN
 pcBrowser
 Pcore-HTTP
+PDF24 URL To PDF
 Pearltrees
 PECL::HTTP
 peerindex
@@ -858,6 +861,7 @@ plumanalytics
 PocketImageCache
 PocketParser
 Pockey
+PodcastAddict\/
 POE-Component-Client-HTTP
 Polymail\/
 Pompos
@@ -1070,6 +1074,7 @@ Suzuran
 swcd 
 Symfony BrowserKit
 Symfony2 BrowserKit
+Syndirella\/
 SynHttpClient-Built
 Sysomos
 sysscan

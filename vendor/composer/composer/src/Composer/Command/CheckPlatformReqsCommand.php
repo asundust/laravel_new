@@ -15,11 +15,12 @@ namespace Composer\Command;
 use Composer\Package\Link;
 use Composer\Package\PackageInterface;
 use Composer\Semver\Constraint\Constraint;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Composer\Repository\PlatformRepository;
+use Composer\Repository\RootPackageRepository;
+use Composer\Repository\InstalledRepository;
 
 class CheckPlatformReqsCommand extends BaseCommand
 {
@@ -46,14 +47,14 @@ EOT
     {
         $composer = $this->getComposer();
 
-        $requires = $composer->getPackage()->getRequires();
+        $requires = array();
         if ($input->getOption('no-dev')) {
-            $dependencies = $composer->getLocker()->getLockedRepository(!$input->getOption('no-dev'))->getPackages();
+            $installedRepo = $composer->getLocker()->getLockedRepository(!$input->getOption('no-dev'));
         } else {
-            $dependencies = $composer->getRepositoryManager()->getLocalRepository()->getPackages();
+            $installedRepo = $composer->getRepositoryManager()->getLocalRepository();
             // fallback to lockfile if installed repo is empty
-            if (!$dependencies) {
-                $dependencies = $composer->getLocker()->getLockedRepository(true)->getPackages();
+            if (!$installedRepo->getPackages()) {
+                $installedRepo = $composer->getLocker()->getLockedRepository(true);
             }
             $requires += $composer->getPackage()->getDevRequires();
         }
@@ -61,7 +62,8 @@ EOT
             $requires[$require] = array($link);
         }
 
-        foreach ($dependencies as $package) {
+        $installedRepo = new InstalledRepository(array($installedRepo, new RootPackageRepository($composer->getPackage())));
+        foreach ($installedRepo->getPackages() as $package) {
             foreach ($package->getRequires() as $require => $link) {
                 $requires[$require][] = $link;
             }
@@ -69,62 +71,78 @@ EOT
 
         ksort($requires);
 
-        $platformRepo = new PlatformRepository(array(), array());
-        $currentPlatformPackages = $platformRepo->getPackages();
-        $currentPlatformPackageMap = array();
-
-        /**
-         * @var PackageInterface $currentPlatformPackage
-         */
-        foreach ($currentPlatformPackages as $currentPlatformPackage) {
-            $currentPlatformPackageMap[$currentPlatformPackage->getName()] = $currentPlatformPackage;
-        }
+        $installedRepo->addRepository(new PlatformRepository(array(), array()));
 
         $results = array();
-
         $exitCode = 0;
 
         /**
          * @var Link[] $links
          */
         foreach ($requires as $require => $links) {
-            if (preg_match(PlatformRepository::PLATFORM_PACKAGE_REGEX, $require)) {
-                if (isset($currentPlatformPackageMap[$require])) {
-                    $pass = true;
-                    $version = $currentPlatformPackageMap[$require]->getVersion();
-
-                    foreach ($links as $link) {
-                        if (!$link->getConstraint()->matches(new Constraint('=', $version))) {
-                            $results[] = array(
-                                $currentPlatformPackageMap[$require]->getPrettyName(),
-                                $currentPlatformPackageMap[$require]->getPrettyVersion(),
-                                $link,
-                                '<error>failed</error>',
-                            );
-                            $pass = false;
-
-                            $exitCode = max($exitCode, 1);
+            if (PlatformRepository::isPlatformPackage($require)) {
+                $candidates = $installedRepo->findPackagesWithReplacersAndProviders($require);
+                if ($candidates) {
+                    $reqResults = array();
+                    foreach ($candidates as $candidate) {
+                        $candidateConstraint = null;
+                        if ($candidate->getName() === $require) {
+                            $candidateConstraint = new Constraint('=', $candidate->getVersion());
+                            $candidateConstraint->setPrettyString($candidate->getPrettyVersion());
+                        } else {
+                            foreach (array_merge($candidate->getProvides(), $candidate->getReplaces()) as $link) {
+                                if ($link->getTarget() === $require) {
+                                    $candidateConstraint = $link->getConstraint();
+                                    break;
+                                }
+                            }
                         }
-                    }
 
-                    if ($pass) {
+                        // safety check for phpstan, but it should not be possible to get a candidate out of findPackagesWithReplacersAndProviders without a constraint matching $require
+                        if (!$candidateConstraint) {
+                            continue;
+                        }
+
+                        foreach ($links as $link) {
+                            if (!$link->getConstraint()->matches($candidateConstraint)) {
+                                $reqResults[] = array(
+                                    $candidate->getName() === $require ? $candidate->getPrettyName() : $require,
+                                    $candidateConstraint->getPrettyString(),
+                                    $link,
+                                    '<error>failed</error>'.($candidate->getName() === $require ? '' : ' <comment>provided by '.$candidate->getPrettyName().'</comment>'),
+                                );
+
+                                // skip to next candidate
+                                continue 2;
+                            }
+                        }
+
                         $results[] = array(
-                            $currentPlatformPackageMap[$require]->getPrettyName(),
-                            $currentPlatformPackageMap[$require]->getPrettyVersion(),
+                            $candidate->getName() === $require ? $candidate->getPrettyName() : $require,
+                            $candidateConstraint->getPrettyString(),
                             null,
-                            '<info>success</info>',
+                            '<info>success</info>'.($candidate->getName() === $require ? '' : ' <comment>provided by '.$candidate->getPrettyName().'</comment>'),
                         );
-                    }
-                } else {
-                    $results[] = array(
-                        $require,
-                        'n/a',
-                        $links[0],
-                        '<error>missing</error>',
-                    );
 
-                    $exitCode = max($exitCode, 2);
+                        // candidate matched, skip to next requirement
+                        continue 2;
+                    }
+
+                    // show the first error from every failed candidate
+                    $results = array_merge($results, $reqResults);
+                    $exitCode = max($exitCode, 1);
+
+                    continue;
                 }
+
+                $results[] = array(
+                    $require,
+                    'n/a',
+                    $links[0],
+                    '<error>missing</error>',
+                );
+
+                $exitCode = max($exitCode, 2);
             }
         }
 
@@ -135,7 +153,6 @@ EOT
 
     protected function printTable(OutputInterface $output, $results)
     {
-        $table = array();
         $rows = array();
         foreach ($results as $result) {
             /**
@@ -149,18 +166,7 @@ EOT
                 $status,
             );
         }
-        $table = array_merge($rows, $table);
 
-        // Render table
-        $renderer = new Table($output);
-        $renderer->setStyle('compact');
-        $rendererStyle = $renderer->getStyle();
-        if (method_exists($rendererStyle, 'setVerticalBorderChars')) {
-            $rendererStyle->setVerticalBorderChars('');
-        } else {
-            $rendererStyle->setVerticalBorderChar('');
-        }
-        $rendererStyle->setCellRowContentFormat('%s  ');
-        $renderer->setRows($table)->render();
+        $this->renderTable($rows, $output);
     }
 }
