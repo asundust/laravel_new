@@ -56,12 +56,16 @@ class CurlDownloader
             'method' => CURLOPT_CUSTOMREQUEST,
             'content' => CURLOPT_POSTFIELDS,
             'header' => CURLOPT_HTTPHEADER,
+            'timeout' => CURLOPT_TIMEOUT,
         ),
         'ssl' => array(
             'cafile' => CURLOPT_CAINFO,
             'capath' => CURLOPT_CAPATH,
             'verify_peer' => CURLOPT_SSL_VERIFYPEER,
             'verify_peer_name' => CURLOPT_SSL_VERIFYHOST,
+            'local_cert' => CURLOPT_SSLCERT,
+            'local_pk' => CURLOPT_SSLKEY,
+            'passphrase' => CURLOPT_SSLKEYPASSWD,
         ),
     );
 
@@ -156,7 +160,6 @@ class CurlDownloader
 
         curl_setopt($curlHandle, CURLOPT_URL, $url);
         curl_setopt($curlHandle, CURLOPT_FOLLOWLOCATION, false);
-        //curl_setopt($curlHandle, CURLOPT_DNS_USE_GLOBAL_CACHE, false);
         curl_setopt($curlHandle, CURLOPT_CONNECTTIMEOUT, 10);
         curl_setopt($curlHandle, CURLOPT_TIMEOUT, 300);
         curl_setopt($curlHandle, CURLOPT_WRITEHEADER, $headerHandle);

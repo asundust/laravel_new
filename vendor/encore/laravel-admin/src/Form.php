@@ -478,8 +478,10 @@ class Form implements Renderable
         $relations = [];
 
         foreach ($inputs as $column => $value) {
-            if (method_exists($this->model, $column) ||
-                method_exists($this->model, $column = Str::camel($column))) {
+            if ((method_exists($this->model, $column) ||
+                method_exists($this->model, $column = Str::camel($column))) &&
+                !method_exists(Model::class, $column)
+            ) {
                 $relation = call_user_func([$this->model, $column]);
 
                 if ($relation instanceof Relations\Relation) {
@@ -1122,6 +1124,7 @@ class Form implements Renderable
                 list($relation) = explode('.', $column);
 
                 if (method_exists($this->model, $relation) &&
+                    !method_exists(Model::class, $relation) &&
                     $this->model->$relation() instanceof Relations\Relation
                 ) {
                     $relations[] = $relation;
@@ -1470,6 +1473,18 @@ class Form implements Renderable
     public function __set($name, $value)
     {
         return Arr::set($this->inputs, $name, $value);
+    }
+
+    /**
+     * __isset.
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function __isset($name)
+    {
+        return isset($this->inputs[$name]);
     }
 
     /**

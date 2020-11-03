@@ -445,6 +445,7 @@ The color coding is as such:
 * **--minor-only (-m):** Only shows packages that have minor SemVer-compatible updates.
 * **--format (-f):** Lets you pick between text (default) or json output format.
 * **--no-dev:** Do not show outdated dev dependencies.
+* **--locked:** Shows updates for packages from the lock file, regardless of what is currently in vendor dir.
 
 ## browse / home
 
@@ -606,6 +607,9 @@ you may have to run the command with `root` privileges
 ```sh
 sudo -H composer self-update
 ```
+
+If Composer was not installed as a PHAR, this command is not available.
+(This is sometimes the case when Composer was installed by an operating system package manager.)
 
 ### Options
 

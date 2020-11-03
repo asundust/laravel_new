@@ -125,8 +125,9 @@ class AuthHelper
             ) {
                 throw new TransportException('Could not authenticate against '.$origin, 401);
             }
-        } elseif ($origin === 'bitbucket.org') {
+        } elseif ($origin === 'bitbucket.org' || $origin === 'api.bitbucket.org') {
             $askForOAuthToken = true;
+            $origin = 'bitbucket.org';
             if ($this->io->hasAuthentication($origin)) {
                 $auth = $this->io->getAuthentication($origin);
                 if ($auth['username'] !== 'x-token-auth') {
@@ -228,9 +229,9 @@ class AuthHelper
                 $authenticationDisplayMessage = 'Using HTTP basic authentication with username "' . $auth['username'] . '"';
             }
 
-            if ($authenticationDisplayMessage && !in_array($origin, $this->displayedOriginAuthentications, true)) {
+            if ($authenticationDisplayMessage && (!isset($this->displayedOriginAuthentications[$origin]) || $this->displayedOriginAuthentications[$origin] !== $authenticationDisplayMessage)) {
                 $this->io->writeError($authenticationDisplayMessage, true, IOInterface::DEBUG);
-                $this->displayedOriginAuthentications[] = $origin;
+                $this->displayedOriginAuthentications[$origin] = $authenticationDisplayMessage;
             }
         } elseif (in_array($origin, array('api.bitbucket.org', 'api.github.com'), true)) {
             return $this->addAuthenticationHeader($headers, str_replace('api.', '', $origin), $url);

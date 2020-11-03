@@ -41,15 +41,6 @@
     Inspired by <a href="https://github.com/sleeping-owl/admin" target="_blank">SleepingOwlAdmin</a> and <a href="https://github.com/zofe/rapyd-laravel" target="_blank">rapyd-laravel</a>.
 </p>
 
-Sponsor
-------------
-[laravel-admin] is being sponsored by the following tool; please help to support us by taking a look and signing up to a free trial
-
-<a href="https://tracking.gitads.io/?repo=laravel-admin">
- <img src ="https://images.gitads.io/laravel-admin" alt="GitAds" />
-</a>
-
-
 Requirements
 ------------
  - PHP >= 7.0.0
@@ -117,6 +108,9 @@ The file `config/admin.php` contains an array of configurations, you can find th
 | [composer-viewer](https://github.com/laravel-admin-extensions/composer-viewer) | A web interface of composer packages in laravel.          |~1.6 |
 | [data-table](https://github.com/laravel-admin-extensions/data-table) | Advanced table widget for laravel-admin |~1.6 |
 | [watermark](https://github.com/laravel-admin-extensions/watermark) | Text watermark for laravel-admin |~1.6 |
+| [google-authenticator](https://github.com/ylic/laravel-admin-google-authenticator) | Google authenticator |~1.6 |
+
+
 
 ## Contributors
  This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].

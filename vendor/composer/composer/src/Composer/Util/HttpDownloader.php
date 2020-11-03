@@ -80,7 +80,27 @@ class HttpDownloader
         list($job) = $this->addJob(array('url' => $url, 'options' => $options, 'copyTo' => false), true);
         $this->wait($job['id']);
 
-        return $this->getResponse($job['id']);
+        $response = $this->getResponse($job['id']);
+
+        // check for failed curl response (empty body but successful looking response)
+        if (
+            $this->curl
+            && PHP_VERSION_ID < 70000
+            && $response->getBody() === null
+            && $response->getStatusCode() === 200
+            && $response->getHeader('content-length') !== '0'
+        ) {
+            $this->io->writeError('<warning>cURL downloader failed to return a response, disabling it and proceeding in slow mode.</warning>');
+
+            $this->curl = null;
+
+            list($job) = $this->addJob(array('url' => $url, 'options' => $options, 'copyTo' => false), true);
+            $this->wait($job['id']);
+
+            $response = $this->getResponse($job['id']);
+        }
+
+        return $response;
     }
 
     public function add($url, $options = array())
@@ -148,7 +168,7 @@ class HttpDownloader
 
         $rfs = $this->rfs;
 
-        if ($this->curl && preg_match('{^https?://}i', $job['request']['url'])) {
+        if ($this->canUseCurl($job)) {
             $resolver = function ($resolve, $reject) use (&$job) {
                 $job['status'] = HttpDownloader::STATUS_QUEUED;
                 $job['resolve'] = $resolve;
@@ -357,5 +377,50 @@ class HttpDownloader
 
             $io->writeError('<'.$type.'>'.ucfirst($type).' from '.$url.': '.$data[$type].'</'.$type.'>');
         }
+    }
+
+    public static function getExceptionHints(\Exception $e)
+    {
+        if (!$e instanceof TransportException) {
+            return;
+        }
+
+        if (
+            false !== strpos($e->getMessage(), 'Resolving timed out')
+            || false !== strpos($e->getMessage(), 'Could not resolve host')
+        ) {
+            Silencer::suppress();
+            $testConnectivity = file_get_contents('https://8.8.8.8', false, stream_context_create(array(
+                'ssl' => array('verify_peer' => false),
+                'http' => array('follow_location' => false, 'ignore_errors' => true)
+            )));
+            Silencer::restore();
+            if (false !== $testConnectivity) {
+                return array(
+                    '<error>The following exception probably indicates you have misconfigured DNS resolver(s)</error>'
+                );
+            }
+
+            return array(
+                '<error>The following exception probably indicates you are offline or have misconfigured DNS resolver(s)</error>'
+            );
+        }
+    }
+
+    private function canUseCurl(array $job)
+    {
+        if (!$this->curl) {
+            return false;
+        }
+
+        if (!preg_match('{^https?://}i', $job['request']['url'])) {
+            return false;
+        }
+
+        if (!empty($job['request']['options']['ssl']['allow_self_signed'])) {
+            return false;
+        }
+
+        return true;
     }
 }

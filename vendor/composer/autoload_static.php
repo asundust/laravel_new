@@ -31,7 +31,6 @@ class ComposerStaticInitf184658b4068cc02f7b22d6dee710e57
         '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
         '9cdd7b9056abc3081735233ba9dd9c7f' => __DIR__ . '/..' . '/facade/flare-client-php/src/helpers.php',
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
-        'b6ec61354e97f32c0ae683041c78392a' => __DIR__ . '/..' . '/scrivo/highlight.php/HighlightUtilities/functions.php',
         '4e8671d7be9056dcd04ddd9e8e15f9cc' => __DIR__ . '/..' . '/encore/laravel-admin/src/helpers.php',
         'ed962a97bd972bc82007176b647d4e36' => __DIR__ . '/..' . '/facade/ignition/src/helpers.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
@@ -666,17 +665,6 @@ class ComposerStaticInitf184658b4068cc02f7b22d6dee710e57
             'Mockery' => 
             array (
                 0 => __DIR__ . '/..' . '/mockery/mockery/library',
-            ),
-        ),
-        'H' => 
-        array (
-            'Highlight\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/scrivo/highlight.php',
-            ),
-            'HighlightUtilities\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/scrivo/highlight.php',
             ),
         ),
         'D' => 
@@ -2893,17 +2881,6 @@ class ComposerStaticInitf184658b4068cc02f7b22d6dee710e57
         'Hamcrest\\Type\\IsString' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Type/IsString.php',
         'Hamcrest\\Util' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Util.php',
         'Hamcrest\\Xml\\HasXPath' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Xml/HasXPath.php',
-        'Highlight\\Autoloader' => __DIR__ . '/..' . '/scrivo/highlight.php/Highlight/Autoloader.php',
-        'Highlight\\HighlightResult' => __DIR__ . '/..' . '/scrivo/highlight.php/Highlight/HighlightResult.php',
-        'Highlight\\Highlighter' => __DIR__ . '/..' . '/scrivo/highlight.php/Highlight/Highlighter.php',
-        'Highlight\\JsonRef' => __DIR__ . '/..' . '/scrivo/highlight.php/Highlight/JsonRef.php',
-        'Highlight\\Language' => __DIR__ . '/..' . '/scrivo/highlight.php/Highlight/Language.php',
-        'Highlight\\Mode' => __DIR__ . '/..' . '/scrivo/highlight.php/Highlight/Mode.php',
-        'Highlight\\ModeDeprecations' => __DIR__ . '/..' . '/scrivo/highlight.php/Highlight/ModeDeprecations.php',
-        'Highlight\\RegEx' => __DIR__ . '/..' . '/scrivo/highlight.php/Highlight/RegEx.php',
-        'Highlight\\RegExMatch' => __DIR__ . '/..' . '/scrivo/highlight.php/Highlight/RegExMatch.php',
-        'Highlight\\RegExUtils' => __DIR__ . '/..' . '/scrivo/highlight.php/Highlight/RegExUtils.php',
-        'Highlight\\Terminators' => __DIR__ . '/..' . '/scrivo/highlight.php/Highlight/Terminators.php',
         'Illuminate\\Auth\\Access\\AuthorizationException' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Auth/Access/AuthorizationException.php',
         'Illuminate\\Auth\\Access\\Gate' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Auth/Access/Gate.php',
         'Illuminate\\Auth\\Access\\HandlesAuthorization' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Auth/Access/HandlesAuthorization.php',

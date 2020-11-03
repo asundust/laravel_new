@@ -1,3 +1,17 @@
+### [2.0.4] 2020-10-30
+
+  * Fixed `check-platform-req` command not being clear on what packages are checked, and added a --lock flag to explicitly check the locked packages
+  * Fixed `config` & `create-project` adding of repositories to make sure they are prepended as order is much more important in Composer 2, also added a --append flag to `config` to restore the old behavior in the unlikely case this is needed
+  * Fixed curl downloader failing on old PHP releases or when using self-signed SSL certificates
+  * Fixed Bitbucket API authentication issue
+
+### [2.0.3] 2020-10-28
+
+  * Fixed bug in `outdated` command where dev packages with branch-aliases where always shown as being outdated
+  * Fixed issue in lock file interoperability with composer 1.x when using `dev-master as xxx` aliases
+  * Fixed new `--locked` option being missing from `outdated` command, for checking outdated packages directly from the lock file
+  * Fixed a few debug/error reporting strings
+
 ### [2.0.2] 2020-10-25
 
   * Fixed regression handling `composer show -s` in projects where no version can be guessed from VCS
@@ -100,6 +114,11 @@
   * Fixed package ordering when autoloading and especially when loading plugins, to make sure dependencies are loaded before their dependents
   * Fixed suggest output being very spammy, it now is only one line long and shows more rarely
   * Fixed conflict rules like e.g. >=5 from matching dev-master, as it is not normalized to 9999999-dev internally anymore
+
+### [1.10.17] 2020-10-30
+
+  * Fixed Bitbucket API authentication issue
+  * Fixed parsing of Composer 2 lock files breaking in some rare conditions
 
 ### [1.10.16] 2020-10-24
 
@@ -1014,6 +1033,8 @@
 
   * Initial release
 
+[2.0.4]: https://github.com/composer/composer/compare/2.0.3...2.0.4
+[2.0.3]: https://github.com/composer/composer/compare/2.0.2...2.0.3
 [2.0.2]: https://github.com/composer/composer/compare/2.0.1...2.0.2
 [2.0.1]: https://github.com/composer/composer/compare/2.0.0...2.0.1
 [2.0.0]: https://github.com/composer/composer/compare/2.0.0-RC2...2.0.0
@@ -1022,6 +1043,7 @@
 [2.0.0-alpha3]: https://github.com/composer/composer/compare/2.0.0-alpha2...2.0.0-alpha3
 [2.0.0-alpha2]: https://github.com/composer/composer/compare/2.0.0-alpha1...2.0.0-alpha2
 [2.0.0-alpha1]: https://github.com/composer/composer/compare/1.10.7...2.0.0-alpha1
+[1.10.17]: https://github.com/composer/composer/compare/1.10.16...1.10.17
 [1.10.16]: https://github.com/composer/composer/compare/1.10.15...1.10.16
 [1.10.15]: https://github.com/composer/composer/compare/1.10.14...1.10.15
 [1.10.14]: https://github.com/composer/composer/compare/1.10.13...1.10.14
