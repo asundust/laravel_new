@@ -57,6 +57,13 @@ class DemoOrder extends BaseModel
         3 => '全额退款',
     ];
 
+    const STATUS_LABEL = [
+        0 => 'default',
+        1 => 'success',
+        2 => 'warning',
+        3 => 'danger',
+    ];
+
     protected static function boot()
     {
         parent::boot();
