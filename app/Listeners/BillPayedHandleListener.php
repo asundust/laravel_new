@@ -2,7 +2,9 @@
 
 namespace App\Listeners;
 
-class BillPayedListener
+use App\Events\BillPayedEvent;
+
+class BillPayedHandleListener
 {
     /**
      * Create the event listener.
@@ -16,11 +18,9 @@ class BillPayedListener
     /**
      * Handle the event.
      *
-     * @param object $event
-     *
      * @return void
      */
-    public function handle($event)
+    public function handle(BillPayedEvent $event)
     {
         if (method_exists($event->bill->billable, 'handlePied')) {
             $event->bill->billable->handlePied($event->bill);

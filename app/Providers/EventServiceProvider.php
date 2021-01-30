@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Events\BillPayedEvent;
 use App\Events\BillRefundedEvent;
-use App\Listeners\BillPayedListener;
+use App\Listeners\BillPayedHandleListener;
 use App\Listeners\BillRefundedHandleListener;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -20,7 +20,7 @@ class EventServiceProvider extends ServiceProvider
         //     SendEmailVerificationNotification::class,
         // ],
         BillPayedEvent::class => [
-            BillPayedListener::class,
+            BillPayedHandleListener::class,
         ],
         BillRefundedEvent::class => [
             BillRefundedHandleListener::class,

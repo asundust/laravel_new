@@ -718,7 +718,7 @@ class ComposerStaticInitf184658b4068cc02f7b22d6dee710e57
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Http\\Service\\Pay\\AlipayService' => __DIR__ . '/../..' . '/app/Http/Service/Pay/AlipayService.php',
         'App\\Http\\Service\\Pay\\WechatPayService' => __DIR__ . '/../..' . '/app/Http/Service/Pay/WechatPayService.php',
-        'App\\Listeners\\BillPayedListener' => __DIR__ . '/../..' . '/app/Listeners/BillPayedListener.php',
+        'App\\Listeners\\BillPayedHandleListener' => __DIR__ . '/../..' . '/app/Listeners/BillPayedHandleListener.php',
         'App\\Listeners\\BillRefundedHandleListener' => __DIR__ . '/../..' . '/app/Listeners/BillRefundedHandleListener.php',
         'App\\Models\\Admin\\AdminConfig' => __DIR__ . '/../..' . '/app/Models/Admin/AdminConfig.php',
         'App\\Models\\BaseModel' => __DIR__ . '/../..' . '/app/Models/BaseModel.php',

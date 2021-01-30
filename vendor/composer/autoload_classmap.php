@@ -34,7 +34,7 @@ return array(
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
     'App\\Http\\Service\\Pay\\AlipayService' => $baseDir . '/app/Http/Service/Pay/AlipayService.php',
     'App\\Http\\Service\\Pay\\WechatPayService' => $baseDir . '/app/Http/Service/Pay/WechatPayService.php',
-    'App\\Listeners\\BillPayedListener' => $baseDir . '/app/Listeners/BillPayedListener.php',
+    'App\\Listeners\\BillPayedHandleListener' => $baseDir . '/app/Listeners/BillPayedHandleListener.php',
     'App\\Listeners\\BillRefundedHandleListener' => $baseDir . '/app/Listeners/BillRefundedHandleListener.php',
     'App\\Models\\Admin\\AdminConfig' => $baseDir . '/app/Models/Admin/AdminConfig.php',
     'App\\Models\\BaseModel' => $baseDir . '/app/Models/BaseModel.php',
