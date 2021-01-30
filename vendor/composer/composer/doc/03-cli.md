@@ -621,6 +621,9 @@ If Composer was not installed as a PHAR, this command is not available.
 * **--stable:** Force an update to the stable channel.
 * **--preview:** Force an update to the preview channel.
 * **--snapshot:** Force an update to the snapshot channel.
+* **--1:** Force an update to the stable channel, but only use 1.x versions
+* **--2:** Force an update to the stable channel, but only use 2.x versions
+* **--set-channel-only:** Only store the channel as the default one and then exit
 
 ## config
 
@@ -939,6 +942,8 @@ This env var controls the [`discard-changes`](06-config.md#discard-changes) conf
 The `COMPOSER_HOME` var allows you to change the Composer home directory. This
 is a hidden, global (per-user on the machine) directory that is shared between
 all projects.
+
+Use `composer config --global home` to see the location of the home directory.
 
 By default, it points to `C:\Users\<user>\AppData\Roaming\Composer` on Windows
 and `/Users/<user>/.composer` on macOS. On \*nix systems that follow the [XDG Base

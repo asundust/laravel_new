@@ -90,7 +90,12 @@ class JsonFile
                 $json = $this->httpDownloader->get($this->path)->getBody();
             } else {
                 if ($this->io && $this->io->isDebug()) {
-                    $this->io->writeError('Reading ' . $this->path);
+                    $realpathInfo = '';
+                    $realpath = realpath($this->path);
+                    if (false !== $realpath && $realpath !== $this->path) {
+                         $realpathInfo = ' (' . $realpath . ')';
+                    }
+                    $this->io->writeError('Reading ' . $this->path . $realpathInfo);
                 }
                 $json = file_get_contents($this->path);
             }
@@ -164,7 +169,7 @@ class JsonFile
     /**
      * Validates the schema of the current json file according to composer-schema.json rules
      *
-     * @param  int                     $schema a JsonFile::*_SCHEMA constant
+     * @param  int                     $schema     a JsonFile::*_SCHEMA constant
      * @param  string|null             $schemaFile a path to the schema file
      * @throws JsonValidationException
      * @return bool                    true on success

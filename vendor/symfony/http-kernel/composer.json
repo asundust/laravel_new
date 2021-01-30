@@ -1,7 +1,7 @@
 {
     "name": "symfony/http-kernel",
     "type": "library",
-    "description": "Symfony HttpKernel Component",
+    "description": "Provides a structured process for converting a Request into a Response",
     "keywords": [],
     "homepage": "https://symfony.com",
     "license": "MIT",
@@ -32,7 +32,7 @@
         "symfony/config": "^5.0",
         "symfony/console": "^4.4|^5.0",
         "symfony/css-selector": "^4.4|^5.0",
-        "symfony/dependency-injection": "^4.4|^5.0",
+        "symfony/dependency-injection": "^5.1.8",
         "symfony/dom-crawler": "^4.4|^5.0",
         "symfony/expression-language": "^4.4|^5.0",
         "symfony/finder": "^4.4|^5.0",
@@ -42,7 +42,7 @@
         "symfony/translation": "^4.4|^5.0",
         "symfony/translation-contracts": "^1.1|^2",
         "psr/cache": "~1.0",
-        "twig/twig": "^2.4|^3.0"
+        "twig/twig": "^2.13|^3.0.4"
     },
     "provide": {
         "psr/log-implementation": "1.0"
@@ -53,7 +53,7 @@
         "symfony/config": "<5.0",
         "symfony/console": "<4.4",
         "symfony/form": "<5.0",
-        "symfony/dependency-injection": "<4.4",
+        "symfony/dependency-injection": "<5.1.8",
         "symfony/doctrine-bridge": "<5.0",
         "symfony/http-client": "<5.0",
         "symfony/mailer": "<5.0",
@@ -61,7 +61,7 @@
         "symfony/translation": "<5.0",
         "symfony/twig-bridge": "<5.0",
         "symfony/validator": "<5.0",
-        "twig/twig": "<2.4"
+        "twig/twig": "<2.13"
     },
     "suggest": {
         "symfony/browser-kit": "",

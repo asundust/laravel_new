@@ -80,10 +80,9 @@ To fix this you need to open the file in an editor and fix the error. To find th
 your global `auth.json`, execute:
 
 ```sh
-composer config --global --list
+composer config --global home
 ```
 
-And look for the `[home]` section. (It is by default `~/.composer` or `%APPDATA%/Composer` on Windows)
 The folder will contain your global `auth.json` if it exists.
 
 You can open this file in your favorite editor and fix the error.
@@ -141,6 +140,9 @@ composer config [--global] --editor --auth
 For the inline http-basic authentication method the credentials are not stored in a separate
 `auth.json` in the project or globally, but in the `composer.json` or global configuration
 in the same place where the Composer repository definition is defined.
+
+Make sure that the username and password are encoded according to [RFC 3986](http://www.faqs.org/rfcs/rfc3986.html) (2.1. Percent-Encoding).
+If the username e.g. is an email address it needs to be passed as `name%40example.com`.
 
 ### Command line inline http-basic
 

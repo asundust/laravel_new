@@ -19,6 +19,7 @@ use Composer\IO\IOInterface;
 use Composer\Plugin\CommandEvent;
 use Composer\Plugin\PluginEvents;
 use Composer\Package\Version\VersionParser;
+use Composer\Util\HttpDownloader;
 use Composer\Semver\Constraint\MultiConstraint;
 use Composer\Package\Link;
 use Symfony\Component\Console\Helper\Table;
@@ -114,6 +115,10 @@ EOT
 
         $composer = $this->getComposer(true, $input->getOption('no-plugins'));
 
+        if (!HttpDownloader::isCurlEnabled()) {
+            $io->writeError('<warning>Composer is operating significantly slower than normal because you do not have the PHP curl extension enabled.</warning>');
+        }
+
         $packages = $input->getArgument('packages');
         $reqs = $this->formatRequirements($input->getOption('with'));
 
@@ -175,6 +180,7 @@ EOT
 
         if ($updateMirrors && !empty($packages)) {
             $io->writeError('<error>You cannot simultaneously update only a selection of packages and regenerate the lock file metadata.</error>');
+
             return -1;
         }
 
@@ -299,6 +305,7 @@ EOT
         $oldPrettyString = $link->getConstraint()->getPrettyString();
         $newConstraint = MultiConstraint::create(array($link->getConstraint(), $parser->parseConstraints($constraint)));
         $newConstraint->setPrettyString($oldPrettyString.', '.$constraint);
+
         return new Link(
             $link->getSource(),
             $link->getTarget(),

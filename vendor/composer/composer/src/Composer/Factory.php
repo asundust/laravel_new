@@ -85,7 +85,7 @@ class Factory
 
         // select first dir which exists of: $XDG_CONFIG_HOME/composer or ~/.composer
         foreach ($dirs as $dir) {
-            if (is_dir($dir)) {
+            if (Silencer::call('is_dir', $dir)) {
                 return $dir;
             }
         }
@@ -295,7 +295,7 @@ class Factory
                 } else {
                     $message = 'Composer could not find the config file: '.$localConfig;
                 }
-                $instructions = 'To initialize a project, please create a composer.json file as described in the https://getcomposer.org/ "Getting Started" section';
+                $instructions = $fullLoad ? 'To initialize a project, please create a composer.json file as described in the https://getcomposer.org/ "Getting Started" section' : '';
                 throw new \InvalidArgumentException($message.PHP_EOL.$instructions);
             }
 
@@ -315,7 +315,7 @@ class Factory
         $config = static::createConfig($io, $cwd);
         $config->merge($localConfig);
         if (isset($composerFile)) {
-            $io->writeError('Loading config file ' . $composerFile, true, IOInterface::DEBUG);
+            $io->writeError('Loading config file ' . $composerFile .' ('.realpath($composerFile).')', true, IOInterface::DEBUG);
             $config->setConfigSource(new JsonConfigSource(new JsonFile(realpath($composerFile), null, $io)));
 
             $localAuthFile = new JsonFile(dirname(realpath($composerFile)) . '/auth.json', null, $io);
@@ -335,6 +335,11 @@ class Factory
         if ($fullLoad) {
             // load auth configs into the IO instance
             $io->loadConfiguration($config);
+
+            // load existing Composer\InstalledVersions instance if available
+            if (!class_exists('Composer\InstalledVersions', false) && file_exists($installedVersionsPath = $config->get('vendor-dir').'/composer/InstalledVersions.php')) {
+                include $installedVersionsPath;
+            }
         }
 
         $httpDownloader = self::createHttpDownloader($io, $config);
@@ -422,8 +427,8 @@ class Factory
     }
 
     /**
-     * @param  IOInterface $io             IO instance
-     * @param  bool        $disablePlugins Whether plugins should not be loaded
+     * @param  IOInterface   $io             IO instance
+     * @param  bool          $disablePlugins Whether plugins should not be loaded
      * @return Composer|null
      */
     public static function createGlobal(IOInterface $io, $disablePlugins = false)
@@ -593,9 +598,9 @@ class Factory
     /**
      * If you are calling this in a plugin, you probably should instead use $composer->getLoop()->getHttpDownloader()
      *
-     * @param  IOInterface      $io      IO instance
-     * @param  Config           $config  Config instance
-     * @param  array            $options Array of options passed directly to HttpDownloader constructor
+     * @param  IOInterface    $io      IO instance
+     * @param  Config         $config  Config instance
+     * @param  array          $options Array of options passed directly to HttpDownloader constructor
      * @return HttpDownloader
      */
     public static function createHttpDownloader(IOInterface $io, Config $config, $options = array())
@@ -654,7 +659,7 @@ class Factory
             }
         }
 
-        if (is_dir('/etc/xdg')) {
+        if (Silencer::call('is_dir', '/etc/xdg')) {
             return true;
         }
 

@@ -79,32 +79,32 @@ class LoggerDataCollector extends DataCollector implements LateDataCollectorInte
 
     public function getLogs()
     {
-        return isset($this->data['logs']) ? $this->data['logs'] : [];
+        return $this->data['logs'] ?? [];
     }
 
     public function getPriorities()
     {
-        return isset($this->data['priorities']) ? $this->data['priorities'] : [];
+        return $this->data['priorities'] ?? [];
     }
 
     public function countErrors()
     {
-        return isset($this->data['error_count']) ? $this->data['error_count'] : 0;
+        return $this->data['error_count'] ?? 0;
     }
 
     public function countDeprecations()
     {
-        return isset($this->data['deprecation_count']) ? $this->data['deprecation_count'] : 0;
+        return $this->data['deprecation_count'] ?? 0;
     }
 
     public function countWarnings()
     {
-        return isset($this->data['warning_count']) ? $this->data['warning_count'] : 0;
+        return $this->data['warning_count'] ?? 0;
     }
 
     public function countScreams()
     {
-        return isset($this->data['scream_count']) ? $this->data['scream_count'] : 0;
+        return $this->data['scream_count'] ?? 0;
     }
 
     public function getCompilerLogs()
@@ -122,7 +122,7 @@ class LoggerDataCollector extends DataCollector implements LateDataCollectorInte
 
     private function getContainerDeprecationLogs(): array
     {
-        if (null === $this->containerPathPrefix || !file_exists($file = $this->containerPathPrefix.'Deprecations.log')) {
+        if (null === $this->containerPathPrefix || !is_file($file = $this->containerPathPrefix.'Deprecations.log')) {
             return [];
         }
 
@@ -148,7 +148,7 @@ class LoggerDataCollector extends DataCollector implements LateDataCollectorInte
 
     private function getContainerCompilerLogs(string $compilerLogsFilepath = null): array
     {
-        if (!file_exists($compilerLogsFilepath)) {
+        if (!is_file($compilerLogsFilepath)) {
             return [];
         }
 

@@ -89,6 +89,7 @@ return [
         'string'  => 'Pole :attribute musi mieć przynajmniej :min znaków.',
         'array'   => 'Pole :attribute musi mieć przynajmniej :min elementów.',
     ],
+    'multiple_of'          => 'Pole :attribute musi być wielokrotnością wartości :value',
     'not_in'               => 'Zaznaczony :attribute jest nieprawidłowy.',
     'not_regex'            => 'Format pola :attribute jest nieprawidłowy.',
     'numeric'              => 'Pole :attribute musi być liczbą.',

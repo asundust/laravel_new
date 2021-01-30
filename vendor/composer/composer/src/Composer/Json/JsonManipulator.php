@@ -20,13 +20,13 @@ use Composer\Repository\PlatformRepository;
 class JsonManipulator
 {
     private static $DEFINES = '(?(DEFINE)
-       (?<number>   -? (?= [1-9]|0(?!\d) ) \d+ (\.\d+)? ([eE] [+-]? \d+)? )
+       (?<number>    -? (?= [1-9]|0(?!\d) ) \d++ (\.\d++)? ([eE] [+-]?+ \d++)? )
        (?<boolean>   true | false | null )
-       (?<string>    " ([^"\\\\]* | \\\\ ["\\\\bfnrt\/] | \\\\ u [0-9A-Fa-f]{4} )* " )
-       (?<array>     \[  (?:  (?&json) \s* (?: , (?&json) \s* )*  )?  \s* \] )
-       (?<pair>      \s* (?&string) \s* : (?&json) \s* )
-       (?<object>    \{  (?:  (?&pair)  (?: , (?&pair)  )*  )?  \s* \} )
-       (?<json>   \s* (?: (?&number) | (?&boolean) | (?&string) | (?&array) | (?&object) ) )
+       (?<string>    " ([^"\\\\]*+ | \\\\ ["\\\\bfnrt\/] | \\\\ u [0-9A-Fa-f]{4} )* " )
+       (?<array>     \[  (?:  (?&json) \s*+ (?: , (?&json) \s*+ )*+  )?+  \s*+ \] )
+       (?<pair>      \s*+ (?&string) \s*+ : (?&json) \s*+ )
+       (?<object>    \{  (?:  (?&pair)  (?: , (?&pair)  )*+  )?+  \s*+ \} )
+       (?<json>      \s*+ (?: (?&number) | (?&boolean) | (?&string) | (?&array) | (?&object) ) )
     )';
 
     private $contents;
@@ -478,6 +478,21 @@ class JsonManipulator
         }
 
         return false;
+    }
+
+    public function removeMainKeyIfEmpty($key)
+    {
+        $decoded = JsonFile::parseJson($this->contents);
+
+        if (!array_key_exists($key, $decoded)) {
+            return true;
+        }
+
+        if (is_array($decoded[$key]) && count($decoded[$key]) === 0) {
+            return $this->removeMainKey($key);
+        }
+
+        return true;
     }
 
     public function format($data, $depth = 0)
