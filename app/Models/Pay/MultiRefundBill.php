@@ -5,7 +5,6 @@ namespace App\Models\Pay;
 use App\Events\BillRefundedEvent;
 use App\Models\BaseModel;
 use Eloquent;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 
 /**

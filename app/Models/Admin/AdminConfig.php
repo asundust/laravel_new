@@ -4,7 +4,6 @@ namespace App\Models\Admin;
 
 use Eloquent;
 use Encore\Admin\Config\ConfigModel;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 
 /**

@@ -5,7 +5,6 @@ namespace App\Models\Pay;
 use App\Models\BaseModel;
 use App\Models\BaseModelTrait;
 use Eloquent;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -100,18 +99,14 @@ class DemoOrder extends BaseModel
 
     /**
      * 获取支付结果页面链接.
-     *
-     * @return string
      */
-    public function payResultUrl():string
+    public function payResultUrl(): string
     {
         return route('web.pay_result', ['id' => $this->id]);
     }
 
     /**
      * 支付成功处理.
-     *
-     * @param MultiBill $bill
      */
     public function handlePied(MultiBill $bill)
     {
@@ -134,8 +129,6 @@ class DemoOrder extends BaseModel
 
     /**
      * 退款处理.
-     *
-     * @param MultiBill $bill
      */
     public function handleRefunded(MultiBill $bill)
     {
