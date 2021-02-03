@@ -29,9 +29,9 @@ if (!function_exists('pl')) {
             $path = $name;
         }
         config([
-            'logging.channels.' . $path . '_' . $name => [
+            'logging.channels.'.$path.'_'.$name => [
                 'driver' => 'daily',
-                'path' => storage_path('logs/' . $path . '/' . $name . '.log'),
+                'path' => storage_path('logs/'.$path.'/'.$name.'.log'),
                 'level' => 'debug',
                 'days' => $max,
             ],
@@ -45,10 +45,10 @@ if (!function_exists('pl')) {
             }
         }
         if (!is_array($message)) {
-            logger()->channel($path . '_' . $name)->info($type . PHP_EOL . $message);
+            logger()->channel($path.'_'.$name)->info($type.PHP_EOL.$message);
         } else {
-            logger()->channel($path . '_' . $name)->info($type);
-            logger()->channel($path . '_' . $name)->info($message);
+            logger()->channel($path.'_'.$name)->info($type);
+            logger()->channel($path.'_'.$name)->info($message);
         }
     }
 }
@@ -115,7 +115,7 @@ if (!function_exists('sc_send')) {
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
             ],
-        ]))->post('https://sc.ftqq.com/' . $key . '.send', [
+        ]))->post('https://sc.ftqq.com/'.$key.'.send', [
             'form_params' => [
                 'text' => $text,
                 'desp' => $desc,
