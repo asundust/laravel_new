@@ -5,7 +5,6 @@ namespace App\Models\Pay;
 use App\Models\BaseModel;
 use App\Models\BaseModelTrait;
 use Eloquent;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
