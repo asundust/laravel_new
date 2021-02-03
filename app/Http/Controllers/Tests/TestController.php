@@ -9,12 +9,16 @@ class TestController extends Controller
 {
     use WechatTrait;
 
+    const ALLOW_LISTS = [
+        'wechatOauthTest',
+    ];
+
     /**
      * TestController constructor.
      */
     public function __construct()
     {
-        if (app()->isProduction() && in_array(__FUNCTION__, ['wechatOauthTest'])) {
+        if (app()->isProduction() && in_array(__FUNCTION__, self::ALLOW_LISTS)) {
             abort(404);
         }
     }
