@@ -13,6 +13,8 @@ use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -45,25 +47,6 @@ use Illuminate\Support\Facades\DB;
  * @property mixed                        $status_name
  * @property Collection|MultiRefundBill[] $refundBills
  * @property int|null                     $refund_bills_count
- *
- * @method static Builder|MultiBill newModelQuery()
- * @method static Builder|MultiBill newQuery()
- * @method static Builder|MultiBill query()
- * @method static Builder|MultiBill whereBillStatus($value)
- * @method static Builder|MultiBill whereBillableId($value)
- * @method static Builder|MultiBill whereBillableType($value)
- * @method static Builder|MultiBill whereCreatedAt($value)
- * @method static Builder|MultiBill whereId($value)
- * @method static Builder|MultiBill whereOpenid($value)
- * @method static Builder|MultiBill wherePayAmount($value)
- * @method static Builder|MultiBill wherePayAt($value)
- * @method static Builder|MultiBill wherePayNo($value)
- * @method static Builder|MultiBill wherePayServiceNo($value)
- * @method static Builder|MultiBill wherePayStatus($value)
- * @method static Builder|MultiBill wherePayWay($value)
- * @method static Builder|MultiBill whereTitle($value)
- * @method static Builder|MultiBill whereUpdatedAt($value)
- * @method static Builder|MultiBill whereUserId($value)
  * @mixin Eloquent
  */
 class MultiBill extends BaseModel
@@ -111,9 +94,15 @@ class MultiBill extends BaseModel
         });
     }
 
-    public function billable()
+    public function billable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    // 关联退款表
+    public function refundBills(): HasMany
+    {
+        return $this->hasMany(MultiRefundBill::class, 'multi_bill_id');
     }
 
     // 支付方式名称 pay_way_name
@@ -138,12 +127,6 @@ class MultiBill extends BaseModel
     public function getPayStatusNameAttribute()
     {
         return self::PAY_STATUS[$this->pay_status] ?? '';
-    }
-
-    // 关联退款表
-    public function refundBills()
-    {
-        return $this->hasMany(MultiRefundBill::class, 'multi_bill_id');
     }
 
     // 已退款的金额 refunded_amount

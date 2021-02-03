@@ -263,3 +263,34 @@ if (!function_exists('admin_switch_arr')) {
         ];
     }
 }
+
+if (!function_exists('money_show')) {
+    /**
+     * 金额格式化.
+     *
+     * @param int|string $money  金额数
+     * @param int        $number 小数位数
+     *
+     * @return string
+     */
+    function money_show($money, $number = 2)
+    {
+        if (null == $money || '' == $money) {
+            return '0.00';
+        }
+
+        return sprintf('%01.' . $number . 'f', $money);
+    }
+}
+
+if (!function_exists('is_wechat')) {
+    /**
+     * 判断是否是微信访问.
+     *
+     * @return bool
+     */
+    function is_wechat()
+    {
+        return false !== strpos(\Jenssegers\Agent\Facades\Agent::getUserAgent(), 'MicroMessenger');
+    }
+}

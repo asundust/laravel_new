@@ -22,19 +22,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property mixed       $refund_status_name
  * @property mixed       $status_name
- *
- * @method static Builder|MultiRefundBill newModelQuery()
- * @method static Builder|MultiRefundBill newQuery()
- * @method static Builder|MultiRefundBill query()
- * @method static Builder|MultiRefundBill whereCreatedAt($value)
- * @method static Builder|MultiRefundBill whereId($value)
- * @method static Builder|MultiRefundBill whereMultiBillId($value)
- * @method static Builder|MultiRefundBill whereRefundAmount($value)
- * @method static Builder|MultiRefundBill whereRefundAt($value)
- * @method static Builder|MultiRefundBill whereRefundNo($value)
- * @method static Builder|MultiRefundBill whereRefundServiceNo($value)
- * @method static Builder|MultiRefundBill whereRefundStatus($value)
- * @method static Builder|MultiRefundBill whereUpdatedAt($value)
  * @mixin Eloquent
  */
 class MultiRefundBill extends BaseModel

@@ -7,6 +7,8 @@ use App\Models\BaseModelTrait;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 
@@ -31,19 +33,6 @@ use Illuminate\Support\Facades\Cache;
  * @property mixed                  $refunded_amount
  * @property mixed                  $refunding_amount
  * @property mixed                  $status_name
- *
- * @method static Builder|DemoOrder newModelQuery()
- * @method static Builder|DemoOrder newQuery()
- * @method static Builder|DemoOrder query()
- * @method static Builder|DemoOrder whereCreatedAt($value)
- * @method static Builder|DemoOrder whereId($value)
- * @method static Builder|DemoOrder whereNumber($value)
- * @method static Builder|DemoOrder wherePayAt($value)
- * @method static Builder|DemoOrder wherePrice($value)
- * @method static Builder|DemoOrder whereStatus($value)
- * @method static Builder|DemoOrder whereTitle($value)
- * @method static Builder|DemoOrder whereUpdatedAt($value)
- * @method static Builder|DemoOrder whereUserId($value)
  * @mixin Eloquent
  */
 class DemoOrder extends BaseModel
@@ -70,17 +59,17 @@ class DemoOrder extends BaseModel
         });
     }
 
-    public function bills()
+    public function bills(): MorphMany
     {
         return $this->morphMany(MultiBill::class, 'billable');
     }
 
-    public function bill()
+    public function bill(): MorphOne
     {
         return $this->morphOne(MultiBill::class, 'billable')->latest();
     }
 
-    public function billed()
+    public function billed(): MorphOne
     {
         return $this->morphOne(MultiBill::class, 'billable')->where('bill_status', 1)->latest();
     }
@@ -114,7 +103,7 @@ class DemoOrder extends BaseModel
      *
      * @return string
      */
-    public function payResultUrl()
+    public function payResultUrl():string
     {
         return route('web.pay_result', ['id' => $this->id]);
     }
@@ -124,7 +113,7 @@ class DemoOrder extends BaseModel
      *
      * @param MultiBill $bill
      */
-    public function handlePied($bill)
+    public function handlePied(MultiBill $bill)
     {
         Cache::put('DemoOrder'.$this->id, 1, 600);
         $this->update([
@@ -148,7 +137,7 @@ class DemoOrder extends BaseModel
      *
      * @param MultiBill $bill
      */
-    public function handleRefunded($bill)
+    public function handleRefunded(MultiBill $bill)
     {
         if (5 == $bill->pay_status) {
             $this->status = 2;

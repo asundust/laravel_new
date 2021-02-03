@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 // 测试
-Route::get('t/{name?}', 'Tests\TestController@test');
+Route::get('t/{fun?}', 'Tests\TestController@t');
+Route::get('wechatOauthTest', 'Tests\TestController@wechatOauthTest')->middleware(['wechat.oauth:default,snsapi_base']); // 微信授权测试
 
 // 主页
 Route::get('/', function () {

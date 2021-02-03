@@ -1792,6 +1792,58 @@
         ]
     },
     {
+        "name": "easywechat-composer/easywechat-composer",
+        "version": "1.4.0",
+        "version_normalized": "1.4.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/mingyoung/easywechat-composer.git",
+            "reference": "93cfce1ec842b9a5b1b0791a52afd18b833f114a"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/mingyoung/easywechat-composer/zipball/93cfce1ec842b9a5b1b0791a52afd18b833f114a",
+            "reference": "93cfce1ec842b9a5b1b0791a52afd18b833f114a",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "composer-plugin-api": "^1.0 || ^2.0",
+            "php": ">=7.0"
+        },
+        "require-dev": {
+            "composer/composer": "^1.0 || ^2.0",
+            "phpunit/phpunit": "^6.5 || ^7.0"
+        },
+        "time": "2020-07-23T11:06:47+00:00",
+        "type": "composer-plugin",
+        "extra": {
+            "class": "EasyWeChatComposer\\Plugin"
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "EasyWeChatComposer\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "张铭阳",
+                "email": "mingyoungcheung@gmail.com"
+            }
+        ],
+        "description": "The composer plugin for EasyWeChat"
+    },
+    {
         "name": "egulias/email-validator",
         "version": "2.1.25",
         "version_normalized": "2.1.25.0",
@@ -2012,17 +2064,17 @@
     },
     {
         "name": "facade/ignition",
-        "version": "2.5.9",
-        "version_normalized": "2.5.9.0",
+        "version": "2.5.10",
+        "version_normalized": "2.5.10.0",
         "source": {
             "type": "git",
             "url": "https://github.com/facade/ignition.git",
-            "reference": "66b3138ecce38024723fb3bfc66ef8852a779ea9"
+            "reference": "98154e8b991fb616304c213cd405299ffedc26f5"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/facade/ignition/zipball/66b3138ecce38024723fb3bfc66ef8852a779ea9",
-            "reference": "66b3138ecce38024723fb3bfc66ef8852a779ea9",
+            "url": "https://api.github.com/repos/facade/ignition/zipball/98154e8b991fb616304c213cd405299ffedc26f5",
+            "reference": "98154e8b991fb616304c213cd405299ffedc26f5",
             "shasum": "",
             "mirrors": [
                 {
@@ -2052,7 +2104,7 @@
         "suggest": {
             "laravel/telescope": "^3.1"
         },
-        "time": "2021-01-26T14:45:19+00:00",
+        "time": "2021-02-02T10:15:48+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -4575,6 +4627,225 @@
         ]
     },
     {
+        "name": "overtrue/laravel-wechat",
+        "version": "5.1.0",
+        "version_normalized": "5.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/overtrue/laravel-wechat.git",
+            "reference": "1bc59aa52cf6bae2f4f388e9f20f7893305f2fe8"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/overtrue/laravel-wechat/zipball/1bc59aa52cf6bae2f4f388e9f20f7893305f2fe8",
+            "reference": "1bc59aa52cf6bae2f4f388e9f20f7893305f2fe8",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "illuminate/container": "^5.1 || ^6.0 || ^7.0 || ^8.0",
+            "overtrue/wechat": "^4.0"
+        },
+        "require-dev": {
+            "friendsofphp/php-cs-fixer": "^2.16",
+            "laravel/framework": "^8.5"
+        },
+        "time": "2020-09-27T08:32:30+00:00",
+        "type": "library",
+        "extra": {
+            "laravel": {
+                "providers": [
+                    "Overtrue\\LaravelWeChat\\ServiceProvider"
+                ],
+                "aliases": {
+                    "EasyWeChat": "Overtrue\\LaravelWeChat\\Facade"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Overtrue\\LaravelWeChat\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "overtrue",
+                "email": "anzhengchao@gmail.com"
+            }
+        ],
+        "description": "微信 SDK for Laravel",
+        "keywords": [
+            "laravel",
+            "sdk",
+            "wechat",
+            "weixin"
+        ]
+    },
+    {
+        "name": "overtrue/socialite",
+        "version": "2.0.23",
+        "version_normalized": "2.0.23.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/overtrue/socialite.git",
+            "reference": "0bc60597b589592243f074a4d9016aabd2e9cfb2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/overtrue/socialite/zipball/0bc60597b589592243f074a4d9016aabd2e9cfb2",
+            "reference": "0bc60597b589592243f074a4d9016aabd2e9cfb2",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "ext-json": "*",
+            "guzzlehttp/guzzle": "^5.0|^6.0|^7.0",
+            "php": ">=5.6",
+            "symfony/http-foundation": "^2.7|^3.0|^4.0|^5.0"
+        },
+        "require-dev": {
+            "mockery/mockery": "~1.2",
+            "phpunit/phpunit": "~6"
+        },
+        "time": "2020-12-14T03:30:08+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Overtrue\\Socialite\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "overtrue",
+                "email": "anzhengchao@gmail.com"
+            }
+        ],
+        "description": "A collection of OAuth 2 packages that extracts from laravel/socialite.",
+        "keywords": [
+            "login",
+            "oauth",
+            "qq",
+            "social",
+            "wechat",
+            "weibo"
+        ],
+        "funding": [
+            {
+                "url": "https://www.patreon.com/overtrue",
+                "type": "patreon"
+            }
+        ]
+    },
+    {
+        "name": "overtrue/wechat",
+        "version": "4.4.0",
+        "version_normalized": "4.4.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/w7corp/easywechat.git",
+            "reference": "20bdd3fe8056ee9297692caf53bd131be8079ee6"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/w7corp/easywechat/zipball/20bdd3fe8056ee9297692caf53bd131be8079ee6",
+            "reference": "20bdd3fe8056ee9297692caf53bd131be8079ee6",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "easywechat-composer/easywechat-composer": "^1.1",
+            "ext-fileinfo": "*",
+            "ext-openssl": "*",
+            "ext-simplexml": "*",
+            "guzzlehttp/guzzle": "^6.2 || ^7.0",
+            "monolog/monolog": "^1.22 || ^2.0",
+            "overtrue/socialite": "~2.0",
+            "php": ">=7.2",
+            "pimple/pimple": "^3.0",
+            "psr/simple-cache": "^1.0",
+            "symfony/cache": "^3.3 || ^4.3 || ^5.0",
+            "symfony/event-dispatcher": "^4.3 || ^5.0",
+            "symfony/http-foundation": "^2.7 || ^3.0 || ^4.0 || ^5.0",
+            "symfony/psr-http-message-bridge": "^0.3 || ^1.0 || ^2.0"
+        },
+        "require-dev": {
+            "friendsofphp/php-cs-fixer": "^2.15",
+            "mikey179/vfsstream": "^1.6",
+            "mockery/mockery": "^1.2.3",
+            "phpstan/phpstan": "^0.12.0",
+            "phpunit/phpunit": "^7.5"
+        },
+        "time": "2020-12-30T06:39:40+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "EasyWeChat\\": "src/"
+            },
+            "files": [
+                "src/Kernel/Support/Helpers.php",
+                "src/Kernel/Helpers.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "overtrue",
+                "email": "anzhengchao@gmail.com"
+            }
+        ],
+        "description": "微信SDK",
+        "keywords": [
+            "easywechat",
+            "sdk",
+            "wechat",
+            "weixin",
+            "weixin-sdk"
+        ],
+        "funding": [
+            {
+                "url": "https://www.easywechat.com/img/pay/wechat.jpg",
+                "type": "custom"
+            },
+            {
+                "url": "https://github.com/overtrue",
+                "type": "github"
+            },
+            {
+                "url": "https://www.patreon.com/overtrue",
+                "type": "patreon"
+            }
+        ]
+    },
+    {
         "name": "phar-io/manifest",
         "version": "2.0.1",
         "version_normalized": "2.0.1.0",
@@ -5337,17 +5608,17 @@
     },
     {
         "name": "phpunit/phpunit",
-        "version": "9.5.1",
-        "version_normalized": "9.5.1.0",
+        "version": "9.5.2",
+        "version_normalized": "9.5.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/sebastianbergmann/phpunit.git",
-            "reference": "e7bdf4085de85a825f4424eae52c99a1cec2f360"
+            "reference": "f661659747f2f87f9e72095bb207bceb0f151cb4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e7bdf4085de85a825f4424eae52c99a1cec2f360",
-            "reference": "e7bdf4085de85a825f4424eae52c99a1cec2f360",
+            "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f661659747f2f87f9e72095bb207bceb0f151cb4",
+            "reference": "f661659747f2f87f9e72095bb207bceb0f151cb4",
             "shasum": "",
             "mirrors": [
                 {
@@ -5394,7 +5665,7 @@
             "ext-soap": "*",
             "ext-xdebug": "*"
         },
-        "time": "2021-01-17T07:42:25+00:00",
+        "time": "2021-02-02T14:45:58+00:00",
         "bin": [
             "phpunit"
         ],
@@ -5440,6 +5711,118 @@
                 "url": "https://github.com/sebastianbergmann",
                 "type": "github"
             }
+        ]
+    },
+    {
+        "name": "pimple/pimple",
+        "version": "v3.3.1",
+        "version_normalized": "3.3.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/silexphp/Pimple.git",
+            "reference": "21e45061c3429b1e06233475cc0e1f6fc774d5b0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/silexphp/Pimple/zipball/21e45061c3429b1e06233475cc0e1f6fc774d5b0",
+            "reference": "21e45061c3429b1e06233475cc0e1f6fc774d5b0",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "php": ">=7.2.5",
+            "psr/container": "^1.0"
+        },
+        "require-dev": {
+            "symfony/phpunit-bridge": "^5.0"
+        },
+        "time": "2020-11-24T20:35:42+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.3.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Pimple": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            }
+        ],
+        "description": "Pimple, a simple Dependency Injection Container",
+        "homepage": "https://pimple.symfony.com",
+        "keywords": [
+            "container",
+            "dependency injection"
+        ]
+    },
+    {
+        "name": "psr/cache",
+        "version": "1.0.1",
+        "version_normalized": "1.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/php-fig/cache.git",
+            "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/php-fig/cache/zipball/d11b50ad223250cf17b86e38383413f5a6764bf8",
+            "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2016-08-06T20:24:11+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Psr\\Cache\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "PHP-FIG",
+                "homepage": "http://www.php-fig.org/"
+            }
+        ],
+        "description": "Common interface for caching libraries",
+        "keywords": [
+            "cache",
+            "psr",
+            "psr-6"
         ]
     },
     {
@@ -7436,18 +7819,202 @@
         ]
     },
     {
-        "name": "symfony/console",
-        "version": "v5.2.2",
-        "version_normalized": "5.2.2.0",
+        "name": "symfony/cache",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/symfony/console.git",
-            "reference": "d62ec79478b55036f65e2602e282822b8eaaff0a"
+            "url": "https://github.com/symfony/cache.git",
+            "reference": "d6aed6c1bbf6f59e521f46437475a0ff4878d388"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/console/zipball/d62ec79478b55036f65e2602e282822b8eaaff0a",
-            "reference": "d62ec79478b55036f65e2602e282822b8eaaff0a",
+            "url": "https://api.github.com/repos/symfony/cache/zipball/d6aed6c1bbf6f59e521f46437475a0ff4878d388",
+            "reference": "d6aed6c1bbf6f59e521f46437475a0ff4878d388",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "php": ">=7.2.5",
+            "psr/cache": "~1.0",
+            "psr/log": "^1.1",
+            "symfony/cache-contracts": "^1.1.7|^2",
+            "symfony/polyfill-php80": "^1.15",
+            "symfony/service-contracts": "^1.1|^2",
+            "symfony/var-exporter": "^4.4|^5.0"
+        },
+        "conflict": {
+            "doctrine/dbal": "<2.10",
+            "symfony/dependency-injection": "<4.4",
+            "symfony/http-kernel": "<4.4",
+            "symfony/var-dumper": "<4.4"
+        },
+        "provide": {
+            "psr/cache-implementation": "1.0",
+            "psr/simple-cache-implementation": "1.0",
+            "symfony/cache-implementation": "1.0"
+        },
+        "require-dev": {
+            "cache/integration-tests": "dev-master",
+            "doctrine/cache": "^1.6",
+            "doctrine/dbal": "^2.10|^3.0",
+            "predis/predis": "^1.1",
+            "psr/simple-cache": "^1.0",
+            "symfony/config": "^4.4|^5.0",
+            "symfony/dependency-injection": "^4.4|^5.0",
+            "symfony/filesystem": "^4.4|^5.0",
+            "symfony/http-kernel": "^4.4|^5.0",
+            "symfony/messenger": "^4.4|^5.0",
+            "symfony/var-dumper": "^4.4|^5.0"
+        },
+        "time": "2021-01-27T11:24:50+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Component\\Cache\\": ""
+            },
+            "exclude-from-classmap": [
+                "/Tests/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Nicolas Grekas",
+                "email": "p@tchwork.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Provides an extended PSR-6, PSR-16 (and tags) implementation",
+        "homepage": "https://symfony.com",
+        "keywords": [
+            "caching",
+            "psr6"
+        ],
+        "funding": [
+            {
+                "url": "https://symfony.com/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https://github.com/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                "type": "tidelift"
+            }
+        ]
+    },
+    {
+        "name": "symfony/cache-contracts",
+        "version": "v2.2.0",
+        "version_normalized": "2.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/cache-contracts.git",
+            "reference": "8034ca0b61d4dd967f3698aaa1da2507b631d0cb"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/cache-contracts/zipball/8034ca0b61d4dd967f3698aaa1da2507b631d0cb",
+            "reference": "8034ca0b61d4dd967f3698aaa1da2507b631d0cb",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "php": ">=7.2.5",
+            "psr/cache": "^1.0"
+        },
+        "suggest": {
+            "symfony/cache-implementation": ""
+        },
+        "time": "2020-09-07T11:33:47+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.2-dev"
+            },
+            "thanks": {
+                "name": "symfony/contracts",
+                "url": "https://github.com/symfony/contracts"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Contracts\\Cache\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Nicolas Grekas",
+                "email": "p@tchwork.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Generic abstractions related to caching",
+        "homepage": "https://symfony.com",
+        "keywords": [
+            "abstractions",
+            "contracts",
+            "decoupling",
+            "interfaces",
+            "interoperability",
+            "standards"
+        ],
+        "funding": [
+            {
+                "url": "https://symfony.com/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https://github.com/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                "type": "tidelift"
+            }
+        ]
+    },
+    {
+        "name": "symfony/console",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/console.git",
+            "reference": "89d4b176d12a2946a1ae4e34906a025b7b6b135a"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/console/zipball/89d4b176d12a2946a1ae4e34906a025b7b6b135a",
+            "reference": "89d4b176d12a2946a1ae4e34906a025b7b6b135a",
             "shasum": "",
             "mirrors": [
                 {
@@ -7489,7 +8056,7 @@
             "symfony/lock": "",
             "symfony/process": ""
         },
-        "time": "2021-01-27T10:15:41+00:00",
+        "time": "2021-01-28T22:06:19+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -7539,8 +8106,8 @@
     },
     {
         "name": "symfony/css-selector",
-        "version": "v5.2.2",
-        "version_normalized": "5.2.2.0",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/css-selector.git",
@@ -7681,8 +8248,8 @@
     },
     {
         "name": "symfony/dom-crawler",
-        "version": "v5.2.2",
-        "version_normalized": "5.2.2.0",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/dom-crawler.git",
@@ -7760,17 +8327,17 @@
     },
     {
         "name": "symfony/error-handler",
-        "version": "v5.2.2",
-        "version_normalized": "5.2.2.0",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/error-handler.git",
-            "reference": "4fd4a377f7b7ec7c3f3b40346a1411e0a83f9d40"
+            "reference": "48f18b3609e120ea66d59142c23dc53e9562c26d"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/error-handler/zipball/4fd4a377f7b7ec7c3f3b40346a1411e0a83f9d40",
-            "reference": "4fd4a377f7b7ec7c3f3b40346a1411e0a83f9d40",
+            "url": "https://api.github.com/repos/symfony/error-handler/zipball/48f18b3609e120ea66d59142c23dc53e9562c26d",
+            "reference": "48f18b3609e120ea66d59142c23dc53e9562c26d",
             "shasum": "",
             "mirrors": [
                 {
@@ -7790,7 +8357,7 @@
             "symfony/http-kernel": "^4.4|^5.0",
             "symfony/serializer": "^4.4|^5.0"
         },
-        "time": "2021-01-27T10:15:41+00:00",
+        "time": "2021-01-28T22:06:19+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -7834,8 +8401,8 @@
     },
     {
         "name": "symfony/event-dispatcher",
-        "version": "v5.2.2",
-        "version_normalized": "5.2.2.0",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/event-dispatcher.git",
@@ -8008,8 +8575,8 @@
     },
     {
         "name": "symfony/filesystem",
-        "version": "v5.2.2",
-        "version_normalized": "5.2.2.0",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/filesystem.git",
@@ -8075,17 +8642,17 @@
     },
     {
         "name": "symfony/finder",
-        "version": "v5.2.2",
-        "version_normalized": "5.2.2.0",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/finder.git",
-            "reference": "196f45723b5e618bf0e23b97e96d11652696ea9e"
+            "reference": "4adc8d172d602008c204c2e16956f99257248e03"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/finder/zipball/196f45723b5e618bf0e23b97e96d11652696ea9e",
-            "reference": "196f45723b5e618bf0e23b97e96d11652696ea9e",
+            "url": "https://api.github.com/repos/symfony/finder/zipball/4adc8d172d602008c204c2e16956f99257248e03",
+            "reference": "4adc8d172d602008c204c2e16956f99257248e03",
             "shasum": "",
             "mirrors": [
                 {
@@ -8097,7 +8664,7 @@
         "require": {
             "php": ">=7.2.5"
         },
-        "time": "2021-01-27T10:01:46+00:00",
+        "time": "2021-01-28T22:06:19+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -8225,17 +8792,17 @@
     },
     {
         "name": "symfony/http-foundation",
-        "version": "v5.2.2",
-        "version_normalized": "5.2.2.0",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/http-foundation.git",
-            "reference": "16dfa5acf8103f0394d447f8eea3ea49f9e50855"
+            "reference": "20c554c0f03f7cde5ce230ed248470cccbc34c36"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/http-foundation/zipball/16dfa5acf8103f0394d447f8eea3ea49f9e50855",
-            "reference": "16dfa5acf8103f0394d447f8eea3ea49f9e50855",
+            "url": "https://api.github.com/repos/symfony/http-foundation/zipball/20c554c0f03f7cde5ce230ed248470cccbc34c36",
+            "reference": "20c554c0f03f7cde5ce230ed248470cccbc34c36",
             "shasum": "",
             "mirrors": [
                 {
@@ -8259,7 +8826,7 @@
         "suggest": {
             "symfony/mime": "To use the file extension guesser"
         },
-        "time": "2021-01-27T11:19:04+00:00",
+        "time": "2021-02-03T04:42:09+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -8303,17 +8870,17 @@
     },
     {
         "name": "symfony/http-kernel",
-        "version": "v5.2.2",
-        "version_normalized": "5.2.2.0",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/http-kernel.git",
-            "reference": "831b51e9370ece0febd0950dd819c63f996721c7"
+            "reference": "89bac04f29e7b0b52f9fa6a4288ca7a8f90a1a05"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/http-kernel/zipball/831b51e9370ece0febd0950dd819c63f996721c7",
-            "reference": "831b51e9370ece0febd0950dd819c63f996721c7",
+            "url": "https://api.github.com/repos/symfony/http-kernel/zipball/89bac04f29e7b0b52f9fa6a4288ca7a8f90a1a05",
+            "reference": "89bac04f29e7b0b52f9fa6a4288ca7a8f90a1a05",
             "shasum": "",
             "mirrors": [
                 {
@@ -8376,7 +8943,7 @@
             "symfony/console": "",
             "symfony/dependency-injection": ""
         },
-        "time": "2021-01-27T14:45:46+00:00",
+        "time": "2021-02-03T04:51:58+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -8420,17 +8987,17 @@
     },
     {
         "name": "symfony/mime",
-        "version": "v5.2.2",
-        "version_normalized": "5.2.2.0",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/mime.git",
-            "reference": "37bade585ea100d235c031b258eff93b5b6bb9a9"
+            "reference": "7dee6a43493f39b51ff6c5bb2bd576fe40a76c86"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/mime/zipball/37bade585ea100d235c031b258eff93b5b6bb9a9",
-            "reference": "37bade585ea100d235c031b258eff93b5b6bb9a9",
+            "url": "https://api.github.com/repos/symfony/mime/zipball/7dee6a43493f39b51ff6c5bb2bd576fe40a76c86",
+            "reference": "7dee6a43493f39b51ff6c5bb2bd576fe40a76c86",
             "shasum": "",
             "mirrors": [
                 {
@@ -8459,7 +9026,7 @@
             "symfony/property-info": "^4.4|^5.1",
             "symfony/serializer": "^5.2"
         },
-        "time": "2021-01-25T14:08:25+00:00",
+        "time": "2021-02-02T06:10:15+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -9353,8 +9920,8 @@
     },
     {
         "name": "symfony/process",
-        "version": "v5.2.2",
-        "version_normalized": "5.2.2.0",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/process.git",
@@ -9419,9 +9986,95 @@
         ]
     },
     {
+        "name": "symfony/psr-http-message-bridge",
+        "version": "v2.0.2",
+        "version_normalized": "2.0.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/psr-http-message-bridge.git",
+            "reference": "51a21cb3ba3927d4b4bf8f25cc55763351af5f2e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/psr-http-message-bridge/zipball/51a21cb3ba3927d4b4bf8f25cc55763351af5f2e",
+            "reference": "51a21cb3ba3927d4b4bf8f25cc55763351af5f2e",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "php": ">=7.1",
+            "psr/http-message": "^1.0",
+            "symfony/http-foundation": "^4.4 || ^5.0"
+        },
+        "require-dev": {
+            "nyholm/psr7": "^1.1",
+            "symfony/phpunit-bridge": "^4.4 || ^5.0"
+        },
+        "suggest": {
+            "nyholm/psr7": "For a super lightweight PSR-7/17 implementation"
+        },
+        "time": "2020-09-29T08:17:46+00:00",
+        "type": "symfony-bridge",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Bridge\\PsrHttpMessage\\": ""
+            },
+            "exclude-from-classmap": [
+                "/Tests/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
+            }
+        ],
+        "description": "PSR HTTP message bridge",
+        "homepage": "http://symfony.com",
+        "keywords": [
+            "http",
+            "http-message",
+            "psr-17",
+            "psr-7"
+        ],
+        "funding": [
+            {
+                "url": "https://symfony.com/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https://github.com/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                "type": "tidelift"
+            }
+        ]
+    },
+    {
         "name": "symfony/routing",
-        "version": "v5.2.2",
-        "version_normalized": "5.2.2.0",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/routing.git",
@@ -9599,8 +10252,8 @@
     },
     {
         "name": "symfony/string",
-        "version": "v5.2.2",
-        "version_normalized": "5.2.2.0",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/string.git",
@@ -9687,8 +10340,8 @@
     },
     {
         "name": "symfony/translation",
-        "version": "v5.2.2",
-        "version_normalized": "5.2.2.0",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/translation.git",
@@ -9868,8 +10521,8 @@
     },
     {
         "name": "symfony/var-dumper",
-        "version": "v5.2.2",
-        "version_normalized": "5.2.2.0",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/var-dumper.git",
@@ -9943,6 +10596,84 @@
         "keywords": [
             "debug",
             "dump"
+        ],
+        "funding": [
+            {
+                "url": "https://symfony.com/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https://github.com/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                "type": "tidelift"
+            }
+        ]
+    },
+    {
+        "name": "symfony/var-exporter",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/var-exporter.git",
+            "reference": "5aed4875ab514c8cb9b6ff4772baa25fa4c10307"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/var-exporter/zipball/5aed4875ab514c8cb9b6ff4772baa25fa4c10307",
+            "reference": "5aed4875ab514c8cb9b6ff4772baa25fa4c10307",
+            "shasum": "",
+            "mirrors": [
+                {
+                    "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                    "preferred": true
+                }
+            ]
+        },
+        "require": {
+            "php": ">=7.2.5",
+            "symfony/polyfill-php80": "^1.15"
+        },
+        "require-dev": {
+            "symfony/var-dumper": "^4.4.9|^5.0.9"
+        },
+        "time": "2021-01-27T10:01:46+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Component\\VarExporter\\": ""
+            },
+            "exclude-from-classmap": [
+                "/Tests/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Nicolas Grekas",
+                "email": "p@tchwork.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Allows exporting any serializable PHP data structure to plain PHP code",
+        "homepage": "https://symfony.com",
+        "keywords": [
+            "clone",
+            "construct",
+            "export",
+            "hydrate",
+            "instantiate",
+            "serialize"
         ],
         "funding": [
             {

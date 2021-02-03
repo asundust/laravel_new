@@ -6,7 +6,9 @@ use App\Events\BillPayedEvent;
 use App\Events\BillRefundedEvent;
 use App\Listeners\BillPayedHandleListener;
 use App\Listeners\BillRefundedHandleListener;
+use App\Listeners\WeChatUserAuthorizedHandleListener;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Overtrue\LaravelWeChat\Events\WeChatUserAuthorized;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -24,6 +26,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         BillRefundedEvent::class => [
             BillRefundedHandleListener::class,
+        ],
+        WeChatUserAuthorized::class => [
+            WeChatUserAuthorizedHandleListener::class,
         ],
     ];
 
