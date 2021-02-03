@@ -1,0 +1,28 @@
+{
+    "name": "asundust/helpers",
+    "description": "Laravel 快捷函数 / Quick Function for Laravel.",
+    "keywords": [
+        "asundsut",
+        "laravel",
+        "helpers"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "asundust",
+            "email": "asundust@qq.com"
+        }
+    ],
+    "require": {
+        "php": "^7.1.3|^8.0",
+        "illuminate/support": "~5.8.0|^6.0|^7.0|^8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0|^8.0|^9.0"
+    },
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ]
+    }
+}

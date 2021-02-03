@@ -12,6 +12,7 @@
     "ext-curl": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
+    "asundust/helpers": "^1.0",
     "dingo/api": "^3.0",
     "encore/laravel-admin": "^1.8",
     "fideloper/proxy": "^4.4",
