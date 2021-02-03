@@ -279,7 +279,7 @@ if (!function_exists('money_show')) {
             return '0.00';
         }
 
-        return sprintf('%01.' . $number . 'f', $money);
+        return sprintf('%01.'.$number.'f', $money);
     }
 }
 
