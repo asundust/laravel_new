@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Tests;
 
 use App\Http\Controllers\Controller;
 use App\Http\Traits\WechatTrait;
-use App\Models\Wechat\WechatUser;
 
 class TestController extends Controller
 {
@@ -38,7 +37,6 @@ class TestController extends Controller
 
     public function wechatOauthTest()
     {
-        /* @var WechatUser $wechatUser */
         $wechatUser = $this->getWechatUser();
         mad('授权成功，您的用户id为：'.$wechatUser->user_id.' ，您的openid为：'.$wechatUser->wechat_openid);
     }
