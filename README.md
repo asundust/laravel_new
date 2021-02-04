@@ -57,7 +57,13 @@ return (new AlipayService())->pay(['no' => $bill->pay_no, 'amount' => $bill->amo
 $bill = $order->bills()->create(['pay_no' => $order->number, 'title' => $order->title, 'amount' => $order->price, 'pay_way' => 1]);
 return (new WechatPayService())->pay(['no' => $bill->pay_no, 'amount' => $bill->amount, 'title' => $bill->title], 'scan');
 ```
-如果不需要此Demo则需要删除`database/migrations/2019_10_01_000000_create_demo_orders_table.php`和`app/Models/Pay/DemoOrder.php`文件
+
+如果不需要此Demo则需要删除以下两个文件
+
+`database/migrations/2019_10_01_000000_create_demo_orders_table.php`
+
+`app/Models/Pay/DemoOrder.php`
+
 另外微信公众号支付涉及了网页授权登陆，这边额外加入了以下文件
 
 `2021_01_30_000000_create_wechat_users_table.php`
