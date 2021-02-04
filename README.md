@@ -2,8 +2,7 @@
 
 ## 关于
 
-[Laravel](https://github.com/laravel/laravel)本地化(中文化)项目模板，带[Laravel-Admin](https://github.com/z-song/laravel-admin)、[Config](https://github.com/laravel-admin-extensions/config)、一键安装更新命令、[支付宝微信支付](https://github.com/yansongda/laravel-pay)、支付Demo，已安装[dingo/api](https://github.com/dingo/api)扩展包以及部分其他辅助扩展包，目前[Laravel](https://github.com/laravel/laravel)版本是7.x版本。
-
+[Laravel](https://github.com/laravel/laravel)本地化(中文化)项目模板，带[Laravel-Admin](https://github.com/z-song/laravel-admin)、[Config](https://github.com/laravel-admin-extensions/config)、一键安装更新命令、[支付宝微信支付](https://github.com/yansongda/laravel-pay)、[EasyWechat](https://github.com/w7corp/easywechat)、支付Demo，已安装[dingo/api](https://github.com/dingo/api)扩展包以及部分其他辅助扩展包，目前[Laravel](https://github.com/laravel/laravel)版本是7.x版本。
 
 同步[github.com](https://github.com/asundust/laravel_new)和[gitee.com](https://gitee.com/asundust/laravel_new)
 
@@ -58,7 +57,20 @@ return (new AlipayService())->pay(['no' => $bill->pay_no, 'amount' => $bill->amo
 $bill = $order->bills()->create(['pay_no' => $order->number, 'title' => $order->title, 'amount' => $order->price, 'pay_way' => 1]);
 return (new WechatPayService())->pay(['no' => $bill->pay_no, 'amount' => $bill->amount, 'title' => $bill->title], 'scan');
 ```
-如果不需要此Demo则需要删除`database/migrations/2020_09_02_000000_create_demo_orders_table.php`和`app/Models/Pay/DemoOrder.php`文件
+如果不需要此Demo则需要删除`database/migrations/2019_10_01_000000_create_demo_orders_table.php`和`app/Models/Pay/DemoOrder.php`文件
+另外微信公众号支付涉及了网页授权登陆，这边额外加入了以下文件
+
+`2021_01_30_000000_create_wechat_users_table.php`
+
+`app/Models/Wechat/WechatUser`
+
+`app/Http/Traits/WechatTrait.php`
+
+`app/Http/Middleware/WechatAuthMiddleware.php`
+
+`app/Listeners/WeChatUserAuthorizedHandleListener.php`
+
+删除的时候需要注意这些文件的引用处，也需要删除相关代码
 
 ## 许可证
 [MIT](https://opensource.org/licenses/MIT)
