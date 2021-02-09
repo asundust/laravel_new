@@ -19,5 +19,7 @@ resources/lang/*
 !resources/lang/en/
 !resources/lang/zh-CN/
 !resources/lang/zh-CN.json
+!resources/lang/zh_CN/
+!resources/lang/zh_CN.json
 public/uploads
 public/vendor
