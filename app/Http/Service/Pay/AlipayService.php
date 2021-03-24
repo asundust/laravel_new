@@ -166,7 +166,7 @@ class AlipayService
     /**
      * 发起退款请求
      *
-     * @param array $data    => ['refund_amount' => '金额', 'pay_no' => '商户单号', 'pay_service_no' => '支付宝订单号', 'refund_no' => '退款单号'] | no 和 service_no 不能同时为空 | refund_no 部分退款时不能为空
+     * @param array $data    => ['refund_amount' => '金额', 'pay_no' => '商户单号', 'pay_service_no' => '支付宝订单号', 'refund_no' => '退款单号'] | pay_no 和 pay_service_no 不能同时为空 | refund_no 部分退款时不能为空
      * @param array $extData
      *
      * @return mixed
@@ -288,7 +288,7 @@ class AlipayService
      *
      * @param string|array $data
      *                           支付 => 商户单号 | ['pay_no' => '商户单号', 'pay_service_no' => '支付宝订单号'](2选1)
-     *                           退款 => 退款单号 | ['pay_no' => '商户单号', 'pay_service_no' => '支付宝订单号', 'refund_no' => '退款单号'](pay_no 和 pay_service_no 4选1)
+     *                           退款 => 退款单号 | ['pay_no' => '商户单号', 'pay_service_no' => '支付宝订单号', 'refund_no' => '退款单号'](refund_no 为空时自动取值 pay_no)
      *                           转账 => 转账单号 | ['transfer_no' => '转账单号']
      * @param string       $type
      *                           '' => '支付', 'refund' => '退款', 'transfer' => '转账'
@@ -311,9 +311,7 @@ class AlipayService
                 if (isset($data['pay_service_no'])) {
                     $order['trade_no'] = $data['pay_service_no'];
                 }
-                if (isset($data['refund_no'])) {
-                    $order['out_request_no'] = $data['refund_no'];
-                }
+                $order['out_request_no'] = $data['refund_no'] ?? $data['pay_no'] ?? '';
 
                 return $alipay->find($order, $type);
                 break;
