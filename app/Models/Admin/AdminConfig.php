@@ -27,7 +27,7 @@ class AdminConfig extends ConfigModel
     const CACHE_TTL = 864000;
 
     /**
-     * 配置缓存操作
+     * 配置缓存操作.
      */
     public static function configLoad()
     {
@@ -35,7 +35,7 @@ class AdminConfig extends ConfigModel
         $configs = self::all(['name', 'value']);
         Cache::put(self::CACHE_KEY_PREFIX, 1, $ttl);
         foreach ($configs as $config) {
-            Cache::put(self::CACHE_KEY_PREFIX . $config['name'], $config['value'], $ttl);
+            Cache::put(self::CACHE_KEY_PREFIX.$config['name'], $config['value'], $ttl);
             config([$config['name'] => $config['value']]);
         }
     }
