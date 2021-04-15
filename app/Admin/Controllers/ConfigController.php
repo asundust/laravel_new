@@ -18,10 +18,7 @@ class ConfigController extends BaseConfigController
     use HasResourceActions;
 
     /**
-     * 列表
-     *
-     * @param Content $content
-     * @return Content
+     * 列表.
      */
     public function index(Content $content): Content
     {
@@ -32,11 +29,9 @@ class ConfigController extends BaseConfigController
     }
 
     /**
-     * 编辑
+     * 编辑.
      *
-     * @param int     $id
-     * @param Content $content
-     * @return Content
+     * @param int $id
      */
     public function edit($id, Content $content): Content
     {
@@ -47,10 +42,7 @@ class ConfigController extends BaseConfigController
     }
 
     /**
-     * 创建
-     *
-     * @param Content $content
-     * @return Content
+     * 创建.
      */
     public function create(Content $content): Content
     {
@@ -61,11 +53,9 @@ class ConfigController extends BaseConfigController
     }
 
     /**
-     * 详情
+     * 详情.
      *
-     * @param         $id
-     * @param Content $content
-     * @return Content
+     * @param $id
      */
     public function show($id, Content $content): Content
     {
@@ -76,9 +66,7 @@ class ConfigController extends BaseConfigController
     }
 
     /**
-     * 列表字段
-     *
-     * @return Grid
+     * 列表字段.
      */
     public function grid(): Grid
     {
@@ -90,7 +78,7 @@ class ConfigController extends BaseConfigController
         });
         $grid->column('value', '值')->editable();
         $grid->column('cache_value', '缓存值')->display(function () {
-            return Cache::get(AdminConfig::CACHE_KEY_PREFIX . $this->name);
+            return Cache::get(AdminConfig::CACHE_KEY_PREFIX.$this->name);
         });
         $grid->column('description', '描述');
         $grid->column('sort', '排序')->sortable();
@@ -103,7 +91,7 @@ class ConfigController extends BaseConfigController
         })->hide();
 
         $grid->tools(function (Grid\Tools $tools) {
-            $tools->append('<div class="btn-group"><a href="' . admin_url('config/refresh') . '" class="btn btn-success btn-sm" title="刷新配置缓存"><i class="fa fa-refresh"></i><span class="hidden-xs">&nbsp;刷新配置缓存</span></a></div>');
+            $tools->append('<div class="btn-group"><a href="'.admin_url('config/refresh').'" class="btn btn-success btn-sm" title="刷新配置缓存"><i class="fa fa-refresh"></i><span class="hidden-xs">&nbsp;刷新配置缓存</span></a></div>');
         });
 
         $grid->filter(function ($filter) {
@@ -119,10 +107,9 @@ class ConfigController extends BaseConfigController
     }
 
     /**
-     * 详情字段
+     * 详情字段.
      *
      * @param $id
-     * @return Show
      */
     protected function detail($id): Show
     {
@@ -140,9 +127,7 @@ class ConfigController extends BaseConfigController
     }
 
     /**
-     * 表单字段
-     *
-     * @return Form
+     * 表单字段.
      */
     public function form(): Form
     {
@@ -161,14 +146,13 @@ class ConfigController extends BaseConfigController
     }
 
     /**
-     * 刷新配置缓存
-     *
-     * @return RedirectResponse
+     * 刷新配置缓存.
      */
     public function refresh(): RedirectResponse
     {
         AdminConfig::configLoad();
         admin_toastr('配置缓存刷新成功');
+
         return back();
     }
 }
