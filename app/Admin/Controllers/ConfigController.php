@@ -79,7 +79,7 @@ class ConfigController extends BaseConfigController
         $grid->column('value', '值')->editable();
         $grid->column('cache_value', '缓存值')->display(function () {
             return Cache::get(AdminConfig::CACHE_KEY_PREFIX.$this->name);
-        });
+        })->help('如果与“值”不一致，点击“刷新配置缓存”');
         $grid->column('description', '描述');
         $grid->column('sort', '排序')->sortable();
 
