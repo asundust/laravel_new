@@ -102,7 +102,7 @@ if (!function_exists('sc_send')) {
     function sc_send($text, $desc = '', $key = '')
     {
         if (!$key) {
-            $key = config('sc_send_key');
+            $key = cache_config('sc_send_key');
         }
         if (!$key) {
             return false;
