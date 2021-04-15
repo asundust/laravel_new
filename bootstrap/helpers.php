@@ -126,6 +126,19 @@ if (!function_exists('sc_send')) {
     }
 }
 
+if (!function_exists('cache_config')) {
+    /**
+     * 获取Admin Config的缓存键的值
+     *
+     * @param $key
+     * @return mixed
+     */
+    function cache_config($key)
+    {
+        return \Illuminate\Support\Facades\Cache::get(\App\Models\Admin\AdminConfig::CACHE_KEY_PREFIX.$key);
+    }
+}
+
 if (!function_exists('admin_switch_arr')) {
     /**
      * admin系统的switch选项.
