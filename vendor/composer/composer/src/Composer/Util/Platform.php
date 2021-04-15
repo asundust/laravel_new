@@ -19,6 +19,9 @@ namespace Composer\Util;
  */
 class Platform
 {
+    /** @var ?bool */
+    private static $isVirtualBoxGuest = null;
+
     /**
      * Parses tildes and environment variables in paths.
      *
@@ -116,5 +119,53 @@ class Platform
         $stat = @fstat($fd);
         // Check if formatted mode is S_IFCHR
         return $stat ? 0020000 === ($stat['mode'] & 0170000) : false;
+    }
+
+    public static function workaroundFilesystemIssues()
+    {
+        if (self::isVirtualBoxGuest()) {
+            usleep(200000);
+        }
+    }
+
+    /**
+     * Attempts detection of VirtualBox guest VMs
+     *
+     * This works based on the process' user being "vagrant", the COMPOSER_RUNTIME_ENV env var being set to "virtualbox", or lsmod showing the virtualbox guest additions are loaded
+     *
+     * @return bool
+     */
+    private static function isVirtualBoxGuest()
+    {
+        if (null === self::$isVirtualBoxGuest) {
+            self::$isVirtualBoxGuest = false;
+            if (self::isWindows()) {
+                return self::$isVirtualBoxGuest;
+            }
+
+            if (function_exists('posix_getpwuid') && function_exists('posix_geteuid')) {
+                $processUser = posix_getpwuid(posix_geteuid());
+                if ($processUser && $processUser['name'] === 'vagrant') {
+                    return self::$isVirtualBoxGuest = true;
+                }
+            }
+
+            if (getenv('COMPOSER_RUNTIME_ENV') === 'virtualbox') {
+                return self::$isVirtualBoxGuest = true;
+            }
+
+            if (defined('PHP_OS_FAMILY') && PHP_OS_FAMILY === 'Linux') {
+                $process = new ProcessExecutor();
+                try {
+                    if (0 === $process->execute('lsmod | grep vboxguest', $ignoredOutput)) {
+                        return self::$isVirtualBoxGuest = true;
+                    }
+                } catch (\Exception $e) {
+                    // noop
+                }
+            }
+        }
+
+        return self::$isVirtualBoxGuest;
     }
 }

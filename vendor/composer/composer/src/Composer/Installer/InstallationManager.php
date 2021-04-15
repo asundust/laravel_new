@@ -26,6 +26,7 @@ use Composer\DependencyResolver\Operation\MarkAliasInstalledOperation;
 use Composer\DependencyResolver\Operation\MarkAliasUninstalledOperation;
 use Composer\EventDispatcher\EventDispatcher;
 use Composer\Util\Loop;
+use Composer\Util\Platform;
 use React\Promise\PromiseInterface;
 
 /**
@@ -207,7 +208,7 @@ class InstallationManager
         };
 
         $handleInterruptsUnix = function_exists('pcntl_async_signals') && function_exists('pcntl_signal');
-        $handleInterruptsWindows = function_exists('sapi_windows_set_ctrl_handler');
+        $handleInterruptsWindows = function_exists('sapi_windows_set_ctrl_handler') && PHP_SAPI === 'cli';
         $prevHandler = null;
         $windowsHandler = null;
         if ($handleInterruptsUnix) {
@@ -439,6 +440,8 @@ class InstallationManager
         if (count($promises)) {
             $this->waitOnPromises($promises);
         }
+
+        Platform::workaroundFilesystemIssues();
 
         foreach ($postExecCallbacks as $cb) {
             $cb();

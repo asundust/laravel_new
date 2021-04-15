@@ -19,6 +19,8 @@
 
 内置了vendor环境，如不需要，请去`.gitignore`内添加`/vendor`，在命令行里执行`git rm -r --cached ./vendor`，然后再提交到git库即可。
 
+如果需要使用内置vendor环境，请在开发前更新一下环境，执行`composer update`即可。
+
 
 一键安装/更新命令 `php artisan system install`，`php artisan system update`。
 
