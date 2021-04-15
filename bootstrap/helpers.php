@@ -131,6 +131,7 @@ if (!function_exists('cache_config')) {
      * 获取Admin Config的缓存键的值
      *
      * @param $key
+     *
      * @return mixed
      */
     function cache_config($key)
