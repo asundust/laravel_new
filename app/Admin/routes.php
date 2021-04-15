@@ -11,4 +11,5 @@ Route::group([
     'as' => config('admin.route.prefix').'.',
 ], function (Router $router) {
     $router->get('/', 'HomeController@index')->name('admin.home');
+    $router->get('config/refresh', 'ConfigController@refresh')->name('admin.config.refresh');
 });

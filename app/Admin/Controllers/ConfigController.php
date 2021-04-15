@@ -3,39 +3,42 @@
 namespace App\Admin\Controllers;
 
 use App\Models\Admin\AdminConfig;
+use Carbon\Carbon;
 use Encore\Admin\Config\ConfigController as BaseConfigController;
 use Encore\Admin\Controllers\HasResourceActions;
-use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
 
 class ConfigController extends BaseConfigController
 {
     use HasResourceActions;
 
     /**
-     * Index interface.
+     * 列表
      *
+     * @param Content $content
      * @return Content
      */
-    public function index(Content $content)
+    public function index(Content $content): Content
     {
         return $content
             ->header('网站配置')
-            ->description('列表')
+            ->description('列表&nbsp;<span class="small">[默认缓存时间为'.AdminConfig::CACHE_TTL.'秒]</span>')
             ->body($this->grid());
     }
 
     /**
-     * Edit interface.
+     * 编辑
      *
-     * @param int $id
-     *
+     * @param int     $id
+     * @param Content $content
      * @return Content
      */
-    public function edit($id, Content $content)
+    public function edit($id, Content $content): Content
     {
         return $content
             ->header('网站配置')
@@ -44,11 +47,12 @@ class ConfigController extends BaseConfigController
     }
 
     /**
-     * Create interface.
+     * 创建
      *
+     * @param Content $content
      * @return Content
      */
-    public function create(Content $content)
+    public function create(Content $content): Content
     {
         return $content
             ->header('网站配置')
@@ -56,36 +60,51 @@ class ConfigController extends BaseConfigController
             ->body($this->form());
     }
 
-    public function show($id, Content $content)
+    /**
+     * 详情
+     *
+     * @param         $id
+     * @param Content $content
+     * @return Content
+     */
+    public function show($id, Content $content): Content
     {
         return $content
             ->header('网站配置')
             ->description('详情')
-            ->body(Admin::show(AdminConfig()::findOrFail($id), function (Show $show) {
-                $show->field('id', 'ID');
-                $show->field('name', '名称');
-                $show->field('value', '值');
-                $show->field('description', '描述');
-                $show->field('sort', '排序');
-                // $show->created_at('创建时间');
-                // $show->updated_at('更新时间');
-            }));
+            ->body($this->detail($id));
     }
 
-    public function grid()
+    /**
+     * 列表字段
+     *
+     * @return Grid
+     */
+    public function grid(): Grid
     {
         $grid = new Grid(new AdminConfig());
 
-        $grid->column('id', 'ID')->sortable();
+        $grid->column('id', 'ID')->sortable()->hide();
         $grid->column('name', '名称')->display(function ($name) {
-            return "<a tabindex=\"0\" class=\"btn btn-xs btn-twitter\" role=\"button\" data-toggle=\"popover\" data-html=true title=\"用法\" data-content=\"<code>config('$name');</code>\">$name</a>";
+            return "<a tabindex=\"0\" class=\"btn btn-xs btn-twitter\" role=\"button\" data-toggle=\"popover\" data-html=true title=\"用法\" data-content=\"<code>cache_config('$name');</code>\">$name</a>";
         });
         $grid->column('value', '值')->editable();
+        $grid->column('cache_value', '缓存值')->display(function () {
+            return Cache::get(AdminConfig::CACHE_KEY_PREFIX . $this->name);
+        });
         $grid->column('description', '描述');
-        $grid->column('sort', '排序');
+        $grid->column('sort', '排序')->sortable();
 
-        // $grid->created_at('创建时间');
-        // $grid->updated_at('更新时间');
+        $grid->column('created_at', '创建时间')->display(function ($createdAt) {
+            return Carbon::parse($createdAt)->toDateTimeString();
+        })->hide();
+        $grid->column('updated_at', '更新时间')->display(function ($updatedAt) {
+            return Carbon::parse($updatedAt)->toDateTimeString();
+        })->hide();
+
+        $grid->tools(function (Grid\Tools $tools) {
+            $tools->append('<div class="btn-group"><a href="' . admin_url('config/refresh') . '" class="btn btn-success btn-sm" title="刷新配置缓存"><i class="fa fa-refresh"></i><span class="hidden-xs">&nbsp;刷新配置缓存</span></a></div>');
+        });
 
         $grid->filter(function ($filter) {
             $filter->disableIdFilter();
@@ -99,7 +118,33 @@ class ConfigController extends BaseConfigController
         return $grid;
     }
 
-    public function form()
+    /**
+     * 详情字段
+     *
+     * @param $id
+     * @return Show
+     */
+    protected function detail($id): Show
+    {
+        $show = new Show(AdminConfig::findOrFail($id));
+
+        $show->field('id', 'ID');
+        $show->field('name', '名称');
+        $show->field('value', '值');
+        $show->field('description', '描述');
+        $show->field('sort', '排序');
+        $show->field('created_at', '创建时间');
+        $show->field('updated_at', '更新时间');
+
+        return $show;
+    }
+
+    /**
+     * 表单字段
+     *
+     * @return Form
+     */
+    public function form(): Form
     {
         $form = new Form(new AdminConfig());
 
@@ -113,5 +158,17 @@ class ConfigController extends BaseConfigController
         // $form->display('updated_at', '更新时间');
 
         return $form;
+    }
+
+    /**
+     * 刷新配置缓存
+     *
+     * @return RedirectResponse
+     */
+    public function refresh(): RedirectResponse
+    {
+        AdminConfig::configLoad();
+        admin_toastr('配置缓存刷新成功');
+        return back();
     }
 }
