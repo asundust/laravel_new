@@ -9,8 +9,6 @@ trait BaseModelTrait
      *
      * @param string $model
      * @param string $fieldName
-     *
-     * @return string
      */
     public static function getNewNumber($model = '', $fieldName = 'number'): string
     {

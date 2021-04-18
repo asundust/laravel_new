@@ -81,8 +81,6 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * 为数组 / JSON 序列化准备日期。
-     *
-     * @return string
      */
     protected function serializeDate(DateTimeInterface $date): string
     {

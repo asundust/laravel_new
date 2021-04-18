@@ -11,12 +11,12 @@ use Illuminate\Support\Carbon;
  * App\Models\Pay\MultiRefundBill.
  *
  * @property int         $id
- * @property int         $multi_bill_id      支付订单号id
- * @property float       $refund_amount      退款发起金额
- * @property string|null $refund_no          退款商户订单号
- * @property string|null $refund_service_no  退款支付商订单号
- * @property string|null $refund_at          退款到账时间
- * @property int         $refund_status      退款状态(1退款中，2退款成功，3退款失败，4退款取消)
+ * @property int         $multi_bill_id        支付订单号id
+ * @property float       $refund_amount        退款发起金额
+ * @property string|null $refund_no            退款商户订单号
+ * @property string|null $refund_service_no    退款支付商订单号
+ * @property string|null $refund_at            退款到账时间
+ * @property int         $refund_status        退款状态(1退款中，2退款成功，3退款失败，4退款取消)
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property mixed       $refund_status_string
@@ -56,8 +56,6 @@ class MultiRefundBill extends BaseModel
      * 目前只有微信
      *
      * @param $data
-     *
-     * @return bool
      */
     public static function handleNotifyRrFund($data): bool
     {

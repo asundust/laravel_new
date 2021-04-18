@@ -151,8 +151,6 @@ class MultiBill extends BaseModel
      * 支付回调通知处理 - 异步.
      *
      * @param $data
-     *
-     * @return bool
      */
     public static function handleNotify($data, int $payWay): bool
     {
@@ -388,8 +386,6 @@ class MultiBill extends BaseModel
 
     /**
      * 订单支付检查.
-     *
-     * @return array
      *
      * @throws Throwable
      */
