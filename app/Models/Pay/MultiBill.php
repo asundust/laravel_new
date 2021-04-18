@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 /**
  * App\Models\Pay\MultiBill.
@@ -36,14 +37,14 @@ use Illuminate\Support\Facades\DB;
  * @property Carbon|null                  $created_at
  * @property Carbon|null                  $updated_at
  * @property Model|Eloquent               $billable
- * @property mixed                        $bill_status_name
+ * @property mixed                        $bill_status_string
  * @property mixed                        $can_refund_amount
- * @property mixed                        $pay_status_name
- * @property mixed                        $pay_way_name
+ * @property mixed                        $pay_status_string
+ * @property mixed                        $pay_way_string
  * @property mixed                        $pay_way_alias
  * @property mixed                        $refunded_amount
  * @property mixed                        $refunding_amount
- * @property mixed                        $status_name
+ * @property mixed                        $status_string
  * @property Collection|MultiRefundBill[] $refundBills
  * @property int|null                     $refund_bills_count
  * @mixin Eloquent
@@ -104,26 +105,26 @@ class MultiBill extends BaseModel
         return $this->hasMany(MultiRefundBill::class, 'multi_bill_id');
     }
 
-    // 支付方式名称 pay_way_name
-    public function getPayWayNameAttribute()
+    // 支付方式名称 pay_way_string
+    public function getPayWayStringAttribute(): ?string
     {
         return self::PAY_WAY[$this->pay_way] ?? '';
     }
 
     // 支付方式别名 pay_way_alias
-    public function getPayWayAliasAttribute()
+    public function getPayWayAliasAttribute(): ?string
     {
         return self::PAY_WAY_ALIAS[$this->pay_way] ?? '';
     }
 
-    // 账单状态名称 bill_status_name
-    public function getBillStatusNameAttribute()
+    // 账单状态名称 bill_status_string
+    public function getBillStatusStringAttribute(): ?string
     {
         return self::BILL_STATUS[$this->bill_status] ?? '';
     }
 
-    // 支付状态名称 pay_status_name
-    public function getPayStatusNameAttribute()
+    // 支付状态名称 pay_status_string
+    public function getPayStatusStringAttribute(): ?string
     {
         return self::PAY_STATUS[$this->pay_status] ?? '';
     }
@@ -153,7 +154,7 @@ class MultiBill extends BaseModel
      *
      * @return bool
      */
-    public static function handleNotify($data, int $payWay)
+    public static function handleNotify($data, int $payWay): bool
     {
         /* @var self $bill */
         $bill = self::where('pay_no', $data->pay_no)->where('pay_way', $payWay)->first();
@@ -169,7 +170,7 @@ class MultiBill extends BaseModel
                 // todo
                 return true;
             }
-            pl('订单状态非未支付：'.$data->pay_no.'，订单状态：'.$bill->pay_status_name, $bill->pay_way_alias.'-notify-comment', 'pay');
+            pl('订单状态非未支付：'.$data->pay_no.'，订单状态：'.$bill->pay_status_string, $bill->pay_way_alias.'-notify-comment', 'pay');
 
             return true;
         }
@@ -211,7 +212,7 @@ class MultiBill extends BaseModel
             return $bill->billable->payResult();
         }
 
-        return $bill->pay_status_name.':)';
+        return $bill->pay_status_string.':)';
     }
 
     /**
@@ -390,9 +391,9 @@ class MultiBill extends BaseModel
      *
      * @return array
      *
-     * @throws Exception
+     * @throws Throwable
      */
-    public function toPayFind()
+    public function toPayFind(): array
     {
         DB::beginTransaction();
         try {
@@ -425,7 +426,7 @@ class MultiBill extends BaseModel
                     break;
             }
         } catch (Exception $e) {
-            pl($this->pay_way_name.'支付订单'.$this->pay_no.'支付检查失败：'.$e->getMessage(), $this->pay_way_alias.'-pay-find-err', 'pay');
+            pl($this->pay_way_string.'支付订单'.$this->pay_no.'支付检查失败：'.$e->getMessage(), $this->pay_way_alias.'-pay-find-err', 'pay');
             DB::rollBack();
 
             return ['code' => 1, 'msg' => '订单支付失败'];

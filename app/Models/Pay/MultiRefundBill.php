@@ -19,8 +19,8 @@ use Illuminate\Support\Carbon;
  * @property int         $refund_status      退款状态(1退款中，2退款成功，3退款失败，4退款取消)
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property mixed       $refund_status_name
- * @property mixed       $status_name
+ * @property mixed       $refund_status_string
+ * @property mixed       $status_string
  * @mixin Eloquent
  */
 class MultiRefundBill extends BaseModel
@@ -45,8 +45,8 @@ class MultiRefundBill extends BaseModel
         });
     }
 
-    // 退款状态名称 refund_status_name
-    public function getRefundStatusNameAttribute()
+    // 退款状态名称 refund_status_string
+    public function getRefundStatusStringAttribute(): ?string
     {
         return self::REFUND_STATUS[$this->refund_status] ?? '';
     }
@@ -59,7 +59,7 @@ class MultiRefundBill extends BaseModel
      *
      * @return bool
      */
-    public static function handleNotifyRrFund($data)
+    public static function handleNotifyRrFund($data): bool
     {
         $refundBill = self::where('refund_no', $data->refund_no)->first();
         if (!$refundBill) {
@@ -69,7 +69,7 @@ class MultiRefundBill extends BaseModel
         }
         // 如果误操作关闭了退款，此时订单照常退款了理应正常更新掉退款状态，方便查证
         // if ($refundBill->refund_status != 1) {
-        //     pl('退款订单状态非退款中：' . $data->refund_no . '，订单状态：' . $refundBill->refund_status_name, 'wechat' . '-notify-comment', 'pay');
+        //     pl('退款订单状态非退款中：' . $data->refund_no . '，订单状态：' . $refundBill->refund_status_string, 'wechat' . '-notify-comment', 'pay');
         //     return true;
         // }
         if ($refundBill->refund_amount != $data->refund_amount) {

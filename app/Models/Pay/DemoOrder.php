@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Cache;
  * @property mixed                  $payed_amount
  * @property mixed                  $refunded_amount
  * @property mixed                  $refunding_amount
- * @property mixed                  $status_name
+ * @property mixed                  $status_string
  * @mixin Eloquent
  */
 class DemoOrder extends BaseModel
@@ -74,7 +74,7 @@ class DemoOrder extends BaseModel
     }
 
     // 已支付的金额 payed_amount
-    public function getPayedAmountAttribute()
+    public function getPayedAmountAttribute(): float
     {
         return $this->billed ? $this->billed->pay_amount : 0.00;
     }
@@ -116,7 +116,7 @@ class DemoOrder extends BaseModel
             'status' => 1,
         ]);
         // 发送Server酱推送通知
-        sc_send(config('app.name').$bill->pay_way_name.'有一笔新的收款'.money_show($this->payed_amount).'元', $bill->pay_way_name.'于 '.$bill->pay_at.' 收款：￥'.money_show($this->payed_amount));
+        sc_send(config('app.name').$bill->pay_way_string.'有一笔新的收款'.money_show($this->payed_amount).'元', $bill->pay_way_string.'于 '.$bill->pay_at.' 收款：￥'.money_show($this->payed_amount));
     }
 
     /**

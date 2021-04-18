@@ -12,7 +12,7 @@ trait BaseModelTrait
      *
      * @return string
      */
-    public static function getNewNumber($model = '', $fieldName = 'number')
+    public static function getNewNumber($model = '', $fieldName = 'number'): string
     {
         $number = now()->format('ymdHis').rand(10000, 99999);
         if (empty($model)) {
@@ -46,8 +46,8 @@ trait BaseModelTrait
         return (new $model())::where($fieldName, $number)->first();
     }
 
-    // 状态名称 status_name
-    public function getStatusNameAttribute()
+    // 状态名称 status_string
+    public function getStatusStringAttribute(): ?string
     {
         return self::STATUS[$this->status] ?? '';
     }

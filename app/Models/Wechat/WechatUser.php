@@ -18,7 +18,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property mixed       $created_at_format
- * @property mixed       $status_name
+ * @property mixed       $status_string
  * @property mixed       $updated_at_format
  * @mixin Eloquent
  */
