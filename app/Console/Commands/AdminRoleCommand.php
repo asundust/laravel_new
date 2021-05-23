@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Encore\Admin\Auth\Database\Permission;
 use Encore\Admin\Auth\Database\Role;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 
 class AdminRoleCommand extends Command
 {
