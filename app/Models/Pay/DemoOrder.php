@@ -2,6 +2,7 @@
 
 namespace App\Models\Pay;
 
+use App\Http\Traits\SendMessageToUserTrait;
 use App\Models\BaseModel;
 use App\Models\BaseModelTrait;
 use Eloquent;
@@ -37,6 +38,7 @@ use Illuminate\Support\Facades\Cache;
 class DemoOrder extends BaseModel
 {
     use BaseModelTrait;
+    use SendMessageToUserTrait;
 
     const STATUS = [
         0 => '未支付',
@@ -107,6 +109,9 @@ class DemoOrder extends BaseModel
 
     /**
      * 支付成功处理.
+     *
+     * @throws \EasyWeChat\Kernel\Exceptions\InvalidArgumentException
+     * @throws \EasyWeChat\Kernel\Exceptions\RuntimeException
      */
     public function handlePied(MultiBill $bill)
     {
@@ -115,8 +120,8 @@ class DemoOrder extends BaseModel
             'pay_at' => $bill->pay_at,
             'status' => 1,
         ]);
-        // 发送Server酱推送通知
-        sc_send(config('app.name').$bill->pay_way_string.'有一笔新的收款'.money_show($this->payed_amount).'元', $bill->pay_way_string.'于 '.$bill->pay_at.' 收款：￥'.money_show($this->payed_amount));
+        // 发送消息
+        $this->sendMessage(config('app.name').$bill->pay_way_string.'有一笔新的收款'.money_show($this->payed_amount).'元', $bill->pay_way_string.'于 '.$bill->pay_at.' 收款：￥'.money_show($this->payed_amount));
     }
 
     /**

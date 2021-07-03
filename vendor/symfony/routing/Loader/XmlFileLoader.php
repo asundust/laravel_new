@@ -88,6 +88,16 @@ class XmlFileLoader extends FileLoader
             case 'import':
                 $this->parseImport($collection, $node, $path, $file);
                 break;
+            case 'when':
+                if (!$this->env || $node->getAttribute('env') !== $this->env) {
+                    break;
+                }
+                foreach ($node->childNodes as $node) {
+                    if ($node instanceof \DOMElement) {
+                        $this->parseNode($collection, $node, $path, $file);
+                    }
+                }
+                break;
             default:
                 throw new \InvalidArgumentException(sprintf('Unknown tag "%s" used in file "%s". Expected "route" or "import".', $node->localName, $path));
         }
@@ -358,7 +368,7 @@ class XmlFileLoader extends FileLoader
     /**
      * Recursively parses the value of a "default" element.
      *
-     * @return array|bool|float|int|string The parsed value
+     * @return array|bool|float|int|string|null The parsed value
      *
      * @throws \InvalidArgumentException when the XML is invalid
      */

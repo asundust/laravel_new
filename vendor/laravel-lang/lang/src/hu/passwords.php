@@ -14,7 +14,7 @@ return [
 
     'reset'     => 'Az új jelszó beállítva!',
     'sent'      => 'Jelszó-emlékeztető elküldve!',
-    'throttled' => 'Kérjük várjon, mielőtt újra megpróbálná.',
+    'throttled' => 'Please wait before retrying.',
     'token'     => 'Ez az új jelszó generálásához tartozó token érvénytelen.',
     'user'      => 'Nem található felhasználó a megadott email címmel.',
 ];

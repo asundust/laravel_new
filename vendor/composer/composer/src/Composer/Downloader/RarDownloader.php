@@ -33,10 +33,10 @@ class RarDownloader extends ArchiveDownloader
 
         // Try to use unrar on *nix
         if (!Platform::isWindows()) {
-            $command = 'unrar x ' . ProcessExecutor::escape($file) . ' ' . ProcessExecutor::escape($path) . ' >/dev/null && chmod -R u+w ' . ProcessExecutor::escape($path);
+            $command = 'unrar x -- ' . ProcessExecutor::escape($file) . ' ' . ProcessExecutor::escape($path) . ' >/dev/null && chmod -R u+w ' . ProcessExecutor::escape($path);
 
             if (0 === $this->process->execute($command, $ignoredOutput)) {
-                return;
+                return \React\Promise\resolve();
             }
 
             $processError = 'Failed to execute ' . $command . "\n\n" . $this->process->getErrorOutput();
@@ -75,5 +75,7 @@ class RarDownloader extends ArchiveDownloader
         }
 
         $rarArchive->close();
+
+        return \React\Promise\resolve();
     }
 }

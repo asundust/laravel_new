@@ -13,10 +13,10 @@
 namespace Composer\Package\Loader;
 
 use Composer\Package\BasePackage;
-use Composer\Package\AliasPackage;
 use Composer\Config;
 use Composer\IO\IOInterface;
-use Composer\Package\RootPackageInterface;
+use Composer\Package\Package;
+use Composer\Package\RootAliasPackage;
 use Composer\Repository\RepositoryFactory;
 use Composer\Package\Version\VersionGuesser;
 use Composer\Package\Version\VersionParser;
@@ -58,13 +58,18 @@ class RootPackageLoader extends ArrayLoader
     }
 
     /**
-     * @param  array                $config package data
-     * @param  string               $class  FQCN to be instantiated
-     * @param  string               $cwd    cwd of the root package to be used to guess the version if it is not provided
-     * @return RootPackageInterface
+     * @template PackageClass of RootPackage
+     * @param  array                        $config package data
+     * @param  class-string<PackageClass>   $class  FQCN to be instantiated
+     * @param  string                       $cwd    cwd of the root package to be used to guess the version if it is not provided
+     * @return RootPackage|RootAliasPackage
      */
     public function load(array $config, $class = 'Composer\Package\RootPackage', $cwd = null)
     {
+        if ($class !== 'Composer\Package\RootPackage') {
+            trigger_error('The $class arg is deprecated, please reach out to Composer maintainers ASAP if you still need this.', E_USER_DEPRECATED);
+        }
+
         if (!isset($config['name'])) {
             $config['name'] = '__root__';
         } elseif ($err = ValidatingArrayLoader::hasPackageNamingError($config['name'])) {
@@ -105,9 +110,16 @@ class RootPackageLoader extends ArrayLoader
             }
         }
 
-        $realPackage = $package = parent::load($config, $class);
-        if ($realPackage instanceof AliasPackage) {
+        /** @var RootPackage|RootAliasPackage $package */
+        $package = parent::load($config, $class);
+        if ($package instanceof RootAliasPackage) {
             $realPackage = $package->getAliasOf();
+        } else {
+            $realPackage = $package;
+        }
+
+        if (!$realPackage instanceof RootPackage) {
+            throw new \LogicException('Expecting a Composer\Package\RootPackage at this point');
         }
 
         if ($autoVersioned) {
@@ -130,8 +142,8 @@ class RootPackageLoader extends ArrayLoader
                     $links[$link->getTarget()] = $link->getConstraint()->getPrettyString();
                 }
                 $aliases = $this->extractAliases($links, $aliases);
-                $stabilityFlags = $this->extractStabilityFlags($links, $stabilityFlags, $realPackage->getMinimumStability());
-                $references = $this->extractReferences($links, $references);
+                $stabilityFlags = self::extractStabilityFlags($links, $realPackage->getMinimumStability(), $stabilityFlags);
+                $references = self::extractReferences($links, $references);
 
                 if (isset($links[$config['name']])) {
                     throw new \RuntimeException(sprintf('Root package \'%s\' cannot require itself in its composer.json' . PHP_EOL .
@@ -189,7 +201,10 @@ class RootPackageLoader extends ArrayLoader
         return $aliases;
     }
 
-    private function extractStabilityFlags(array $requires, array $stabilityFlags, $minimumStability)
+    /**
+     * @internal
+     */
+    public static function extractStabilityFlags(array $requires, $minimumStability, array $stabilityFlags)
     {
         $stabilities = BasePackage::$stabilities;
         $minimumStability = $stabilities[$minimumStability];
@@ -242,7 +257,10 @@ class RootPackageLoader extends ArrayLoader
         return $stabilityFlags;
     }
 
-    private function extractReferences(array $requires, array $references)
+    /**
+     * @internal
+     */
+    public static function extractReferences(array $requires, array $references)
     {
         foreach ($requires as $reqName => $reqVersion) {
             $reqVersion = preg_replace('{^([^,\s@]+) as .+$}', '$1', $reqVersion);

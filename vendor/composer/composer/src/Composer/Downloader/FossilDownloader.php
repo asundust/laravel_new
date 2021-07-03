@@ -25,6 +25,7 @@ class FossilDownloader extends VcsDownloader
      */
     protected function doDownload(PackageInterface $package, $path, $url, PackageInterface $prevPackage = null)
     {
+        return \React\Promise\resolve();
     }
 
     /**
@@ -39,18 +40,20 @@ class FossilDownloader extends VcsDownloader
         $ref = ProcessExecutor::escape($package->getSourceReference());
         $repoFile = $path . '.fossil';
         $this->io->writeError("Cloning ".$package->getSourceReference());
-        $command = sprintf('fossil clone %s %s', $url, ProcessExecutor::escape($repoFile));
+        $command = sprintf('fossil clone -- %s %s', $url, ProcessExecutor::escape($repoFile));
         if (0 !== $this->process->execute($command, $ignoredOutput)) {
             throw new \RuntimeException('Failed to execute ' . $command . "\n\n" . $this->process->getErrorOutput());
         }
-        $command = sprintf('fossil open %s --nested', ProcessExecutor::escape($repoFile));
+        $command = sprintf('fossil open --nested -- %s', ProcessExecutor::escape($repoFile));
         if (0 !== $this->process->execute($command, $ignoredOutput, realpath($path))) {
             throw new \RuntimeException('Failed to execute ' . $command . "\n\n" . $this->process->getErrorOutput());
         }
-        $command = sprintf('fossil update %s', $ref);
+        $command = sprintf('fossil update -- %s', $ref);
         if (0 !== $this->process->execute($command, $ignoredOutput, realpath($path))) {
             throw new \RuntimeException('Failed to execute ' . $command . "\n\n" . $this->process->getErrorOutput());
         }
+
+        return \React\Promise\resolve();
     }
 
     /**
@@ -72,6 +75,8 @@ class FossilDownloader extends VcsDownloader
         if (0 !== $this->process->execute($command, $ignoredOutput, realpath($path))) {
             throw new \RuntimeException('Failed to execute ' . $command . "\n\n" . $this->process->getErrorOutput());
         }
+
+        return \React\Promise\resolve();
     }
 
     /**

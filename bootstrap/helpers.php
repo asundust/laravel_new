@@ -1,19 +1,5 @@
 <?php
 
-if (!function_exists('log_channel')) {
-    /**
-     * 返回指定通道的日志实例.
-     *
-     * @param $channel
-     *
-     * @return mixed
-     */
-    function log_channel($channel)
-    {
-        return logger()->channel($channel);
-    }
-}
-
 if (!function_exists('pl')) {
     /**
      * 快速日志打印.
@@ -126,17 +112,55 @@ if (!function_exists('sc_send')) {
     }
 }
 
+if (!function_exists('sct_send')) {
+    /**
+     * Server酱(Turbo版)推送
+     *
+     * @param        $text
+     * @param string $desc
+     * @param string $key
+     *
+     * @return false|\Psr\Http\Message\ResponseInterface
+     */
+    function sct_send($text, $desc = '', $key = '')
+    {
+        if (!$key) {
+            $key = cache_config('sct_send_key');
+        }
+        if (!$key) {
+            return false;
+        }
+
+        $response = (new \GuzzleHttp\Client([
+            'timeout' => 5,
+            'verify' => false,
+            'http_errors' => false,
+            'headers' => [
+                'Content-Type' => 'application/x-www-form-urlencoded',
+            ],
+        ]))->post('https://sctapi.ftqq.com/'.$key.'.send', [
+            'form_params' => [
+                'text' => $text,
+                'desp' => $desc,
+            ],
+        ]);
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+}
+
 if (!function_exists('cache_config')) {
     /**
      * 获取Admin Config的缓存键的值
      *
      * @param $key
+     * @param $default
      *
      * @return mixed
      */
-    function cache_config($key)
+    function cache_config($key, $default = null)
     {
-        return \Illuminate\Support\Facades\Cache::get(\App\Models\Admin\AdminConfig::CACHE_KEY_PREFIX.$key);
+        return \Illuminate\Support\Facades\Cache::get(\App\Models\Admin\AdminConfig::CACHE_KEY_PREFIX.$key, $default);
     }
 }
 

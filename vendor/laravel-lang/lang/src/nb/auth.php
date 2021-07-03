@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Authentication Language Lines
@@ -13,7 +12,6 @@ return [
     |
     */
 
-    'failed'   => 'Disse opplysningene samsvarer ikke med hva vi har lagret.',
+    'failed'   => 'Brukernavn og/eller passord er feil.',
     'throttle' => 'For mange innloggingsforsøk. Vennligst prøv igjen om :seconds sekunder.',
-
 ];

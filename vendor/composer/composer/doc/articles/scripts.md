@@ -162,10 +162,11 @@ class MyClass
 }
 ```
 
-**Note:** During a composer install or update process, a variable named
+**Note:** During a Composer `install` or `update` command run, a variable named
 `COMPOSER_DEV_MODE` will be added to the environment. If the command was run
 with the `--no-dev` flag, this variable will be set to 0, otherwise it will be
-set to 1.
+set to 1. The variable is also available while `dump-autoload` runs, and it
+will be set to same as the last `install` or `update` was run in.
 
 ## Event classes
 
@@ -177,15 +178,15 @@ Depending on the [script types](#event-names) you will get various event
 subclasses containing various getters with relevant data and associated
 objects:
 
-- Base class: [`Composer\EventDispatcher\Event`](https://getcomposer.org/apidoc/master/Composer/EventDispatcher/Event.html)
-- Command Events: [`Composer\Script\Event`](https://getcomposer.org/apidoc/master/Composer/Script/Event.html)
-- Installer Events: [`Composer\Installer\InstallerEvent`](https://getcomposer.org/apidoc/master/Composer/Installer/InstallerEvent.html)
-- Package Events: [`Composer\Installer\PackageEvent`](https://getcomposer.org/apidoc/master/Composer/Installer/PackageEvent.html)
+- Base class: [`Composer\EventDispatcher\Event`](https://github.com/composer/composer/blob/master/src/Composer/EventDispatcher/Event.php)
+- Command Events: [`Composer\Script\Event`](https://github.com/composer/composer/blob/master/src/Composer/Script/Event.php)
+- Installer Events: [`Composer\Installer\InstallerEvent`](https://github.com/composer/composer/blob/master/src/Composer/Installer/InstallerEvent.php)
+- Package Events: [`Composer\Installer\PackageEvent`](https://github.com/composer/composer/blob/master/src/Composer/Installer/PackageEvent.php)
 - Plugin Events:
-  - init: [`Composer\EventDispatcher\Event`](https://getcomposer.org/apidoc/master/Composer/EventDispatcher/Event.html)
-  - command: [`Composer\Plugin\CommandEvent`](https://getcomposer.org/apidoc/master/Composer/Plugin/CommandEvent.html)
-  - pre-file-download: [`Composer\Plugin\PreFileDownloadEvent`](https://getcomposer.org/apidoc/master/Composer/Plugin/PreFileDownloadEvent.html)
-  - post-file-download: [`Composer\Plugin\PostFileDownloadEvent`](https://getcomposer.org/apidoc/master/Composer/Plugin/PostFileDownloadEvent.html)
+  - init: [`Composer\EventDispatcher\Event`](https://github.com/composer/composer/blob/master/src/Composer/EventDispatcher/Event.php)
+  - command: [`Composer\Plugin\CommandEvent`](https://github.com/composer/composer/blob/master/src/Composer/Plugin/CommandEvent.php)
+  - pre-file-download: [`Composer\Plugin\PreFileDownloadEvent`](https://github.com/composer/composer/blob/master/src/Composer/Plugin/PreFileDownloadEvent.php)
+  - post-file-download: [`Composer\Plugin\PostFileDownloadEvent`](https://github.com/composer/composer/blob/master/src/Composer/Plugin/PostFileDownloadEvent.php)
 
 ## Running scripts manually
 

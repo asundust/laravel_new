@@ -2,6 +2,26 @@
 
 All notable changes to `ignition` will be documented in this file
 
+## 2.10.2 - 2021-06-11
+
+- fix typo in config/flare.php (#395)
+
+## 2.10.1 - 2021-06-03
+
+- fix memory leaks in Octane (#393)
+
+## 2.10.0 - 2021-06-03
+
+- add a solution for lazy loading violations (#392)
+
+## 2.9.0 - 2021-05-05
+
+- add Xdebug format links for editor (#383)
+
+## 2.8.4 - 2021-04-29
+
+- avoid making call to Flare when no API key is specified
+
 ## 2.8.3 - 2021-04-09
 
 - support Octane (#379)

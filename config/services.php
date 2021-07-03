@@ -33,8 +33,23 @@ return [
     // 后台配置
     'admin_configs' => [
         [
+            'description' => '消息发送通道(1.Server酱 2.Server酱Turbo版 3.企业微信消息推送(只走默认配置))',
+            'name' => 'message_send_way',
+            'value' => '',
+        ],
+        [
             'description' => 'Server酱推送密钥(请关注“方糖”公众号)',
             'name' => 'sc_send_key',
+            'value' => '',
+        ],
+        [
+            'description' => 'Server酱(Turbo版)推送密钥(自行配置好消息通道)',
+            'name' => 'sct_send_key',
+            'value' => '',
+        ],
+        [
+            'description' => '企业微信消息推送推送用户(不填写默认“@all”)',
+            'name' => 'wechat_work_push_user',
             'value' => '',
         ],
     ],
@@ -56,6 +71,35 @@ return [
                     'icon' => 'fa-toggle-on',
                     'type' => 0,
                     'uri' => 'config',
+                    'permission' => '',
+                    'roles' => [
+                    ],
+                ],
+            ],
+        ],
+        [
+            'title' => '企业微信消息推送',
+            'icon' => 'fa-wechat',
+            'type' => 0,
+            'uri' => '',
+            'permission' => '',
+            'roles' => [
+            ],
+            'data' => [
+                [
+                    'title' => '用户配置',
+                    'icon' => 'fa-users',
+                    'type' => 0,
+                    'uri' => 'wechatWorkPushUsers',
+                    'permission' => '',
+                    'roles' => [
+                    ],
+                ],
+                [
+                    'title' => '默认配置',
+                    'icon' => 'fa-toggle-on',
+                    'type' => 0,
+                    'uri' => 'wechatWorkPushConfig',
                     'permission' => '',
                     'roles' => [
                     ],

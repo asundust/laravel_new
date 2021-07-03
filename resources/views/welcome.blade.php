@@ -113,7 +113,7 @@
 </div>
 @if (config('app.beian'))
     <footer class="footer">
-        <a href="http://www.beian.miit.gov.cn" target="_blank">{{ config('app.beian') }}</a>
+        <a href="http://beian.miit.gov.cn" target="_blank">{{ config('app.beian') }}</a>
     </footer>
 @endif
 </body>

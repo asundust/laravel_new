@@ -261,7 +261,7 @@ class Git
                 $commandCallable = function ($url) {
                     $sanitizedUrl = preg_replace('{://([^@]+?):(.+?)@}', '://', $url);
 
-                    return sprintf('git remote set-url origin %s && git remote update --prune origin && git remote set-url origin %s && git gc --auto', ProcessExecutor::escape($url), ProcessExecutor::escape($sanitizedUrl));
+                    return sprintf('git remote set-url origin -- %s && git remote update --prune origin && git remote set-url origin -- %s && git gc --auto', ProcessExecutor::escape($url), ProcessExecutor::escape($sanitizedUrl));
                 };
                 $this->runCommand($commandCallable, $url, $dir);
             } catch (\Exception $e) {
@@ -277,7 +277,7 @@ class Git
         $this->filesystem->removeDirectory($dir);
 
         $commandCallable = function ($url) use ($dir) {
-            return sprintf('git clone --mirror %s %s', ProcessExecutor::escape($url), ProcessExecutor::escape($dir));
+            return sprintf('git clone --mirror -- %s %s', ProcessExecutor::escape($url), ProcessExecutor::escape($dir));
         };
 
         $this->runCommand($commandCallable, $url, $dir, true);
@@ -353,29 +353,24 @@ class Git
 
         // added in git 1.7.1, prevents prompting the user for username/password
         if (getenv('GIT_ASKPASS') !== 'echo') {
-            putenv('GIT_ASKPASS=echo');
-            $_SERVER['GIT_ASKPASS'] = 'echo';
+            Platform::putEnv('GIT_ASKPASS', 'echo');
         }
 
         // clean up rogue git env vars in case this is running in a git hook
         if (getenv('GIT_DIR')) {
-            putenv('GIT_DIR');
-            unset($_SERVER['GIT_DIR']);
+            Platform::clearEnv('GIT_DIR');
         }
         if (getenv('GIT_WORK_TREE')) {
-            putenv('GIT_WORK_TREE');
-            unset($_SERVER['GIT_WORK_TREE']);
+            Platform::clearEnv('GIT_WORK_TREE');
         }
 
         // Run processes with predictable LANGUAGE
         if (getenv('LANGUAGE') !== 'C') {
-            putenv('LANGUAGE=C');
-            $_SERVER['LANGUAGE'] = 'C';
+            Platform::putEnv('LANGUAGE', 'C');
         }
 
         // clean up env for OSX, see https://github.com/composer/composer/issues/2146#issuecomment-35478940
-        putenv("DYLD_LIBRARY_PATH");
-        unset($_SERVER['DYLD_LIBRARY_PATH']);
+        Platform::clearEnv('DYLD_LIBRARY_PATH');
     }
 
     public static function getGitHubDomainsRegex(Config $config)

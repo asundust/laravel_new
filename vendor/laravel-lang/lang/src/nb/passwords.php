@@ -1,10 +1,9 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
-    | Password Reset Language Lines
+    | Password Reminder Language Lines
     |--------------------------------------------------------------------------
     |
     | The following language lines are the default lines which match reasons
@@ -13,10 +12,9 @@ return [
     |
     */
 
-    'reset'     => 'Passordet ditt har blitt nullstilt!',
-    'sent'      => 'Vi har sendt din lenke for å nullstille passordet!',
-    'throttled' => 'Vennligst vent før du prøver på nytt.',
-    'token'     => 'Denne koden for å nullstille passordet er ugyldig.',
-    'user'      => 'Vi kan ikke finne en bruker med den e-postadressen.',
-
+    'reset'     => 'Passordet ble endret!',
+    'sent'      => 'Vi har sendt deg en lenke du kan klikke på for å endre passordet ditt!',
+    'throttled' => 'Please wait before retrying.',
+    'token'     => 'Passord-nullstillingskoden er ikke gyldig.',
+    'user'      => 'Vi finner ingen brukere med denne e-postadressen.',
 ];

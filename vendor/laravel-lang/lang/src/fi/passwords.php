@@ -14,7 +14,7 @@ return [
 
     'reset'     => 'Salasana on resetoitu!',
     'sent'      => 'Resetointilinkki lähetetty sähköpostitse!',
-    'throttled' => 'Odota, ennen kuin yrität uudelleen',
+    'throttled' => 'Please wait before retrying.',
     'token'     => 'Resetointitunniste on viallinen.',
     'user'      => 'Sähköpostiosoitteella ei löydy käyttäjää.',
 ];
