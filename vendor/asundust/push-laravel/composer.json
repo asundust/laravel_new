@@ -1,0 +1,40 @@
+{
+  "name": "asundust/push-laravel",
+  "description": "asundust/wechat-work-push的Laravel客户端",
+  "type": "library",
+  "keywords": [
+    "laravel",
+    "wechat",
+    "work",
+    "push",
+    "client"
+  ],
+  "homepage": "https://github.com/asundust/push-laravel",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "asundust",
+      "email": "asundust@qq.com",
+      "homepage": "https://github.com/asundust"
+    }
+  ],
+  "require": {
+    "illuminate/support": "~6|~7|~8",
+    "guzzlehttp/guzzle": "^6.3.1|^7.0.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Asundust\\PushLaravel\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Asundust\\PushLaravel\\PushLaravelServiceProvider"
+      ],
+      "aliases": {
+        "PushLaravel": "Asundust\\PushLaravel\\Facades\\PushLaravel"
+      }
+    }
+  }
+}

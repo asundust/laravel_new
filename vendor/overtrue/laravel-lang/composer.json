@@ -1,0 +1,42 @@
+{
+    "name": "overtrue/laravel-lang",
+    "description": "List of 75 languages for Laravel 4, 5, 6 and 7",
+    "keywords": [
+        "laravel",
+        "languages",
+        "i18n",
+        "locale",
+        "overtrue"
+    ],
+    "require": {
+        "laravel-lang/lang": "^5.0",
+        "symfony/process": "^4.0|^5.0",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Overtrue\\LaravelLang\\": "src/"
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "overtrue",
+            "email": "anzhengchao@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Overtrue\\LaravelLang\\TranslationServiceProvider"
+            ]
+        }
+    },
+    "require-dev": {
+        "laravel/framework": "~8.1"
+    },
+    "scripts": {
+        "check-style": "php-cs-fixer fix --using-cache=no --diff --config=.php_cs --dry-run --ansi",
+        "fix-style": "php-cs-fixer fix --using-cache=no --config=.php_cs --ansi"
+    }
+}
