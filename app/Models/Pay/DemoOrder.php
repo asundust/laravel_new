@@ -2,7 +2,7 @@
 
 namespace App\Models\Pay;
 
-use App\Http\Traits\SendMessageToUserTrait;
+use App\Http\Traits\SendMessageTrait;
 use App\Models\BaseModel;
 use App\Models\BaseModelTrait;
 use Eloquent;
@@ -38,7 +38,7 @@ use Illuminate\Support\Facades\Cache;
 class DemoOrder extends BaseModel
 {
     use BaseModelTrait;
-    use SendMessageToUserTrait;
+    use SendMessageTrait;
 
     const STATUS = [
         0 => '未支付',

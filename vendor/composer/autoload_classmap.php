@@ -64,6 +64,7 @@ return array(
     'Asundust\\WechatWorkPush\\Http\\Controllers\\WechatWorkPushHandleController' => $vendorDir . '/asundust/wechat-work-push/src/Http/Controllers/WechatWorkPushHandleController.php',
     'Asundust\\WechatWorkPush\\Http\\Controllers\\WechatWorkPushUserController' => $vendorDir . '/asundust/wechat-work-push/src/Http/Controllers/WechatWorkPushUserController.php',
     'Asundust\\WechatWorkPush\\Http\\Traits\\SendMessageTrait' => $vendorDir . '/asundust/wechat-work-push/src/Http/Traits/SendMessageTrait.php',
+    'Asundust\\WechatWorkPush\\Http\\Traits\\WechatWorkPushSendMessageTrait' => $vendorDir . '/asundust/wechat-work-push/src/Http/Traits/WechatWorkPushSendMessageTrait.php',
     'Asundust\\WechatWorkPush\\Models\\WechatWorkPushConfig' => $vendorDir . '/asundust/wechat-work-push/src/Models/WechatWorkPushConfig.php',
     'Asundust\\WechatWorkPush\\Models\\WechatWorkPushUser' => $vendorDir . '/asundust/wechat-work-push/src/Models/WechatWorkPushUser.php',
     'Asundust\\WechatWorkPush\\WechatWorkPush' => $vendorDir . '/asundust/wechat-work-push/src/WechatWorkPush.php',

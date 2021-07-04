@@ -825,6 +825,7 @@ class ComposerStaticInitf184658b4068cc02f7b22d6dee710e57
         'Asundust\\WechatWorkPush\\Http\\Controllers\\WechatWorkPushHandleController' => __DIR__ . '/..' . '/asundust/wechat-work-push/src/Http/Controllers/WechatWorkPushHandleController.php',
         'Asundust\\WechatWorkPush\\Http\\Controllers\\WechatWorkPushUserController' => __DIR__ . '/..' . '/asundust/wechat-work-push/src/Http/Controllers/WechatWorkPushUserController.php',
         'Asundust\\WechatWorkPush\\Http\\Traits\\SendMessageTrait' => __DIR__ . '/..' . '/asundust/wechat-work-push/src/Http/Traits/SendMessageTrait.php',
+        'Asundust\\WechatWorkPush\\Http\\Traits\\WechatWorkPushSendMessageTrait' => __DIR__ . '/..' . '/asundust/wechat-work-push/src/Http/Traits/WechatWorkPushSendMessageTrait.php',
         'Asundust\\WechatWorkPush\\Models\\WechatWorkPushConfig' => __DIR__ . '/..' . '/asundust/wechat-work-push/src/Models/WechatWorkPushConfig.php',
         'Asundust\\WechatWorkPush\\Models\\WechatWorkPushUser' => __DIR__ . '/..' . '/asundust/wechat-work-push/src/Models/WechatWorkPushUser.php',
         'Asundust\\WechatWorkPush\\WechatWorkPush' => __DIR__ . '/..' . '/asundust/wechat-work-push/src/WechatWorkPush.php',

@@ -39,7 +39,9 @@
 项目地址(同步[github.com/asundust/laravel_pay_demo](https://github.com/asundust/laravel_pay_demo)和[gitee.com/asundust/laravel_pay_demo](https://gitee.com/asundust/laravel_pay_demo))
 
 
-## 支付
+## 改动
+
+### 支付
 
 内置了一个用于测试订单支付的`app/Models/Pay/DemoOrder`Model
 参照下面的可以发起测试支付
@@ -66,6 +68,8 @@ return (new WechatPayService())->pay(['no' => $bill->pay_no, 'amount' => $bill->
 
 `app/Models/Pay/DemoOrder.php`
 
+### 微信网页授权
+
 另外微信公众号支付涉及了网页授权登陆，这边额外加入了以下文件
 
 `2021_01_30_000000_create_wechat_users_table.php`
@@ -80,5 +84,101 @@ return (new WechatPayService())->pay(['no' => $bill->pay_no, 'amount' => $bill->
 
 删除的时候需要注意这些文件的引用处，也需要删除相关代码
 
-## 许可证
-[MIT](https://opensource.org/licenses/MIT)
+### 消息推送服务端
+
+安装了消息推送组件[asundust/wechat-work-push](https://github.com/asundust/wechat-work-push)
+
+如果不需要卸载的话需要进行以下操作
+
+建议在安装前处理，如果已经安装则需要删除数据库表名为`wechat_work_push_configs`和`wechat_work_push_users`，并删除对应的据库表`migrations`里对应的记录
+
+执行`composer remove asundust/wechat-work-push`
+
+删除`config/admin.php`配置文件里的以下代码
+```
+'wechat-work-push' => [
+    'enable' => true,
+    // 'config_table' => 'wechat_work_push_configs', // 自定义配置表表名，可不填写，默认wechat_work_push_configs
+    // 'user_table' => 'wechat_work_push_users', // 自定义用户表表名，可不填写，默认wechat_work_push_users
+    // 'middleware' => 'web', // 自定义中间件组，可不填写，默认web
+],
+```
+
+删除`config/services.php`配置文件里的以下代码
+```
+[
+    'description' => '企业微信消息推送推送用户(不填写默认“@all”)',
+    'name' => 'wechat_work_push_user',
+    'value' => '',
+],
+```
+```
+[
+    'title' => '企业微信消息推送',
+    'icon' => 'fa-wechat',
+    'type' => 0,
+    'uri' => '',
+    'permission' => '',
+    'roles' => [
+    ],
+    'data' => [
+        [
+            'title' => '用户配置',
+            'icon' => 'fa-users',
+            'type' => 0,
+            'uri' => 'wechatWorkPushUsers',
+            'permission' => '',
+            'roles' => [
+            ],
+        ],
+        [
+            'title' => '默认配置',
+            'icon' => 'fa-toggle-on',
+            'type' => 0,
+            'uri' => 'wechatWorkPushConfig',
+            'permission' => '',
+            'roles' => [
+            ],
+        ],
+    ],
+],
+```
+
+修改`config/services.php`配置文件里的`消息发送通道(1.Server酱 2.Server酱Turbo版 3.企业微信消息推送(只走默认配置))`为`消息发送通道(1.Server酱 2.Server酱Turbo版)`
+
+删除`app/Http/Traits/SendMessageTrait.php`文件里的以下代码
+```
+use Asundust\WechatWorkPush\Http\Traits\WechatWorkPushSendMessageTrait;
+```
+```
+use WechatWorkPushSendMessageTrait;
+```
+```
+case 3:
+    return $this->defaultSend(cache_config('wechat_work_push_user', '@all'), $text, $desc);
+    break;
+```
+
+做完这些，需要执行一下`php artisan admin:menu-update`和`php artisan admin:config delete`
+
+### 消息推送客户端
+
+安装了消息推送组件[asundust/push-laravel](https://github.com/asundust/push-laravel)
+
+如果不需要卸载的话需要进行以下操作
+
+执行`composer remove asundust/push-laravel`
+
+删除`config/push-laravel.php`配置文件，
+
+删除`app/Http/Middleware/VerifyCsrfToken.php`配置文件里的`'push/*'`
+
+删除`.env`(如果配置了)和`.env.example`文件里的以下代码
+```
+PUSH_URL=
+PUSH_SECRET=
+```
+
+## License
+
+[The MIT License (MIT)](https://opensource.org/licenses/MIT)

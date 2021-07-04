@@ -2,14 +2,14 @@
 
 namespace Asundust\WechatWorkPush\Http\Actions;
 
-use Asundust\WechatWorkPush\Http\Traits\SendMessageTrait;
+use Asundust\WechatWorkPush\Http\Traits\WechatWorkPushSendMessageTrait;
 use Asundust\WechatWorkPush\Models\WechatWorkPushConfig;
 use Asundust\WechatWorkPush\Models\WechatWorkPushUser as WechatWorkPushUserModel;
 use Encore\Admin\Actions\RowAction;
 
 class SendTestMessage extends RowAction
 {
-    use SendMessageTrait;
+    use WechatWorkPushSendMessageTrait;
 
     public $name = '发送测试消息';
 

@@ -2,11 +2,11 @@
 
 namespace App\Http\Traits;
 
-use Asundust\WechatWorkPush\Http\Traits\SendMessageTrait;
+use Asundust\WechatWorkPush\Http\Traits\WechatWorkPushSendMessageTrait;
 
-trait SendMessageToUserTrait
+trait SendMessageTrait
 {
-    use SendMessageTrait;
+    use WechatWorkPushSendMessageTrait;
 
     /**
      * 发送消息.
