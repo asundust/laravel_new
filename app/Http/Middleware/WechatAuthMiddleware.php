@@ -27,7 +27,7 @@ class WechatAuthMiddleware extends OAuthAuthenticate
             return $next($request);
         }
 
-        //保证兼容性
+        // 保证兼容性
         $class = ('work' !== $type) ? 'wechat' : 'work';
         $prefix = ('work' !== $type) ? 'official_account' : 'work';
         $sessionKey = \sprintf('%s.oauth_user.%s', $class, $account);
