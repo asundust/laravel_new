@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\BaseModel
+ * App\Models\BaseModel.
  *
- * @property-read string $created_at_format
- * @property-read string $status_string
- * @property-read string $updated_at_format
+ * @property string $created_at_format
+ * @property string $status_string
+ * @property string $updated_at_format
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BaseModel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BaseModel newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BaseModel query()

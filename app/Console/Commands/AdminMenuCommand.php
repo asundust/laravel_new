@@ -22,9 +22,6 @@ class AdminMenuCommand extends Command
      */
     protected $description = '更新后台导航菜单';
 
-    /**
-     * @var int
-     */
     private int $startOrder = 3;
 
     /**
@@ -39,8 +36,6 @@ class AdminMenuCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
     public function handle(): void
     {
@@ -111,7 +106,7 @@ class AdminMenuCommand extends Command
         $adminMenuData = config('services.admin_menus', []);
         foreach ($adminMenuData as $parentValue) {
             $uriParent = $this->getUri($parentValue);
-            $this->info('当前处理父菜单：' . $parentValue['title'] . ' ' . $uriParent);
+            $this->info('当前处理父菜单：'.$parentValue['title'].' '.$uriParent);
             $menuParent = $menu->where(
                 'parent_id', 0)
                 ->where('title', $parentValue['title'])
@@ -133,7 +128,7 @@ class AdminMenuCommand extends Command
 
             foreach ($parentValue['data'] ?? [] as $k => $v) {
                 $uriChild = $this->getUri($v);
-                $this->info('　　　　子菜单：' . $v['title'] . ' ' . $uriChild);
+                $this->info('　　　　子菜单：'.$v['title'].' '.$uriChild);
                 $menuChild = $menu->where('parent_id', $menuParent->id)
                     ->where('title', $v['title'])
                     ->where('uri', $uriChild)
@@ -154,20 +149,18 @@ class AdminMenuCommand extends Command
             }
         }
 
-        $this->comment('　　　　处理完成' . PHP_EOL);
+        $this->comment('　　　　处理完成'.PHP_EOL);
     }
 
     /**
      * 获取URI.
      *
      * @param $value
-     *
-     * @return string
      */
     private function getUri($value): string
     {
         return match ($value['type']) {
-            1 => url('/') . (str_starts_with($value['uri'], '/') ? $value['uri'] : '/' . $value['uri']),
+            1 => url('/').(str_starts_with($value['uri'], '/') ? $value['uri'] : '/'.$value['uri']),
             default => $value['uri'],
         };
     }

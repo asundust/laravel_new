@@ -12,6 +12,6 @@
 */
 
 return [
-    'attached'  => '此字段已附加。',
+    'attached' => '此字段已附加。',
     'relatable' => '此字段可能与此资源不相关联。',
 ];

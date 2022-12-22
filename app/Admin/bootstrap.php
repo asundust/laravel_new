@@ -16,9 +16,7 @@
  * Or require js and css assets:
  * Admin::css('/packages/prettydocs/css/styles.css');
  * Admin::js('/packages/prettydocs/js/main.js');
- *
  */
-
 Encore\Admin\Form::forget(['map', 'editor']);
 
 // select 汉化
