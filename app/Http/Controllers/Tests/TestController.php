@@ -33,7 +33,7 @@ class TestController extends Controller
         if (!empty($result)) {
             return $result;
         }
-        dd('结束运行方法：' . $fun);
+        dd('结束运行方法：'.$fun);
     }
 
     // public function wechatOauthTest()
@@ -49,6 +49,5 @@ class TestController extends Controller
 
     public function a()
     {
-        //
     }
 }

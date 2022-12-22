@@ -6,12 +6,10 @@ if (!function_exists('cache_config')) {
      *
      * @param $key
      * @param $default
-     *
-     * @return mixed
      */
     function cache_config($key, $default = null): mixed
     {
-        return \Illuminate\Support\Facades\Cache::get(\App\Models\Admin\AdminConfig::CACHE_KEY_PREFIX . $key, $default);
+        return \Illuminate\Support\Facades\Cache::get(\App\Models\Admin\AdminConfig::CACHE_KEY_PREFIX.$key, $default);
     }
 }
 
@@ -19,10 +17,7 @@ if (!function_exists('admin_switch_arr')) {
     /**
      * Laravel-Admin系统的switch选项.
      *
-     * @param      $arr
-     * @param bool $isOpposite
-     *
-     * @return array
+     * @param $arr
      */
     function admin_switch_arr($arr, bool $isOpposite = true): array
     {
@@ -39,24 +34,21 @@ if (!function_exists('admin_switch_arr')) {
 
 if (!function_exists('admin_select_arr')) {
     /**
-     * Laravel-Admin系统的select选项
+     * Laravel-Admin系统的select选项.
      *
      * @param $items
-     * @param string $key
-     * @param string $value
-     * @param array $suffixData
-     * @return array
      */
     function admin_select_arr($items, string $key = 'id', string $value = 'name', array $suffixData = []): array
     {
         $data = [];
         foreach ($items as $item) {
             $suffix = '';
-            if ($suffixData && count($suffixData) == 4) {
+            if ($suffixData && 4 == count($suffixData)) {
                 $suffix .= $item[$suffixData[0]] == $suffixData[1] ? $suffixData[2] : $suffixData[3];
             }
-            $data[$item[$key]] = $item[$value] . $suffix;
+            $data[$item[$key]] = $item[$value].$suffix;
         }
+
         return $data;
     }
 }
@@ -64,8 +56,6 @@ if (!function_exists('admin_select_arr')) {
 if (!function_exists('is_wechat')) {
     /**
      * 判断是否是微信访问.
-     *
-     * @return bool
      */
     function is_wechat(): bool
     {
@@ -75,13 +65,12 @@ if (!function_exists('is_wechat')) {
 
 if (!function_exists('is_mobile')) {
     /**
-     * 是否手机
-     *
-     * @return bool
+     * 是否手机.
      */
     function is_mobile(): bool
     {
         $agent = new Jenssegers\Agent\Agent();
+
         return $agent->isMobile();
     }
 }

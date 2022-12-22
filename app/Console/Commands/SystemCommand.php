@@ -43,14 +43,16 @@ class SystemCommand extends Command
             case 'ready':
                 if (!app()->isLocal()) {
                     $this->error('非法环境');
+
                     return 0;
                 }
                 $this->language();
                 $this->comment('准备发布完成');
                 break;
             case 'install':
-                if (file_exists(__DIR__ . '/../../../install.lock')) {
+                if (file_exists(__DIR__.'/../../../install.lock')) {
                     $this->error('如需重装，请删除“install.lock”文件！');
+
                     return 0;
                 }
 
@@ -62,7 +64,7 @@ class SystemCommand extends Command
                 $this->adminRbac();
                 $this->queueRestart();
 
-                file_put_contents('install.lock', 'Install on ' . date('Y-m-d H:i:s'));
+                file_put_contents('install.lock', 'Install on '.date('Y-m-d H:i:s'));
                 $this->comment('安装完成:)');
                 break;
             case 'update':
@@ -82,42 +84,30 @@ class SystemCommand extends Command
         }
     }
 
-    /**
-     * @return void
-     */
     private function keyGenerate(): void
     {
         if ($this->laravel['config']['app.key']) {
-            $this->comment('Laravel Key 已存在' . PHP_EOL);
+            $this->comment('Laravel Key 已存在'.PHP_EOL);
         } else {
             Artisan::call('key:generate', [
                 '--ansi' => true,
             ], $this->output);
-            $this->comment('Laravel Key 已生成' . PHP_EOL);
+            $this->comment('Laravel Key 已生成'.PHP_EOL);
         }
     }
 
-    /**
-     * @return void
-     */
     private function adminInstall(): void
     {
         Artisan::call('admin:install', [], $this->output);
-        $this->comment('Admin安装完成' . PHP_EOL);
+        $this->comment('Admin安装完成'.PHP_EOL);
     }
 
-    /**
-     * @return void
-     */
     private function migrate(): void
     {
         Artisan::call('migrate', [], $this->output);
-        $this->comment('数据库迁移完成' . PHP_EOL);
+        $this->comment('数据库迁移完成'.PHP_EOL);
     }
 
-    /**
-     * @return void
-     */
     private function publishAdminAssets(): void
     {
         Artisan::call('view:clear');
@@ -125,24 +115,18 @@ class SystemCommand extends Command
             '--tag' => 'laravel-admin-assets',
             '--force' => true,
         ], $this->output);
-        $this->comment('Admin视图文件更新完成' . PHP_EOL);
+        $this->comment('Admin视图文件更新完成'.PHP_EOL);
     }
 
-    /**
-     * @return void
-     */
     private function adminMinify(): void
     {
         Artisan::call('admin:minify', [
             '--clear' => true,
         ], $this->output);
         Artisan::call('admin:minify', [], $this->output);
-        $this->comment('Admin压缩资源更新完成' . PHP_EOL);
+        $this->comment('Admin压缩资源更新完成'.PHP_EOL);
     }
 
-    /**
-     * @return void
-     */
     private function adminConfig(): void
     {
         Artisan::call('admin:config', [
@@ -150,9 +134,6 @@ class SystemCommand extends Command
         ], $this->output);
     }
 
-    /**
-     * @return void
-     */
     private function adminRbac(): void
     {
         Artisan::call('admin:permission-update', [], $this->output);
@@ -160,30 +141,24 @@ class SystemCommand extends Command
         Artisan::call('admin:menu-update', [], $this->output);
     }
 
-    /**
-     * @return void
-     */
     private function queueRestart(): void
     {
         Artisan::call('queue:restart');
-        $this->comment('队列已重启' . PHP_EOL);
+        $this->comment('队列已重启'.PHP_EOL);
     }
 
-    /**
-     * @return void
-     */
     private function language(): void
     {
         Artisan::call('vendor:publish', [
             '--tag' => 'laravel-admin-lang',
             '--force' => true,
         ], $this->output);
-        $this->comment('Admin语言包更新完成' . PHP_EOL);
+        $this->comment('Admin语言包更新完成'.PHP_EOL);
 
         Artisan::call('lang:publish', [
             'locales' => 'zh_CN',
             '--force' => true,
         ], $this->output);
-        $this->comment('Laravel语言包更新完成' . PHP_EOL);
+        $this->comment('Laravel语言包更新完成'.PHP_EOL);
     }
 }
