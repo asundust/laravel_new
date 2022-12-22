@@ -1,63 +1,28 @@
-# Laravel-lang
+# Laravel Lang
 
-In this repository, you can find the lang files for the framework PHP, [Laravel 4/5/6/7](https://laravel.com).
+![laravel lang localizations](https://preview.dragon-code.pro/laravel-lang/localizations.svg?brand=laravel)
 
-## Install
+In this repository, you can find the lang files for the [Laravel Framework](https://laravel.com), [Laravel Jetstream](https://jetstream.laravel.com), [Laravel Fortify](https://github.com/laravel/fortify), [Laravel Cashier](https://laravel.com/docs/billing), [Laravel Breeze](https://github.com/laravel/breeze), [Laravel Nova](https://nova.laravel.com), [Laravel Spark](https://spark.laravel.com) and [Laravel UI](https://github.com/laravel/ui).
 
-#### Via Composer
-* For Laravel 7.x : run `composer require caouecs/laravel-lang:~6.0` in your project folder
-* For Laravel 6.x : run `composer require caouecs/laravel-lang:~5.0` in your project folder
-* For Laravel 5.8 : run `composer require caouecs/laravel-lang:~4.0` in your project folder
-* For Laravel 5.1-5.7 : run `composer require caouecs/laravel-lang:~3.0` in your project folder
-* For Laravel 5 : run `composer require caouecs/laravel-lang:~2.0` in your project folder
-* For Laravel 4 : run `composer require caouecs/laravel-lang:~1.0` in your project folder
-* Files of languages are in "vendor/caouecs/laravel-lang" directory
-* Copy the folders of languages that you want, in the *resources/lang* folder of your Laravel application (*app/lang* in Laravel 4).
+<p align="center">
+    [
+        <a href="https://laravel-lang.com">Documentation</a> |
+        <a href="https://laravel-lang.com/status.html">Translations Status</a>
+    ]
+</p>
 
-#### Via GitHub
+## Documentation
 
-* Clone the [GitHub repository](https://github.com/caouecs/laravel-lang/) : *git clone https://github.com/caouecs/Laravel-lang.git*
-* Or download the [zip file](https://github.com/caouecs/laravel-lang/archive/master.zip)
-* Choose the branch:
-    * `laravel4` for Laravel 4 project
-    * `master` for Laravel 5, 6, 7 projects
-* Copy the folders of languages that you want, in *resources/lang* folder of your Laravel application (*app/lang* in Laravel 4).
+See the [documentation](https://laravel-lang.com) for detailed installation and usage instructions.
 
-#### Via SVN
+## Translation managers
 
-Run this in your project directory:
-
-```sh
-# Laravel 5:
-svn export https://github.com/caouecs/Laravel-lang/trunk/src/[language-code] resources/lang/[language-code]
-
-# Laravel 4:
-svn export https://github.com/caouecs/Laravel-lang/branches/laravel4/[language-code] app/lang/[language-code]
-```
-
-Replace `[language-code]` by any of the languages listed [here](src).
-
-## Usage [Laravel only]
-
-In the file *config/app.php*, change the value of *locale* by the short name of your language (*app/config/app.php* in Laravel 4).
-
-
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
-## Status of files
-
-* Check the [todo.md](todo.md) file to see the missing translations.
-
-## Projects based on this package
-
-* [LaravelLang by ARCANEDEV](https://github.com/ARCANEDEV/LaravelLang) - Translations manager and checker for Laravel.
-* [Laravel-lang by overtrue](https://github.com/overtrue/laravel-lang) - Command to add languages in your project.
-* [laravel-lang-installer by ablunier](https://github.com/ablunier/laravel-lang-installer) - Command for easily add languages to a Laravel project.
-* [laravel-lang-publisher by Andrey Helldar](https://github.com/andrey-helldar/laravel-lang-publisher) - Easy installation and update of translation files for your project.
+* [Lang Publisher](https://publisher.laravel-lang.com) by [*@Laravel-Lang/laravel-lang*](https://github.com/Laravel-Lang/publisher) - Easy installation and update of
+  translation files for your project.
+* [LaravelLang](https://github.com/ARCANEDEV/LaravelLang) by [*@arcanedev-maroc*](https://github.com/ARCANEDEV) - Translations manager and checker for Laravel.
+* [Laravel-lang](https://github.com/overtrue/laravel-lang) by [*@overtrue*](https://github.com/overtrue) - Command to add languages in your project.
 
 ## Credits
 
-- [caouecs](https://github.com/caouecs)
-- [All Contributors](https://github.com/caouecs/Laravel-lang/graphs/contributors)
+- [Referents by language](https://laravel-lang.com/referents.html)
+- [All Contributors](https://github.com/Laravel-Lang/lang/graphs/contributors)

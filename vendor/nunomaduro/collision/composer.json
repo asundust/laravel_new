@@ -14,22 +14,19 @@
         }
     ],
     "require": {
-        "php": "^7.2.5 || ^8.0",
-        "facade/ignition-contracts": "^1.0",
-        "filp/whoops": "^2.4",
-        "symfony/console": "^5.0"
+        "php": "^8.0.0",
+        "filp/whoops": "^2.14.5",
+        "symfony/console": "^6.0.2"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.16",
-        "facade/ignition": "^2.0",
-        "fideloper/proxy": "^4.2",
-        "fruitcake/laravel-cors": "^1.0",
-        "laravel/framework": "^7.0",
-        "laravel/tinker": "^2.0",
-        "nunomaduro/larastan": "^0.6",
-        "orchestra/testbench": "^5.0",
-        "phpstan/phpstan": "^0.12.3",
-        "phpunit/phpunit": "^8.5.1 || ^9.0"
+        "brianium/paratest": "^6.4.1",
+        "laravel/framework": "^9.26.1",
+        "laravel/pint": "^1.1.1",
+        "nunomaduro/larastan": "^1.0.3",
+        "nunomaduro/mock-final-classes": "^1.1.0",
+        "orchestra/testbench": "^7.7",
+        "phpunit/phpunit": "^9.5.23",
+        "spatie/ignition": "^1.4.1"
     },
     "autoload-dev": {
         "psr-4": {
@@ -51,6 +48,9 @@
         "sort-packages": true
     },
     "extra": {
+        "branch-alias": {
+            "dev-develop": "6.x-dev"
+        },
         "laravel": {
             "providers": [
                 "NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider"
@@ -58,14 +58,14 @@
         }
     },
     "scripts": {
-        "lint": "php-cs-fixer fix -v",
+        "lint": "pint -v",
+        "test:lint": "pint --test -v",
         "test:types": "phpstan analyse --ansi",
         "test:unit": "phpunit --colors=always",
-        "test:lint": "php-cs-fixer fix -v --dry-run",
         "test": [
             "@test:lint",
-            "@test:unit",
-            "@test:types"
+            "@test:types",
+            "@test:unit"
         ]
     }
 }

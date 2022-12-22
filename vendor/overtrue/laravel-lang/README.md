@@ -1,5 +1,5 @@
 <h1 align="center">Laravel-lang</h1>
-<p align="center">75 languages support for Laravel 5 application based on <a href="https://github.com/Laravel-Lang/lang">Laravel-Lang/lang</a>.
+<p align="center">75 languages support for Laravel application based on <a href="https://github.com/Laravel-Lang/lang">Laravel-Lang/lang</a>.
 <p align="center"><a href="https://github.com/overtrue/laravel-lang"><img alt="For Laravel 5" src="https://img.shields.io/badge/laravel-5.*-green.svg" style="max-width:100%;"></a>
 <a href="https://github.com/overtrue/laravel-lang"><img alt="For Lumen 5" src="https://img.shields.io/badge/lumen-5.*-green.svg" style="max-width:100%;"></a>
 <a href="https://packagist.org/packages/overtrue/laravel-lang"><img alt="Latest Stable Version" src="https://img.shields.io/packagist/v/overtrue/laravel-lang.svg" style="max-width:100%;"></a>
@@ -15,8 +15,17 @@
 
 # Install
 
+| Laravel version | Composer command                              |
+| --------------- | --------------------------------------------- |
+| Laravel 9.x     | `composer require overtrue/laravel-lang:~6.0` |
+| Laravel 7.x-8.x | `composer require overtrue/laravel-lang:~5.0` |
+| Laravel 6.x     | `composer require overtrue/laravel-lang:~4.0` |
+| Laravel 5.8     | `composer require overtrue/laravel-lang:~3.0` |
+| Laravel 5.1-5.7 | `composer require overtrue/laravel-lang:~2.0` |
+| Laravel 5       | `composer require overtrue/laravel-lang:~1.0` |
+
 ```shell
-$ composer require "overtrue/laravel-lang:~4.0"
+composer require "overtrue/laravel-lang:~6.0"
 ```
 
 #### Lumen
@@ -90,17 +99,29 @@ return [
 
 You need only add the partials item what you want.
 
-### publish the language files to your project `resources/lang/` directory:
+### publish the language files to your project `resources/lang/` directory
 
 ```shell
-$ php artisan lang:publish [LOCALES] {--force}
+php artisan lang:publish [LOCALES] {--force}
 ```
 
 examples:
 
 ```shell
-$ php artisan lang:publish zh_CN,zh_HK,th,tk
+php artisan lang:publish zh_CN,zh_HK,th,tk
 ```
+
+## :heart: Sponsor me
+
+[![Sponsor me](https://github.com/overtrue/overtrue/blob/master/sponsor-me.svg?raw=true)](https://github.com/sponsors/overtrue)
+
+如果你喜欢我的项目并想支持它，[点击这里 :heart:](https://github.com/sponsors/overtrue)
+
+## Project supported by JetBrains
+
+Many thanks to Jetbrains for kindly providing a license for me to work on this and other open-source projects.
+
+[![](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://www.jetbrains.com/?from=https://github.com/overtrue)
 
 ## PHP 扩展包开发
 

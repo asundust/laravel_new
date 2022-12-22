@@ -25,7 +25,7 @@ class AdminMenuCommand extends Command
     /**
      * @var int
      */
-    private $startOrder = 3;
+    private int $startOrder = 3;
 
     /**
      * Create a new command instance.
@@ -40,9 +40,9 @@ class AdminMenuCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $menu = new Menu();
 
@@ -96,7 +96,7 @@ class AdminMenuCommand extends Command
             [
                 'parent_id' => 2,
                 'order' => 7,
-                'title' => '访问日志',
+                'title' => '操作日志',
                 'icon' => 'fa-history',
                 'uri' => 'auth/logs',
             ],
@@ -107,11 +107,11 @@ class AdminMenuCommand extends Command
         }
 
         // 自定义菜单
-        console_info('开始处理菜单');
-        $adminMenuData = config('services.admin_menus');
-        foreach ($adminMenuData as $parentKey => $parentValue) {
+        $this->info('开始处理菜单');
+        $adminMenuData = config('services.admin_menus', []);
+        foreach ($adminMenuData as $parentValue) {
             $uriParent = $this->getUri($parentValue);
-            console_info('当前处理父菜单：'.$parentValue['title'].' '.$uriParent);
+            $this->info('当前处理父菜单：' . $parentValue['title'] . ' ' . $uriParent);
             $menuParent = $menu->where(
                 'parent_id', 0)
                 ->where('title', $parentValue['title'])
@@ -133,7 +133,7 @@ class AdminMenuCommand extends Command
 
             foreach ($parentValue['data'] ?? [] as $k => $v) {
                 $uriChild = $this->getUri($v);
-                console_info('　　　　子菜单：'.$v['title'].' '.$uriChild);
+                $this->info('　　　　子菜单：' . $v['title'] . ' ' . $uriChild);
                 $menuChild = $menu->where('parent_id', $menuParent->id)
                     ->where('title', $v['title'])
                     ->where('uri', $uriChild)
@@ -154,7 +154,7 @@ class AdminMenuCommand extends Command
             }
         }
 
-        console_comment('　　　　处理完成'.PHP_EOL);
+        $this->comment('　　　　处理完成' . PHP_EOL);
     }
 
     /**
@@ -164,16 +164,11 @@ class AdminMenuCommand extends Command
      *
      * @return string
      */
-    private function getUri($value)
+    private function getUri($value): string
     {
-        switch ($value['type']) {
-            case 1:
-                return url('/').('/' == substr($value['uri'], 0, 1) ? $value['uri'] : '/'.$value['uri']);
-                break;
-
-            default:
-                return $value['uri'];
-                break;
-        }
+        return match ($value['type']) {
+            1 => url('/') . (str_starts_with($value['uri'], '/') ? $value['uri'] : '/' . $value['uri']),
+            default => $value['uri'],
+        };
     }
 }

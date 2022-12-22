@@ -2,6 +2,7 @@
 
 namespace Illuminate\Console;
 
+use Illuminate\Console\View\Components\Factory;
 use Illuminate\Support\Traits\Macroable;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,6 +13,7 @@ class Command extends SymfonyCommand
     use Concerns\CallsCommands,
         Concerns\HasParameters,
         Concerns\InteractsWithIO,
+        Concerns\InteractsWithSignals,
         Macroable;
 
     /**
@@ -38,14 +40,14 @@ class Command extends SymfonyCommand
     /**
      * The console command description.
      *
-     * @var string|null
+     * @var string
      */
     protected $description;
 
     /**
      * The console command help text.
      *
-     * @var string|null
+     * @var string
      */
     protected $help;
 
@@ -111,15 +113,21 @@ class Command extends SymfonyCommand
      * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return int
      */
-    public function run(InputInterface $input, OutputInterface $output)
+    public function run(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $this->laravel->make(
             OutputStyle::class, ['input' => $input, 'output' => $output]
         );
 
-        return parent::run(
-            $this->input = $input, $this->output
-        );
+        $this->components = $this->laravel->make(Factory::class, ['output' => $this->output]);
+
+        try {
+            return parent::run(
+                $this->input = $input, $this->output
+            );
+        } finally {
+            $this->untrap();
+        }
     }
 
     /**
@@ -131,7 +139,9 @@ class Command extends SymfonyCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        return (int) $this->laravel->call([$this, 'handle']);
+        $method = method_exists($this, 'handle') ? 'handle' : '__invoke';
+
+        return (int) $this->laravel->call([$this, $method]);
     }
 
     /**
@@ -161,8 +171,10 @@ class Command extends SymfonyCommand
 
     /**
      * {@inheritdoc}
+     *
+     * @return bool
      */
-    public function isHidden()
+    public function isHidden(): bool
     {
         return $this->hidden;
     }
@@ -170,7 +182,7 @@ class Command extends SymfonyCommand
     /**
      * {@inheritdoc}
      */
-    public function setHidden(bool $hidden)
+    public function setHidden(bool $hidden = true): static
     {
         parent::setHidden($this->hidden = $hidden);
 

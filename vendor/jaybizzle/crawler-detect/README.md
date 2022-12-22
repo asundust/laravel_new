@@ -5,7 +5,6 @@
 <p align="center">
 <a href="https://github.com/JayBizzle/Crawler-Detect/actions"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/JayBizzle/Crawler-Detect/Test?style=flat-square"></a>
 <a href="https://packagist.org/packages/jaybizzle/crawler-detect"><img src="https://img.shields.io/packagist/dm/JayBizzle/Crawler-Detect.svg?style=flat-square" /></a>
-<a href="https://scrutinizer-ci.com/g/JayBizzle/Crawler-Detect/?branch=master"><img src="https://img.shields.io/scrutinizer/g/JayBizzle/Crawler-Detect.svg?style=flat-square" /></a>
 <a href="https://github.com/JayBizzle/Crawler-Detect"><img src="https://img.shields.io/badge/license-MIT-ff69b4.svg?style=flat-square" /></a>
 <a href="https://packagist.org/packages/jaybizzle/crawler-detect"><img src="https://img.shields.io/packagist/v/jaybizzle/Crawler-Detect.svg?style=flat-square" /></a>
 <a href="https://coveralls.io/github/JayBizzle/Crawler-Detect"><img src="https://img.shields.io/coveralls/JayBizzle/Crawler-Detect/master.svg?style=flat-square" /></a>
@@ -13,7 +12,7 @@
 
 ## About CrawlerDetect
 
-CrawlerDetect is a PHP class for detecting bots/crawlers/spiders via the user agent and http_from header. Currently able to detect 1,000's of bots/spiders/crawlers.
+CrawlerDetect is a PHP class for detecting bots/crawlers/spiders via the `user agent` and `http_from` header. Currently able to detect 1,000's of bots/spiders/crawlers.
 
 ### Installation
 ```
@@ -60,15 +59,16 @@ To use this library with NodeJS or any ES6 application based, check out [es6-cra
 ### Python Library
 To use this library in a Python project, check out [crawlerdetect](https://github.com/moskrc/CrawlerDetect).
 
+### JVM Library (written in Java)
+To use this library in a JVM project (including Java, Scala, Kotlin, etc.), check out [CrawlerDetect](https://github.com/nekosoftllc/crawler-detect).
+
 ### .NET Library
 To use this library in a .net standard (including .net core) based project, check out [NetCrawlerDetect](https://github.com/gplumb/NetCrawlerDetect).
 
 ### Ruby Gem
-
 To use this library with Ruby on Rails or any Ruby-based application, check out [crawler_detect](https://github.com/loadkpi/crawler_detect) gem.
 
 ### Go Module
-
 To use this library with Go, check out the [crawlerdetect](https://github.com/x-way/crawlerdetect) module.
 
 _Parts of this class are based on the brilliant [MobileDetect](https://github.com/serbanghita/Mobile-Detect)_

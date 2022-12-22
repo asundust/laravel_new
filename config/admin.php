@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     /*
     |--------------------------------------------------------------------------
     | Laravel-admin name
@@ -56,6 +57,7 @@ return [
     |
     */
     'route' => [
+
         'prefix' => env('ADMIN_ROUTE_PREFIX', 'admin'),
 
         'namespace' => 'App\\Admin\\Controllers',
@@ -107,6 +109,7 @@ return [
     |
     */
     'auth' => [
+
         'controller' => App\Admin\Controllers\AuthController::class,
 
         'guard' => 'admin',
@@ -135,7 +138,6 @@ return [
         'excepts' => [
             'auth/login',
             'auth/logout',
-            '_handle_action_',
         ],
     ],
 
@@ -149,6 +151,7 @@ return [
     |
     */
     'upload' => [
+
         // Disk in `config/filesystem.php`.
         'disk' => 'admin',
 
@@ -168,6 +171,7 @@ return [
     |
     */
     'database' => [
+
         // Database connection for following tables.
         'connection' => '',
 
@@ -204,6 +208,7 @@ return [
     |
     */
     'operation_log' => [
+
         'enable' => true,
 
         /*
@@ -218,7 +223,7 @@ return [
          * or specific method to path like: get:admin/auth/logs.
          */
         'except' => [
-            'admin/auth/logs*',
+            env('ADMIN_ROUTE_PREFIX', 'admin') . '/auth/logs*',
         ],
     ],
 
@@ -270,7 +275,7 @@ return [
     |    "skin-red", "skin-red-light", "skin-black", "skin-black-light".
     |
     */
-    'skin' => 'skin-blue-light',
+    'skin' => env('ADMIN_SKIN', 'skin-blue-light'),
 
     /*
     |--------------------------------------------------------------------------
@@ -284,7 +289,7 @@ return [
     | "sidebar-mini".
     |
     */
-    'layout' => ['sidebar-mini', 'sidebar-open'],
+    'layout' => ['sidebar-mini', is_mobile() ? 'sidebar-collapse' : 'sidebar-open'],
 
     /*
     |--------------------------------------------------------------------------
@@ -341,9 +346,12 @@ return [
     |--------------------------------------------------------------------------
     */
     'minify_assets' => [
+
         // Assets will not be minified.
         'excepts' => [
+
         ],
+
     ],
 
     /*
@@ -352,6 +360,16 @@ return [
     |--------------------------------------------------------------------------
     */
     'enable_menu_search' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Exclude route from generate menu command
+    |--------------------------------------------------------------------------
+    */
+    'menu_exclude' => [
+        '_handle_selectable_',
+        '_handle_renderable_',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -390,12 +408,6 @@ return [
         'config' => [
             'name' => 'config',
             'controller' => App\Admin\Controllers\ConfigController::class,
-        ],
-        'wechat-work-push' => [
-            'enable' => true,
-            // 'config_table' => 'wechat_work_push_configs', // 自定义配置表表名，可不填写，默认wechat_work_push_configs
-            // 'user_table' => 'wechat_work_push_users', // 自定义用户表表名，可不填写，默认wechat_work_push_users
-            // 'middleware' => 'web', // 自定义中间件组，可不填写，默认web
         ],
     ],
 ];

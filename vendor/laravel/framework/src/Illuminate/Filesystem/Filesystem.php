@@ -5,13 +5,18 @@ namespace Illuminate\Filesystem;
 use ErrorException;
 use FilesystemIterator;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use RuntimeException;
+use SplFileObject;
+use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Mime\MimeTypes;
 
 class Filesystem
 {
+    use Conditionable;
     use Macroable;
 
     /**
@@ -87,14 +92,22 @@ class Filesystem
      * Get the returned value of a file.
      *
      * @param  string  $path
+     * @param  array  $data
      * @return mixed
      *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function getRequire($path)
+    public function getRequire($path, array $data = [])
     {
         if ($this->isFile($path)) {
-            return require $path;
+            $__path = $path;
+            $__data = $data;
+
+            return (static function () use ($__path, $__data) {
+                extract($__data, EXTR_SKIP);
+
+                return require $__path;
+            })();
         }
 
         throw new FileNotFoundException("File does not exist at path {$path}.");
@@ -103,23 +116,65 @@ class Filesystem
     /**
      * Require the given file once.
      *
-     * @param  string  $file
+     * @param  string  $path
+     * @param  array  $data
      * @return mixed
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function requireOnce($file)
+    public function requireOnce($path, array $data = [])
     {
-        require_once $file;
+        if ($this->isFile($path)) {
+            $__path = $path;
+            $__data = $data;
+
+            return (static function () use ($__path, $__data) {
+                extract($__data, EXTR_SKIP);
+
+                return require_once $__path;
+            })();
+        }
+
+        throw new FileNotFoundException("File does not exist at path {$path}.");
     }
 
     /**
-     * Get the MD5 hash of the file at the given path.
+     * Get the contents of a file one line at a time.
      *
      * @param  string  $path
+     * @return \Illuminate\Support\LazyCollection
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    public function lines($path)
+    {
+        if (! $this->isFile($path)) {
+            throw new FileNotFoundException(
+                "File does not exist at path {$path}."
+            );
+        }
+
+        return LazyCollection::make(function () use ($path) {
+            $file = new SplFileObject($path);
+
+            $file->setFlags(SplFileObject::DROP_NEW_LINE);
+
+            while (! $file->eof()) {
+                yield $file->fgets();
+            }
+        });
+    }
+
+    /**
+     * Get the hash of the file at the given path.
+     *
+     * @param  string  $path
+     * @param  string  $algorithm
      * @return string
      */
-    public function hash($path)
+    public function hash($path, $algorithm = 'md5')
     {
-        return md5_file($path);
+        return hash_file($algorithm, $path);
     }
 
     /**
@@ -157,6 +212,19 @@ class Filesystem
         file_put_contents($tempPath, $content);
 
         rename($tempPath, $path);
+    }
+
+    /**
+     * Replace a given string within a given file.
+     *
+     * @param  array|string  $search
+     * @param  array|string  $replace
+     * @param  string  $path
+     * @return void
+     */
+    public function replaceInFile($search, $replace, $path)
+    {
+        file_put_contents($path, str_replace($search, $replace, file_get_contents($path)));
     }
 
     /**
@@ -217,7 +285,9 @@ class Filesystem
 
         foreach ($paths as $path) {
             try {
-                if (! @unlink($path)) {
+                if (@unlink($path)) {
+                    clearstatcache(false, $path);
+                } else {
                     $success = false;
                 }
             } catch (ErrorException $e) {
@@ -271,6 +341,28 @@ class Filesystem
     }
 
     /**
+     * Create a relative symlink to the target file or directory.
+     *
+     * @param  string  $target
+     * @param  string  $link
+     * @return void
+     *
+     * @throws \RuntimeException
+     */
+    public function relativeLink($target, $link)
+    {
+        if (! class_exists(SymfonyFilesystem::class)) {
+            throw new RuntimeException(
+                'To enable support for relative links, please install the symfony/filesystem package.'
+            );
+        }
+
+        $relativeTarget = (new SymfonyFilesystem)->makePathRelative($target, dirname($link));
+
+        $this->link($relativeTarget, $link);
+    }
+
+    /**
      * Extract the file name from a file path.
      *
      * @param  string  $path
@@ -319,6 +411,8 @@ class Filesystem
      *
      * @param  string  $path
      * @return string|null
+     *
+     * @throws \RuntimeException
      */
     public function guessExtension($path)
     {
@@ -387,6 +481,18 @@ class Filesystem
     }
 
     /**
+     * Determine if the given path is a directory that does not contain any other files or directories.
+     *
+     * @param  string  $directory
+     * @param  bool  $ignoreDotFiles
+     * @return bool
+     */
+    public function isEmptyDirectory($directory, $ignoreDotFiles = false)
+    {
+        return ! Finder::create()->ignoreDotFiles($ignoreDotFiles)->in($directory)->depth(0)->hasResults();
+    }
+
+    /**
      * Determine if the given path is readable.
      *
      * @param  string  $path
@@ -406,6 +512,20 @@ class Filesystem
     public function isWritable($path)
     {
         return is_writable($path);
+    }
+
+    /**
+     * Determine if two files are the same by comparing their hashes.
+     *
+     * @param  string  $firstFile
+     * @param  string  $secondFile
+     * @return bool
+     */
+    public function hasSameHash($firstFile, $secondFile)
+    {
+        $hash = @md5_file($firstFile);
+
+        return $hash && $hash === @md5_file($secondFile);
     }
 
     /**
@@ -568,10 +688,8 @@ class Filesystem
             // If the current items is just a regular file, we will just copy this to the new
             // location and keep looping. If for some reason the copy fails we'll bail out
             // and return false, so the developer is aware that the copy process failed.
-            else {
-                if (! $this->copy($item->getPathname(), $target)) {
-                    return false;
-                }
+            elseif (! $this->copy($item->getPathname(), $target)) {
+                return false;
             }
         }
 

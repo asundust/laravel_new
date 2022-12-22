@@ -2,6 +2,113 @@
 
 All notable changes of the PHPUnit 8.5 release series are documented in this file using the [Keep a CHANGELOG](https://keepachangelog.com/) principles.
 
+## [8.5.31] - 2022-10-28
+
+### Fixed
+
+* [#5076](https://github.com/sebastianbergmann/phpunit/issues/5076): Test Runner does not warn about conflicting options
+
+## [8.5.30] - 2022-09-25
+
+### Changed
+
+* The configuration generator now asks for a cache directory
+
+### Fixed
+
+* [#4913](https://github.com/sebastianbergmann/phpunit/issues/4913): Failed `assert()` should show a backtrace
+* [#4966](https://github.com/sebastianbergmann/phpunit/issues/4966): `TestCase::assertSame()` (and related exact comparisons) must compare `float` exactly
+
+## [8.5.29] - 2022-08-22
+
+### Changed
+
+* [#5033](https://github.com/sebastianbergmann/phpunit/issues/5033): Do not depend on phpspec/prophecy
+
+## [8.5.28] - 2022-07-29
+
+### Fixed
+
+* [#5015](https://github.com/sebastianbergmann/phpunit/pull/5015): Ukraine banner unreadable on black background
+* [#5016](https://github.com/sebastianbergmann/phpunit/issues/5016): PHPUnit 8.5.27 does not work on PHP 7.2.0-7.2.18 and PHP 7.3.0-7.3.5
+
+## [8.5.27] - 2022-06-19
+
+### Fixed
+
+* [#4950](https://github.com/sebastianbergmann/phpunit/issues/4950): False error on `atMost()` invocation rule without call
+* [#4962](https://github.com/sebastianbergmann/phpunit/issues/4962): Ukraine banner unreadable on white background
+
+## [8.5.26] - 2022-04-01
+
+### Fixed
+
+* [#4938](https://github.com/sebastianbergmann/phpunit/issues/4938): Test Double code generator does not handle `void` return type declaration on `__clone()` methods
+
+## [8.5.25] - 2022-03-16
+
+### Fixed
+
+* [#4934](https://github.com/sebastianbergmann/phpunit/issues/4934): Code Coverage does not work with PHPUnit 8.5.24 PHAR on PHP 7
+
+## [8.5.24] - 2022-03-05 - #StandWithUkraine
+
+### Changed
+
+* [#4874](https://github.com/sebastianbergmann/phpunit/pull/4874): `PHP_FLOAT_EPSILON` is now used instead of hardcoded `0.0000000001` in `PHPUnit\Framework\Constraint\IsIdentical`
+
+### Fixed
+
+* When the HTML code coverage report's configured low upper bound is larger than the high lower bound then the default values are used instead
+
+## [8.5.23] - 2022-01-21
+
+### Fixed
+
+* [#4799](https://github.com/sebastianbergmann/phpunit/pull/4799): Memory leaks in `PHPUnit\Framework\TestSuite` class
+* [#4857](https://github.com/sebastianbergmann/phpunit/pull/4857): Result of `debug_backtrace()` is not used correctly
+
+## [8.5.22] - 2021-12-25
+
+### Changed
+
+* [#4812](https://github.com/sebastianbergmann/phpunit/issues/4812): Do not enforce time limits when a debugging session through DBGp is active
+* [#4835](https://github.com/sebastianbergmann/phpunit/issues/4835): Support for `$GLOBALS['_composer_autoload_path']` introduced in Composer 2.2
+
+### Fixed
+
+* [#4840](https://github.com/sebastianbergmann/phpunit/pull/4840): TestDox prettifying for class names does not correctly handle diacritics
+* [#4846](https://github.com/sebastianbergmann/phpunit/pull/4846): Composer proxy script is not ignored
+
+## [8.5.21] - 2021-09-25
+
+### Changed
+
+* PHPUnit no longer converts PHP deprecations to exceptions by default (configure `convertDeprecationsToExceptions="true"` to enable this)
+* The PHPUnit XML configuration file generator now configures `convertDeprecationsToExceptions="true"`
+
+### Fixed
+
+* [#4772](https://github.com/sebastianbergmann/phpunit/pull/4772): TestDox HTML report not displayed correctly when browser has custom colour settings
+
+## [8.5.20] - 2021-08-31
+
+### Fixed
+
+* [#4751](https://github.com/sebastianbergmann/phpunit/issues/4751): Configuration validation fails when using brackets in glob pattern
+
+## [8.5.19] - 2021-07-31
+
+### Fixed
+
+* [#4740](https://github.com/sebastianbergmann/phpunit/issues/4740): `phpunit.phar` does not work with PHP 8.1
+
+## [8.5.18] - 2021-07-19
+
+### Fixed
+
+* [#4720](https://github.com/sebastianbergmann/phpunit/issues/4720): PHPUnit does not verify its own PHP extension requirements
+
 ## [8.5.17] - 2021-06-23
 
 ### Changed
@@ -149,6 +256,20 @@ All notable changes of the PHPUnit 8.5 release series are documented in this fil
 * [#3967](https://github.com/sebastianbergmann/phpunit/issues/3967): Cannot double interface that extends interface that extends `\Throwable`
 * [#3968](https://github.com/sebastianbergmann/phpunit/pull/3968): Test class run in a separate PHP process are passing when `exit` called inside
 
+[8.5.31]: https://github.com/sebastianbergmann/phpunit/compare/8.5.30...8.5.31
+[8.5.30]: https://github.com/sebastianbergmann/phpunit/compare/8.5.29...8.5.30
+[8.5.29]: https://github.com/sebastianbergmann/phpunit/compare/8.5.28...8.5.29
+[8.5.28]: https://github.com/sebastianbergmann/phpunit/compare/8.5.27...8.5.28
+[8.5.27]: https://github.com/sebastianbergmann/phpunit/compare/8.5.26...8.5.27
+[8.5.26]: https://github.com/sebastianbergmann/phpunit/compare/8.5.25...8.5.26
+[8.5.25]: https://github.com/sebastianbergmann/phpunit/compare/8.5.24...8.5.25
+[8.5.24]: https://github.com/sebastianbergmann/phpunit/compare/8.5.23...8.5.24
+[8.5.23]: https://github.com/sebastianbergmann/phpunit/compare/8.5.22...8.5.23
+[8.5.22]: https://github.com/sebastianbergmann/phpunit/compare/8.5.21...8.5.22
+[8.5.21]: https://github.com/sebastianbergmann/phpunit/compare/8.5.20...8.5.21
+[8.5.20]: https://github.com/sebastianbergmann/phpunit/compare/8.5.19...8.5.20
+[8.5.19]: https://github.com/sebastianbergmann/phpunit/compare/8.5.18...8.5.19
+[8.5.18]: https://github.com/sebastianbergmann/phpunit/compare/8.5.17...8.5.18
 [8.5.17]: https://github.com/sebastianbergmann/phpunit/compare/8.5.16...8.5.17
 [8.5.16]: https://github.com/sebastianbergmann/phpunit/compare/8.5.15...8.5.16
 [8.5.15]: https://github.com/sebastianbergmann/phpunit/compare/8.5.14...8.5.15

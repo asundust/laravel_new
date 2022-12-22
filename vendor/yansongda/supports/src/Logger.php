@@ -1,56 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Supports;
 
 use Exception;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\AbstractHandler;
+use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger as BaseLogger;
 use Psr\Log\LoggerInterface;
 
 /**
- * @method void emergency($message, array $context = array())
- * @method void alert($message, array $context = array())
- * @method void critical($message, array $context = array())
- * @method void error($message, array $context = array())
- * @method void warning($message, array $context = array())
- * @method void notice($message, array $context = array())
- * @method void info($message, array $context = array())
- * @method void debug($message, array $context = array())
- * @method void log($message, array $context = array())
+ * @method static void emergency($message, array $context = [])
+ * @method static void alert($message, array $context = [])
+ * @method static void critical($message, array $context = [])
+ * @method static void error($message, array $context = [])
+ * @method static void warning($message, array $context = [])
+ * @method static void notice($message, array $context = [])
+ * @method static void info($message, array $context = [])
+ * @method static void debug($message, array $context = [])
+ * @method static void log($message, array $context = [])
  */
 class Logger
 {
-    /**
-     * Logger instance.
-     *
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected ?LoggerInterface $logger = null;
 
-    /**
-     * formatter.
-     *
-     * @var \Monolog\Formatter\FormatterInterface
-     */
-    protected $formatter;
+    protected ?FormatterInterface $formatter = null;
 
-    /**
-     * handler.
-     *
-     * @var AbstractHandler
-     */
-    protected $handler;
+    protected ?AbstractProcessingHandler $handler = null;
 
-    /**
-     * config.
-     *
-     * @var array
-     */
-    protected $config = [
+    protected array $config = [
         'file' => null,
         'identify' => 'yansongda.supports',
         'level' => BaseLogger::DEBUG,
@@ -59,24 +41,25 @@ class Logger
     ];
 
     /**
+     * Bootstrap.
+     */
+    public function __construct(array $config = [])
+    {
+        $this->setConfig($config);
+    }
+
+    /**
      * Forward call.
-     *
-     * @author yansongda <me@yansongda.cn>
-     *
-     * @param string $method
-     * @param array  $args
      *
      * @throws Exception
      */
-    public function __call($method, $args): void
+    public function __call(string $method, array $args): void
     {
         call_user_func_array([$this->getLogger(), $method], $args);
     }
 
     /**
      * Set logger.
-     *
-     * @author yansongda <me@yansongda.cn>
      */
     public function setLogger(LoggerInterface $logger): Logger
     {
@@ -88,26 +71,13 @@ class Logger
     /**
      * Return the logger instance.
      *
-     * @author yansongda <me@yansongda.cn>
-     *
      * @throws Exception
      */
     public function getLogger(): LoggerInterface
     {
-        if (is_null($this->logger)) {
-            $this->logger = $this->createLogger();
-        }
-
-        return $this->logger;
+        return $this->logger ??= $this->createLogger();
     }
 
-    /**
-     * Make a default log instance.
-     *
-     * @author yansongda <me@yansongda.cn>
-     *
-     * @throws Exception
-     */
     public function createLogger(): BaseLogger
     {
         $handler = $this->getHandler();
@@ -124,8 +94,6 @@ class Logger
     /**
      * setFormatter.
      *
-     * @author yansongda <me@yansongda.cn>
-     *
      * @return $this
      */
     public function setFormatter(FormatterInterface $formatter): self
@@ -137,22 +105,14 @@ class Logger
 
     /**
      * getFormatter.
-     *
-     * @author yansongda <me@yansongda.cn>
      */
     public function getFormatter(): FormatterInterface
     {
-        if (is_null($this->formatter)) {
-            $this->formatter = $this->createFormatter();
-        }
-
-        return $this->formatter;
+        return $this->formatter ??= $this->createFormatter();
     }
 
     /**
      * createFormatter.
-     *
-     * @author yansongda <me@yansongda.cn>
      */
     public function createFormatter(): LineFormatter
     {
@@ -167,43 +127,21 @@ class Logger
     /**
      * setHandler.
      *
-     * @author yansongda <me@yansongda.cn>
-     *
      * @return $this
      */
-    public function setHandler(AbstractHandler $handler): self
+    public function setHandler(AbstractProcessingHandler $handler): self
     {
         $this->handler = $handler;
 
         return $this;
     }
 
-    /**
-     * getHandler.
-     *
-     * @author yansongda <me@yansongda.cn>
-     *
-     * @throws \Exception
-     */
-    public function getHandler(): AbstractHandler
+    public function getHandler(): AbstractProcessingHandler
     {
-        if (is_null($this->handler)) {
-            $this->handler = $this->createHandler();
-        }
-
-        return $this->handler;
+        return $this->handler ??= $this->createHandler();
     }
 
-    /**
-     * createHandler.
-     *
-     * @author yansongda <me@yansongda.cn>
-     *
-     * @throws \Exception
-     *
-     * @return \Monolog\Handler\RotatingFileHandler|\Monolog\Handler\StreamHandler
-     */
-    public function createHandler(): AbstractHandler
+    public function createHandler(): AbstractProcessingHandler
     {
         $file = $this->config['file'] ?? sys_get_temp_dir().'/logs/'.$this->config['identify'].'.log';
 
@@ -217,8 +155,6 @@ class Logger
     /**
      * setConfig.
      *
-     * @author yansongda <me@yansongda.cn>
-     *
      * @return $this
      */
     public function setConfig(array $config): self
@@ -230,8 +166,6 @@ class Logger
 
     /**
      * getConfig.
-     *
-     * @author yansongda <me@yansongda.cn>
      */
     public function getConfig(): array
     {

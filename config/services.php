@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
@@ -17,6 +18,7 @@ return [
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),
         'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+        'scheme' => 'https',
     ],
 
     'postmark' => [
@@ -35,26 +37,6 @@ return [
         [
             'description' => '网站首页标题(默认“Laravel”)',
             'name' => 'index_title',
-            'value' => '',
-        ],
-        [
-            'description' => '消息发送通道(1.Server酱 2.Server酱Turbo版 3.企业微信消息推送(只走默认配置))',
-            'name' => 'message_send_way',
-            'value' => '',
-        ],
-        [
-            'description' => 'Server酱推送密钥(请关注“方糖”公众号)',
-            'name' => 'sc_send_key',
-            'value' => '',
-        ],
-        [
-            'description' => 'Server酱(Turbo版)推送密钥(自行配置好消息通道)',
-            'name' => 'sct_send_key',
-            'value' => '',
-        ],
-        [
-            'description' => '企业微信消息推送推送用户(不填写默认“@all”)',
-            'name' => 'wechat_work_push_user',
             'value' => '',
         ],
     ],
@@ -118,7 +100,7 @@ return [
             'name' => '后台配置管理权限',
             'slug' => 'ext.config',
             'http_method' => '',
-            'http_path' => 'config*',
+            'http_path' => '/config*',
         ],
     ],
     // Admin后台角色

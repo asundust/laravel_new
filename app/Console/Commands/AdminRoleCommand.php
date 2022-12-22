@@ -36,23 +36,23 @@ class AdminRoleCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
-        console_info('自定义角色开始处理');
+        $this->info('自定义角色开始处理');
         $count = 0;
         $adminRoleData = config('services.admin_roles');
         foreach ($adminRoleData as $role) {
-            console_info('　　　　当前处理：'.$role['name'].' '.$role['slug']);
+            $this->info('　　　　当前处理：' . $role['name'] . ' ' . $role['slug']);
             $result = Role::firstOrCreate(Arr::only($role, ['name', 'slug']));
-            if (false != $result) {
+            if (false !== $result) {
                 if (count($role['permissions']) > 0) {
                     $result->permissions()->sync(Permission::whereIn('slug', $role['permissions'])->get());
                 }
                 ++$count;
             }
         }
-        console_comment('　　　　　处理完成：共'.$count.'条'.PHP_EOL);
+        $this->comment('　　　　　处理完成：共' . $count . '条' . PHP_EOL);
     }
 }

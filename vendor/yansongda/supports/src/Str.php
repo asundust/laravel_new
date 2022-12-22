@@ -1,34 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Supports;
 
 use Exception;
 
 /**
- * modify from Illuminate\Support.
+ * Most of the methods in this file come from illuminate/support.
+ * thanks provide such a useful class.
  */
 class Str
 {
     /**
      * The cache of snake-cased words.
-     *
-     * @var array
      */
-    protected static $snakeCache = [];
+    protected static array $snakeCache = [];
 
     /**
      * The cache of camel-cased words.
-     *
-     * @var array
      */
-    protected static $camelCache = [];
+    protected static array $camelCache = [];
 
     /**
      * The cache of studly-cased words.
-     *
-     * @var array
      */
-    protected static $studlyCache = [];
+    protected static array $studlyCache = [];
 
     /**
      * Return the remainder of a string after a given value.
@@ -125,7 +122,7 @@ class Str
      */
     public static function is($pattern, string $value): bool
     {
-        $patterns = is_array($pattern) ? $pattern : (array) $pattern;
+        $patterns = Arr::wrap($pattern);
 
         if (empty($patterns)) {
             return false;
@@ -164,8 +161,6 @@ class Str
 
     /**
      * Return the length of the given string.
-     *
-     * @param string $encoding
      */
     public static function length(string $value, ?string $encoding = null): int
     {
@@ -201,7 +196,7 @@ class Str
      */
     public static function words(string $value, int $words = 100, string $end = '...'): string
     {
-        preg_match('/^\s*+(?:\S++\s*+){1,'.$words.'}/u', $value, $matches);
+        preg_match('/^\s*+\S++\s*+{1,'.$words.'}/u', $value, $matches);
 
         if (!isset($matches[0]) || static::length($value) === static::length($matches[0])) {
             return $value;
@@ -230,12 +225,36 @@ class Str
         while (($len = strlen($string)) < $length) {
             $size = $length - $len;
 
-            $bytes = function_exists('random_bytes') ? random_bytes($size) : mt_rand();
+            $bytes = random_bytes($size);
 
             $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $size);
         }
 
         return $string;
+    }
+
+    public static function uuidV4(): string
+    {
+        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+
+            // 32 bits for "time_low"
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+
+            // 16 bits for "time_mid"
+            mt_rand(0, 0xffff),
+
+            // 16 bits for "time_hi_and_version",
+            // four most significant bits holds version number 4
+            mt_rand(0, 0x0fff) | 0x4000,
+
+            // 16 bits, 8 bits for "clk_seq_hi_res",
+            // 8 bits for "clk_seq_low",
+            // two most significant bits holds zero and one for variant DCE1.1
+            mt_rand(0, 0x3fff) | 0x8000,
+
+            // 48 bits for "node"
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+        );
     }
 
     /**
@@ -402,8 +421,6 @@ class Str
 
     /**
      * Convert string's encoding.
-     *
-     * @author yansongda <me@yansonga.cn>
      */
     public static function encoding(string $string, string $to = 'utf-8', string $from = 'gb2312'): string
     {
@@ -565,6 +582,6 @@ class Str
             ];
         }
 
-        return isset($languageSpecific[$language]) ? $languageSpecific[$language] : null;
+        return $languageSpecific[$language] ?? null;
     }
 }

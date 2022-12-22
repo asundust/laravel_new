@@ -25,14 +25,14 @@ class AdminPermissionCommand extends Command
     /**
      * @var string[]
      */
-    public static $permissionKeys1 = [
+    public static array $permissionKeys1 = [
         'name', 'slug',
     ];
 
     /**
      * @var string[]
      */
-    public static $permissionKeys2 = [
+    public static array $permissionKeys2 = [
         'http_method', 'http_path',
     ];
 
@@ -49,9 +49,9 @@ class AdminPermissionCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $list1 = [
             [
@@ -112,22 +112,22 @@ class AdminPermissionCommand extends Command
         $count = 0;
         foreach ($list1 as $k => $list) {
             $result = Permission::where($list)->update($list2[$k]);
-            if (false != $result) {
+            if (false !== $result) {
                 ++$count;
             }
         }
-        console_comment('权限名称本地化完成：共'.$count.'条'.PHP_EOL);
+        $this->comment('权限名称本地化完成：共' . $count . '条' . PHP_EOL);
 
-        console_info('自定义权限开始处理');
+        $this->info('自定义权限开始处理');
         $count = 0;
         $adminPermissionData = config('services.admin_permissions');
         foreach ($adminPermissionData as $permission) {
-            console_info('　　　　　当前处理：'.$permission['name'].' '.$permission['slug']);
+            $this->info('　　　　　当前处理：' . $permission['name'] . ' ' . $permission['slug']);
             $result = Permission::updateOrCreate(Arr::only($permission, self::$permissionKeys1), Arr::only($permission, self::$permissionKeys2));
-            if (false != $result) {
+            if (false !== $result) {
                 ++$count;
             }
         }
-        console_comment('　　　　　处理完成：共'.$count.'条'.PHP_EOL);
+        $this->comment('　　　　　处理完成：共' . $count . '条' . PHP_EOL);
     }
 }

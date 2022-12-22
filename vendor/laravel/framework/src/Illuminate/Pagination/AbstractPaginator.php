@@ -6,15 +6,16 @@ use Closure;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Illuminate\Support\Traits\ForwardsCalls;
+use Illuminate\Support\Traits\Tappable;
+use Traversable;
 
 /**
  * @mixin \Illuminate\Support\Collection
  */
 abstract class AbstractPaginator implements Htmlable
 {
-    use ForwardsCalls;
+    use ForwardsCalls, Tappable;
 
     /**
      * All of the items being paginated.
@@ -112,14 +113,14 @@ abstract class AbstractPaginator implements Htmlable
      *
      * @var string
      */
-    public static $defaultView = 'pagination::bootstrap-4';
+    public static $defaultView = 'pagination::tailwind';
 
     /**
      * The default "simple" pagination view.
      *
      * @var string
      */
-    public static $defaultSimpleView = 'pagination::simple-bootstrap-4';
+    public static $defaultSimpleView = 'pagination::simple-tailwind';
 
     /**
      * Determine if the given value is a valid page number.
@@ -180,7 +181,7 @@ abstract class AbstractPaginator implements Htmlable
         }
 
         return $this->path()
-                        .(Str::contains($this->path(), '?') ? '&' : '?')
+                        .(str_contains($this->path(), '?') ? '&' : '?')
                         .Arr::query($parameters)
                         .$this->buildFragment();
     }
@@ -336,6 +337,19 @@ abstract class AbstractPaginator implements Htmlable
     }
 
     /**
+     * Transform each item in the slice of items using a callback.
+     *
+     * @param  callable  $callback
+     * @return $this
+     */
+    public function through(callable $callback)
+    {
+        $this->items->transform($callback);
+
+        return $this;
+    }
+
+    /**
      * Get the number of items shown per page.
      *
      * @return int
@@ -363,6 +377,16 @@ abstract class AbstractPaginator implements Htmlable
     public function onFirstPage()
     {
         return $this->currentPage() <= 1;
+    }
+
+    /**
+     * Determine if the paginator is on the last page.
+     *
+     * @return bool
+     */
+    public function onLastPage()
+    {
+        return ! $this->hasMorePages();
     }
 
     /**
@@ -481,7 +505,7 @@ abstract class AbstractPaginator implements Htmlable
     public static function resolveCurrentPage($pageName = 'page', $default = 1)
     {
         if (isset(static::$currentPageResolver)) {
-            return call_user_func(static::$currentPageResolver, $pageName);
+            return (int) call_user_func(static::$currentPageResolver, $pageName);
         }
 
         return $default;
@@ -496,6 +520,21 @@ abstract class AbstractPaginator implements Htmlable
     public static function currentPageResolver(Closure $resolver)
     {
         static::$currentPageResolver = $resolver;
+    }
+
+    /**
+     * Resolve the query string or return the default value.
+     *
+     * @param  string|array|null  $default
+     * @return string
+     */
+    public static function resolveQueryString($default = null)
+    {
+        if (isset(static::$queryStringResolver)) {
+            return (static::$queryStringResolver)();
+        }
+
+        return $default;
     }
 
     /**
@@ -564,6 +603,16 @@ abstract class AbstractPaginator implements Htmlable
     }
 
     /**
+     * Indicate that Bootstrap 4 styling should be used for generated links.
+     *
+     * @return void
+     */
+    public static function useBootstrap()
+    {
+        static::useBootstrapFour();
+    }
+
+    /**
      * Indicate that Bootstrap 3 styling should be used for generated links.
      *
      * @return void
@@ -575,11 +624,33 @@ abstract class AbstractPaginator implements Htmlable
     }
 
     /**
+     * Indicate that Bootstrap 4 styling should be used for generated links.
+     *
+     * @return void
+     */
+    public static function useBootstrapFour()
+    {
+        static::defaultView('pagination::bootstrap-4');
+        static::defaultSimpleView('pagination::simple-bootstrap-4');
+    }
+
+    /**
+     * Indicate that Bootstrap 5 styling should be used for generated links.
+     *
+     * @return void
+     */
+    public static function useBootstrapFive()
+    {
+        static::defaultView('pagination::bootstrap-5');
+        static::defaultSimpleView('pagination::simple-bootstrap-5');
+    }
+
+    /**
      * Get an iterator for the items.
      *
      * @return \ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return $this->items->getIterator();
     }
@@ -609,7 +680,7 @@ abstract class AbstractPaginator implements Htmlable
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return $this->items->count();
     }
@@ -653,7 +724,7 @@ abstract class AbstractPaginator implements Htmlable
      * @param  mixed  $key
      * @return bool
      */
-    public function offsetExists($key)
+    public function offsetExists($key): bool
     {
         return $this->items->has($key);
     }
@@ -664,7 +735,7 @@ abstract class AbstractPaginator implements Htmlable
      * @param  mixed  $key
      * @return mixed
      */
-    public function offsetGet($key)
+    public function offsetGet($key): mixed
     {
         return $this->items->get($key);
     }
@@ -676,7 +747,7 @@ abstract class AbstractPaginator implements Htmlable
      * @param  mixed  $value
      * @return void
      */
-    public function offsetSet($key, $value)
+    public function offsetSet($key, $value): void
     {
         $this->items->put($key, $value);
     }
@@ -687,7 +758,7 @@ abstract class AbstractPaginator implements Htmlable
      * @param  mixed  $key
      * @return void
      */
-    public function offsetUnset($key)
+    public function offsetUnset($key): void
     {
         $this->items->forget($key);
     }
@@ -715,7 +786,7 @@ abstract class AbstractPaginator implements Htmlable
     }
 
     /**
-     * Render the contents of the paginator when casting to string.
+     * Render the contents of the paginator when casting to a string.
      *
      * @return string
      */

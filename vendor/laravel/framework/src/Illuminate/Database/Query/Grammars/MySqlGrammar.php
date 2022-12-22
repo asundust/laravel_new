@@ -10,17 +10,16 @@ class MySqlGrammar extends Grammar
     /**
      * The grammar specific operators.
      *
-     * @var array
+     * @var string[]
      */
     protected $operators = ['sounds like'];
 
     /**
      * Add a "where null" clause to the query.
      *
-     * @param  string|array  $columns
-     * @param  string  $boolean
-     * @param  bool  $not
-     * @return $this
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  array  $where
+     * @return string
      */
     protected function whereNull(Builder $query, $where)
     {
@@ -36,9 +35,9 @@ class MySqlGrammar extends Grammar
     /**
      * Add a "where not null" clause to the query.
      *
-     * @param  string|array  $columns
-     * @param  string  $boolean
-     * @return $this
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  array  $where
+     * @return string
      */
     protected function whereNotNull(Builder $query, $where)
     {
@@ -49,6 +48,30 @@ class MySqlGrammar extends Grammar
         }
 
         return parent::whereNotNull($query, $where);
+    }
+
+    /**
+     * Compile a "where fulltext" clause.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  array  $where
+     * @return string
+     */
+    public function whereFullText(Builder $query, $where)
+    {
+        $columns = $this->columnize($where['columns']);
+
+        $value = $this->parameter($where['value']);
+
+        $mode = ($where['options']['mode'] ?? []) === 'boolean'
+            ? ' in boolean mode'
+            : ' in natural language mode';
+
+        $expanded = ($where['options']['expanded'] ?? []) && ($where['options']['mode'] ?? []) !== 'boolean'
+            ? ' with query expansion'
+            : '';
+
+        return "match ({$columns}) against (".$value."{$mode}{$expanded})";
     }
 
     /**
@@ -78,6 +101,19 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Compile a "JSON contains key" statement into SQL.
+     *
+     * @param  string  $column
+     * @return string
+     */
+    protected function compileJsonContainsKey($column)
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($column);
+
+        return 'ifnull(json_contains_path('.$field.', \'one\''.$path.'), 0)';
+    }
+
+    /**
      * Compile a "JSON length" statement into SQL.
      *
      * @param  string  $column
@@ -90,6 +126,17 @@ class MySqlGrammar extends Grammar
         [$field, $path] = $this->wrapJsonFieldAndPath($column);
 
         return 'json_length('.$field.$path.') '.$operator.' '.$value;
+    }
+
+    /**
+     * Compile a "JSON value cast" statement into SQL.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function compileJsonValueCast($value)
+    {
+        return 'cast('.$value.' as json)';
     }
 
     /**
@@ -151,6 +198,40 @@ class MySqlGrammar extends Grammar
 
             return $this->wrap($key).' = '.$this->parameter($value);
         })->implode(', ');
+    }
+
+    /**
+     * Compile an "upsert" statement into SQL.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  array  $values
+     * @param  array  $uniqueBy
+     * @param  array  $update
+     * @return string
+     */
+    public function compileUpsert(Builder $query, array $values, array $uniqueBy, array $update)
+    {
+        $useUpsertAlias = $query->connection->getConfig('use_upsert_alias');
+
+        $sql = $this->compileInsert($query, $values);
+
+        if ($useUpsertAlias) {
+            $sql .= ' as laravel_upsert_alias';
+        }
+
+        $sql .= ' on duplicate key update ';
+
+        $columns = collect($update)->map(function ($value, $key) use ($useUpsertAlias) {
+            if (! is_numeric($key)) {
+                return $this->wrap($key).' = '.$this->parameter($value);
+            }
+
+            return $useUpsertAlias
+                ? $this->wrap($value).' = '.$this->wrap('laravel_upsert_alias').'.'.$this->wrap($value)
+                : $this->wrap($value).' = values('.$this->wrap($value).')';
+        })->implode(', ');
+
+        return $sql.$columns;
     }
 
     /**

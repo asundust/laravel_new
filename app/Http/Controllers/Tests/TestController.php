@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\Tests;
 
 use App\Http\Controllers\Controller;
-use App\Http\Traits\WechatTrait;
+
+// use App\Http\Traits\WechatTrait;
 
 class TestController extends Controller
 {
-    use WechatTrait;
+    // use WechatTrait;
 
     const ALLOW_LISTS = [
-        'wechatOauthTest',
+        // 'wechatOauthTest',
     ];
 
     /**
@@ -18,7 +19,7 @@ class TestController extends Controller
      */
     public function __construct()
     {
-        if (app()->isProduction() && in_array(__FUNCTION__, self::ALLOW_LISTS)) {
+        if (!app()->isLocal() && in_array(__FUNCTION__, self::ALLOW_LISTS)) {
             abort(404);
         }
     }
@@ -32,14 +33,14 @@ class TestController extends Controller
         if (!empty($result)) {
             return $result;
         }
-        dd('结束运行方法：'.$fun);
+        dd('结束运行方法：' . $fun);
     }
 
-    public function wechatOauthTest()
-    {
-        $wechatUser = $this->getWechatUser();
-        mad('授权成功，您的用户id为：'.$wechatUser->user_id.' ，您的openid为：'.$wechatUser->wechat_openid);
-    }
+    // public function wechatOauthTest()
+    // {
+    //     $wechatUser = $this->getWechatUser();
+    //     mad('授权成功，您的用户id为：'.$wechatUser->user_id.' ，您的openid为：'.$wechatUser->wechat_openid);
+    // }
 
     // public function a()
     // {
@@ -48,5 +49,6 @@ class TestController extends Controller
 
     public function a()
     {
+        //
     }
 }

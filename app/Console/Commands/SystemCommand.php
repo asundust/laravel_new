@@ -34,7 +34,7 @@ class SystemCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return false|void
      */
     public function handle()
     {
@@ -43,82 +43,147 @@ class SystemCommand extends Command
             case 'ready':
                 if (!app()->isLocal()) {
                     $this->error('非法环境');
-
-                    return false;
+                    return 0;
                 }
+                $this->language();
                 $this->comment('准备发布完成');
                 break;
             case 'install':
-                if (file_exists(__DIR__.'/../../../install.lock')) {
+                if (file_exists(__DIR__ . '/../../../install.lock')) {
                     $this->error('如需重装，请删除“install.lock”文件！');
+                    return 0;
+                }
 
-                    return false;
-                }
-                if (!$this->laravel['config']['app.key']) {
-                    Artisan::call('key:generate --ansi');
-                }
-                $this->comment('Laravel Key 已生成'.PHP_EOL);
-                if (!$this->laravel['config']['jwt.secret']) {
-                    Artisan::call('jwt:secret-force');
-                }
-                $this->comment('JWT 密钥 已生成'.PHP_EOL);
-                Artisan::call('admin:install');
-                $this->comment('Admin安装完成'.PHP_EOL);
-                Artisan::call('vendor:publish', [
-                    '--tag' => 'laravel-admin-assets',
-                    '--force' => true,
-                ]);
-                Artisan::call('admin:minify', [
-                    '--clear' => true,
-                ]);
-                Artisan::call('admin:minify');
-                // Artisan::call('vendor:publish', [
-                //     '--tag' => 'laravel-admin-lang',
-                //     '--force' => true
-                // ]);
-                $this->comment('Admin视图更新完成'.PHP_EOL);
-                Artisan::call('admin:config', [
-                    'type' => 'new',
-                ]);
-                Artisan::call('admin:permission-update');
-                Artisan::call('admin:role-update');
-                Artisan::call('admin:menu-update');
-                Artisan::call('queue:restart');
-                console_comment('队列已重启'.PHP_EOL);
-                file_put_contents('install.lock', 'Install on '.date('Y-m-d H:i:s'));
+                $this->keyGenerate();
+                $this->adminInstall();
+                $this->publishAdminAssets();
+                $this->adminMinify();
+                $this->adminConfig();
+                $this->adminRbac();
+                $this->queueRestart();
+
+                file_put_contents('install.lock', 'Install on ' . date('Y-m-d H:i:s'));
                 $this->comment('安装完成:)');
                 break;
             case 'update':
-                Artisan::call('migrate');
-                $this->comment('数据库迁移完成'.PHP_EOL);
-                Artisan::call('view:clear');
-                Artisan::call('vendor:publish', [
-                    '--tag' => 'laravel-admin-assets',
-                    '--force' => true,
-                ]);
-                Artisan::call('admin:minify', [
-                    '--clear' => true,
-                ]);
-                Artisan::call('admin:minify');
-                // Artisan::call('vendor:publish', [
-                //     '--tag' => 'laravel-admin-lang',
-                //     '--force' => true
-                // ]);
-                $this->comment('Admin视图更新完成'.PHP_EOL);
-                Artisan::call('admin:config', [
-                    'type' => 'new',
-                ]);
-                Artisan::call('admin:permission-update');
-                Artisan::call('admin:role-update');
-                Artisan::call('admin:menu-update');
-                Artisan::call('queue:restart');
-                console_comment('队列已重启'.PHP_EOL);
+                $this->migrate();
+                $this->publishAdminAssets();
+                $this->adminMinify();
+                $this->adminConfig();
+                $this->adminRbac();
+                $this->queueRestart();
+
                 $this->comment('更新完成:)');
                 break;
 
             default:
-                $this->error('只允许type参数类型为“install”、“update”');
+                $this->error('只允许type参数类型为“ready”、“install”、“update”');
                 break;
         }
+    }
+
+    /**
+     * @return void
+     */
+    private function keyGenerate(): void
+    {
+        if ($this->laravel['config']['app.key']) {
+            $this->comment('Laravel Key 已存在' . PHP_EOL);
+        } else {
+            Artisan::call('key:generate', [
+                '--ansi' => true,
+            ], $this->output);
+            $this->comment('Laravel Key 已生成' . PHP_EOL);
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function adminInstall(): void
+    {
+        Artisan::call('admin:install', [], $this->output);
+        $this->comment('Admin安装完成' . PHP_EOL);
+    }
+
+    /**
+     * @return void
+     */
+    private function migrate(): void
+    {
+        Artisan::call('migrate', [], $this->output);
+        $this->comment('数据库迁移完成' . PHP_EOL);
+    }
+
+    /**
+     * @return void
+     */
+    private function publishAdminAssets(): void
+    {
+        Artisan::call('view:clear');
+        Artisan::call('vendor:publish', [
+            '--tag' => 'laravel-admin-assets',
+            '--force' => true,
+        ], $this->output);
+        $this->comment('Admin视图文件更新完成' . PHP_EOL);
+    }
+
+    /**
+     * @return void
+     */
+    private function adminMinify(): void
+    {
+        Artisan::call('admin:minify', [
+            '--clear' => true,
+        ], $this->output);
+        Artisan::call('admin:minify', [], $this->output);
+        $this->comment('Admin压缩资源更新完成' . PHP_EOL);
+    }
+
+    /**
+     * @return void
+     */
+    private function adminConfig(): void
+    {
+        Artisan::call('admin:config', [
+            'type' => 'new',
+        ], $this->output);
+    }
+
+    /**
+     * @return void
+     */
+    private function adminRbac(): void
+    {
+        Artisan::call('admin:permission-update', [], $this->output);
+        Artisan::call('admin:role-update', [], $this->output);
+        Artisan::call('admin:menu-update', [], $this->output);
+    }
+
+    /**
+     * @return void
+     */
+    private function queueRestart(): void
+    {
+        Artisan::call('queue:restart');
+        $this->comment('队列已重启' . PHP_EOL);
+    }
+
+    /**
+     * @return void
+     */
+    private function language(): void
+    {
+        Artisan::call('vendor:publish', [
+            '--tag' => 'laravel-admin-lang',
+            '--force' => true,
+        ], $this->output);
+        $this->comment('Admin语言包更新完成' . PHP_EOL);
+
+        Artisan::call('lang:publish', [
+            'locales' => 'zh_CN',
+            '--force' => true,
+        ], $this->output);
+        $this->comment('Laravel语言包更新完成' . PHP_EOL);
     }
 }

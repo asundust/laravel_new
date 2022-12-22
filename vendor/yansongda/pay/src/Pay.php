@@ -1,131 +1,260 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay;
 
-use Exception;
-use Yansongda\Pay\Contracts\GatewayApplicationInterface;
-use Yansongda\Pay\Exceptions\InvalidGatewayException;
-use Yansongda\Pay\Gateways\Alipay;
-use Yansongda\Pay\Gateways\Wechat;
-use Yansongda\Pay\Listeners\KernelLogSubscriber;
-use Yansongda\Supports\Config;
-use Yansongda\Supports\Log;
-use Yansongda\Supports\Logger;
-use Yansongda\Supports\Str;
+use Closure;
+use Illuminate\Container\Container as LaravelContainer;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Throwable;
+use Yansongda\Pay\Contract\ServiceProviderInterface;
+use Yansongda\Pay\Exception\ContainerException;
+use Yansongda\Pay\Exception\ContainerNotFoundException;
+use Yansongda\Pay\Exception\ServiceNotFoundException;
+use Yansongda\Pay\Provider\Alipay;
+use Yansongda\Pay\Provider\Unipay;
+use Yansongda\Pay\Provider\Wechat;
+use Yansongda\Pay\Service\AlipayServiceProvider;
+use Yansongda\Pay\Service\ConfigServiceProvider;
+use Yansongda\Pay\Service\ContainerServiceProvider;
+use Yansongda\Pay\Service\EventServiceProvider;
+use Yansongda\Pay\Service\HttpServiceProvider;
+use Yansongda\Pay\Service\LoggerServiceProvider;
+use Yansongda\Pay\Service\UnipayServiceProvider;
+use Yansongda\Pay\Service\WechatServiceProvider;
 
 /**
- * @method static Alipay alipay(array $config) 支付宝
- * @method static Wechat wechat(array $config) 微信
+ * @method static Alipay alipay(array $config = [], $container = null)
+ * @method static Wechat wechat(array $config = [], $container = null)
+ * @method static Unipay unipay(array $config = [], $container = null)
  */
 class Pay
 {
     /**
-     * Config.
-     *
-     * @var Config
+     * 正常模式.
      */
-    protected $config;
+    public const MODE_NORMAL = 0;
 
     /**
-     * Bootstrap.
-     *
-     * @author yansongda <me@yansongda.cn>
-     *
-     * @throws Exception
+     * 沙箱模式.
      */
-    public function __construct(array $config)
-    {
-        $this->config = new Config($config);
+    public const MODE_SANDBOX = 1;
 
-        $this->registerLogService();
-        $this->registerEventService();
+    /**
+     * 服务商模式.
+     */
+    public const MODE_SERVICE = 2;
+
+    /**
+     * @var string[]
+     */
+    protected array $service = [
+        AlipayServiceProvider::class,
+        WechatServiceProvider::class,
+        UnipayServiceProvider::class,
+    ];
+
+    /**
+     * @var string[]
+     */
+    private array $coreService = [
+        ContainerServiceProvider::class,
+        ConfigServiceProvider::class,
+        LoggerServiceProvider::class,
+        EventServiceProvider::class,
+        HttpServiceProvider::class,
+    ];
+
+    /**
+     * @var Closure|\Psr\Container\ContainerInterface|null
+     */
+    private static $container = null;
+
+    /**
+     * @param Closure|\Psr\Container\ContainerInterface|null $container
+     *
+     * @throws \Yansongda\Pay\Exception\ContainerException
+     */
+    private function __construct(array $config, $container = null)
+    {
+        $this->registerServices($config, $container);
     }
 
     /**
-     * Magic static call.
+     * @return mixed
      *
-     * @author yansongda <me@yansongda.cn>
-     *
-     * @param string $method
-     * @param array  $params
-     *
-     * @throws InvalidGatewayException
-     * @throws Exception
+     * @throws \Yansongda\Pay\Exception\ContainerException
+     * @throws \Yansongda\Pay\Exception\ServiceNotFoundException
      */
-    public static function __callStatic($method, $params): GatewayApplicationInterface
+    public static function __callStatic(string $service, array $config)
     {
-        $app = new self(...$params);
-
-        return $app->create($method);
-    }
-
-    /**
-     * Create a instance.
-     *
-     * @author yansongda <me@yansongda.cn>
-     *
-     * @param string $method
-     *
-     * @throws InvalidGatewayException
-     */
-    protected function create($method): GatewayApplicationInterface
-    {
-        $gateway = __NAMESPACE__.'\\Gateways\\'.Str::studly($method);
-
-        if (class_exists($gateway)) {
-            return self::make($gateway);
+        if (!empty($config)) {
+            self::config(...$config);
         }
 
-        throw new InvalidGatewayException("Gateway [{$method}] Not Exists");
+        return self::get($service);
     }
 
     /**
-     * Make a gateway.
+     * @param Closure|\Psr\Container\ContainerInterface|null $container
      *
-     * @author yansongda <me@yansonga.cn>
-     *
-     * @param string $gateway
-     *
-     * @throws InvalidGatewayException
+     * @throws \Yansongda\Pay\Exception\ContainerException
      */
-    protected function make($gateway): GatewayApplicationInterface
+    public static function config(array $config = [], $container = null): bool
     {
-        $app = new $gateway($this->config);
-
-        if ($app instanceof GatewayApplicationInterface) {
-            return $app;
+        if (self::hasContainer() && !($config['_force'] ?? false)) {
+            return false;
         }
 
-        throw new InvalidGatewayException("Gateway [{$gateway}] Must Be An Instance Of GatewayApplicationInterface");
+        new self($config, $container);
+
+        return true;
     }
 
     /**
-     * Register log service.
+     * @codeCoverageIgnore
      *
-     * @author yansongda <me@yansongda.cn>
+     * @param mixed $value
      *
-     * @throws Exception
+     * @throws \Yansongda\Pay\Exception\ContainerException
      */
-    protected function registerLogService()
+    public static function set(string $name, $value): void
     {
-        $config = $this->config->get('log');
-        $config['identify'] = 'yansongda.pay';
+        try {
+            $container = Pay::getContainer();
 
-        $logger = new Logger();
-        $logger->setConfig($config);
+            if ($container instanceof LaravelContainer) {
+                $container->singleton($name, $value instanceof Closure ? $value : static fn () => $value);
 
-        Log::setInstance($logger);
+                return;
+            }
+
+            if (method_exists($container, 'set')) {
+                $container->set(...func_get_args());
+
+                return;
+            }
+        } catch (ContainerNotFoundException $e) {
+            throw $e;
+        } catch (Throwable $e) {
+            throw new ContainerException($e->getMessage());
+        }
+
+        throw new ContainerException('Current container does NOT support `set` method');
     }
 
     /**
-     * Register event service.
+     * @codeCoverageIgnore
      *
-     * @author yansongda <me@yansongda.cn>
+     * @return mixed
+     *
+     * @throws \Yansongda\Pay\Exception\ContainerException
      */
-    protected function registerEventService()
+    public static function make(string $service, array $parameters = [])
     {
-        Events::setDispatcher(Events::createDispatcher());
+        try {
+            $container = Pay::getContainer();
 
-        Events::addSubscriber(new KernelLogSubscriber());
+            if (method_exists($container, 'make')) {
+                return $container->make(...func_get_args());
+            }
+        } catch (ContainerNotFoundException $e) {
+            throw $e;
+        } catch (Throwable $e) {
+            throw new ContainerException($e->getMessage());
+        }
+
+        $parameters = array_values($parameters);
+
+        return new $service(...$parameters);
+    }
+
+    /**
+     * @return mixed
+     *
+     * @throws \Yansongda\Pay\Exception\ServiceNotFoundException
+     * @throws \Yansongda\Pay\Exception\ContainerException
+     */
+    public static function get(string $service)
+    {
+        try {
+            return Pay::getContainer()->get($service);
+        } catch (NotFoundExceptionInterface $e) {
+            throw new ServiceNotFoundException($e->getMessage());
+        } catch (ContainerNotFoundException $e) {
+            throw $e;
+        } catch (Throwable $e) {
+            throw new ContainerException($e->getMessage());
+        }
+    }
+
+    /**
+     * @throws \Yansongda\Pay\Exception\ContainerNotFoundException
+     */
+    public static function has(string $service): bool
+    {
+        return Pay::getContainer()->has($service);
+    }
+
+    /**
+     * @param Closure|\Psr\Container\ContainerInterface|null $container
+     */
+    public static function setContainer($container): void
+    {
+        self::$container = $container;
+    }
+
+    /**
+     * @throws \Yansongda\Pay\Exception\ContainerNotFoundException
+     */
+    public static function getContainer(): ContainerInterface
+    {
+        if (self::$container instanceof ContainerInterface) {
+            return self::$container;
+        }
+
+        if (self::$container instanceof Closure) {
+            return (self::$container)();
+        }
+
+        throw new ContainerNotFoundException('`getContainer()` failed! Maybe you should `setContainer()` first', Exception\Exception::CONTAINER_NOT_FOUND);
+    }
+
+    public static function hasContainer(): bool
+    {
+        return self::$container instanceof ContainerInterface || self::$container instanceof Closure;
+    }
+
+    public static function clear(): void
+    {
+        self::$container = null;
+    }
+
+    /**
+     * @param mixed $data
+     *
+     * @throws \Yansongda\Pay\Exception\ContainerException
+     */
+    public static function registerService(string $service, $data): void
+    {
+        $var = new $service();
+
+        if ($var instanceof ServiceProviderInterface) {
+            $var->register($data);
+        }
+    }
+
+    /**
+     * @param Closure|\Psr\Container\ContainerInterface|null $container
+     *
+     * @throws \Yansongda\Pay\Exception\ContainerException
+     */
+    private function registerServices(array $config, $container = null): void
+    {
+        foreach (array_merge($this->coreService, $this->service) as $service) {
+            self::registerService($service, ContainerServiceProvider::class == $service ? $container : $config);
+        }
     }
 }

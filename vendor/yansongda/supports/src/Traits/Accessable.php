@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Yansongda\Supports\Traits;
 
+use Yansongda\Supports\Str;
+
 trait Accessable
 {
     /**
      * __get.
-     *
-     * @author yansongda <me@yansongda.cn>
      *
      * @return mixed
      */
@@ -19,23 +19,33 @@ trait Accessable
     }
 
     /**
+     * Whether or not an data exists by key.
+     */
+    public function __isset(string $key): bool
+    {
+        return !is_null($this->get($key));
+    }
+
+    /**
+     * Unsets an data by key.
+     */
+    public function __unset(string $key)
+    {
+        $this->offsetUnset($key);
+    }
+
+    /**
      * __set.
      *
-     * @author yansongda <me@yansongda.cn>
-     *
      * @param mixed $value
-     *
-     * @return mixed
      */
-    public function __set(string $key, $value)
+    public function __set(string $key, $value): void
     {
-        return $this->set($key, $value);
+        $this->set($key, $value);
     }
 
     /**
      * get.
-     *
-     * @author yansongda <me@yansongda.cn>
      *
      * @param mixed $default
      *
@@ -47,10 +57,7 @@ trait Accessable
             return method_exists($this, 'toArray') ? $this->toArray() : $default;
         }
 
-        $method = 'get';
-        foreach (explode('_', $key) as $item) {
-            $method .= ucfirst($item);
-        }
+        $method = 'get'.Str::studly($key);
 
         if (method_exists($this, $method)) {
             return $this->{$method}();
@@ -62,21 +69,14 @@ trait Accessable
     /**
      * set.
      *
-     * @author yansongda <me@yansongda.cn>
-     *
      * @param mixed $value
-     *
-     * @return $this
      */
-    public function set(string $key, $value)
+    public function set(string $key, $value): self
     {
-        $method = 'set';
-        foreach (explode('_', $key) as $item) {
-            $method .= ucfirst($item);
-        }
+        $method = 'set'.Str::studly($key);
 
         if (method_exists($this, $method)) {
-            return $this->{$method}($value);
+            $this->{$method}($value);
         }
 
         return $this;
@@ -93,6 +93,7 @@ trait Accessable
      *
      * The return value will be casted to boolean if non-boolean was returned.
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return !is_null($this->get($offset));
@@ -107,6 +108,7 @@ trait Accessable
      *
      * @return mixed can return all value types
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->get($offset);
@@ -122,6 +124,7 @@ trait Accessable
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->set($offset, $value);
@@ -136,6 +139,7 @@ trait Accessable
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
     }

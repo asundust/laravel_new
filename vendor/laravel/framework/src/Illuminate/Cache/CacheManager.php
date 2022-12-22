@@ -199,7 +199,11 @@ class CacheManager implements FactoryContract
 
         $connection = $config['connection'] ?? 'default';
 
-        return $this->repository(new RedisStore($redis, $this->getPrefix($config), $connection));
+        $store = new RedisStore($redis, $this->getPrefix($config), $connection);
+
+        return $this->repository(
+            $store->setLockConnection($config['lock_connection'] ?? $connection)
+        );
     }
 
     /**
@@ -212,15 +216,17 @@ class CacheManager implements FactoryContract
     {
         $connection = $this->app['db']->connection($config['connection'] ?? null);
 
-        return $this->repository(
-            new DatabaseStore(
-                $connection,
-                $config['table'],
-                $this->getPrefix($config),
-                $config['lock_table'] ?? 'cache_locks',
-                $config['lock_lottery'] ?? [2, 100]
-            )
+        $store = new DatabaseStore(
+            $connection,
+            $config['table'],
+            $this->getPrefix($config),
+            $config['lock_table'] ?? 'cache_locks',
+            $config['lock_lottery'] ?? [2, 100]
         );
+
+        return $this->repository($store->setLockConnection(
+            $this->app['db']->connection($config['lock_connection'] ?? $config['connection'] ?? null)
+        ));
     }
 
     /**
@@ -231,21 +237,11 @@ class CacheManager implements FactoryContract
      */
     protected function createDynamodbDriver(array $config)
     {
-        $dynamoConfig = [
-            'region' => $config['region'],
-            'version' => 'latest',
-            'endpoint' => $config['endpoint'] ?? null,
-        ];
-
-        if ($config['key'] && $config['secret']) {
-            $dynamoConfig['credentials'] = Arr::only(
-                $config, ['key', 'secret', 'token']
-            );
-        }
+        $client = $this->newDynamodbClient($config);
 
         return $this->repository(
             new DynamoDbStore(
-                new DynamoDbClient($dynamoConfig),
+                $client,
                 $config['table'],
                 $config['attributes']['key'] ?? 'key',
                 $config['attributes']['value'] ?? 'value',
@@ -253,6 +249,28 @@ class CacheManager implements FactoryContract
                 $this->getPrefix($config)
             )
         );
+    }
+
+    /**
+     * Create new DynamoDb Client instance.
+     *
+     * @return \Aws\DynamoDb\DynamoDbClient
+     */
+    protected function newDynamodbClient(array $config)
+    {
+        $dynamoConfig = [
+            'region' => $config['region'],
+            'version' => 'latest',
+            'endpoint' => $config['endpoint'] ?? null,
+        ];
+
+        if (isset($config['key'], $config['secret'])) {
+            $dynamoConfig['credentials'] = Arr::only(
+                $config, ['key', 'secret', 'token']
+            );
+        }
+
+        return new DynamoDbClient($dynamoConfig);
     }
 
     /**
@@ -310,11 +328,15 @@ class CacheManager implements FactoryContract
      * Get the cache connection configuration.
      *
      * @param  string  $name
-     * @return array
+     * @return array|null
      */
     protected function getConfig($name)
     {
-        return $this->app['config']["cache.stores.{$name}"];
+        if (! is_null($name) && $name !== 'null') {
+            return $this->app['config']["cache.stores.{$name}"];
+        }
+
+        return ['driver' => 'null'];
     }
 
     /**
@@ -346,7 +368,7 @@ class CacheManager implements FactoryContract
      */
     public function forgetDriver($name = null)
     {
-        $name = $name ?? $this->getDefaultDriver();
+        $name ??= $this->getDefaultDriver();
 
         foreach ((array) $name as $cacheName) {
             if (isset($this->stores[$cacheName])) {
@@ -355,6 +377,19 @@ class CacheManager implements FactoryContract
         }
 
         return $this;
+    }
+
+    /**
+     * Disconnect the given driver and remove from local cache.
+     *
+     * @param  string|null  $name
+     * @return void
+     */
+    public function purge($name = null)
+    {
+        $name ??= $this->getDefaultDriver();
+
+        unset($this->stores[$name]);
     }
 
     /**

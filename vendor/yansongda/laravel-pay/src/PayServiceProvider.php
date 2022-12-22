@@ -1,21 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\LaravelPay;
 
-use Illuminate\Foundation\Application as LaravelApplication;
+use Illuminate\Contracts\Support\DeferrableProvider;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application as LumenApplication;
 use Yansongda\Pay\Pay;
 
-class PayServiceProvider extends ServiceProvider
+class PayServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    /**
-     * If is defer.
-     *
-     * @var bool
-     */
-    protected $defer = true;
-
     /**
      * Boot the service.
      *
@@ -23,12 +19,14 @@ class PayServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
+        if ($this->app instanceof Application && $this->app->runningInConsole()) {
             $this->publishes([
                 dirname(__DIR__).'/config/pay.php' => config_path('pay.php'), ],
                 'laravel-pay'
             );
-        } elseif ($this->app instanceof LumenApplication) {
+        }
+
+        if ($this->app instanceof LumenApplication) {
             $this->app->configure('pay');
         }
     }
@@ -38,17 +36,26 @@ class PayServiceProvider extends ServiceProvider
      *
      * @author yansongda <me@yansongda.cn>
      *
+     * @throws \Yansongda\Pay\Exception\ContainerException
+     *
      * @return void
      */
     public function register()
     {
         $this->mergeConfigFrom(dirname(__DIR__).'/config/pay.php', 'pay');
 
+        Pay::config(config('pay'));
+
         $this->app->singleton('pay.alipay', function () {
-            return Pay::alipay(config('pay.alipay'));
+            return Pay::alipay();
         });
+
         $this->app->singleton('pay.wechat', function () {
-            return Pay::wechat(config('pay.wechat'));
+            return Pay::wechat();
+        });
+
+        $this->app->singleton('pay.unipay', function () {
+            return Pay::unipay();
         });
     }
 
@@ -61,6 +68,6 @@ class PayServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['pay.alipay', 'pay.wechat'];
+        return ['pay.alipay', 'pay.wechat', 'pay.unipay'];
     }
 }

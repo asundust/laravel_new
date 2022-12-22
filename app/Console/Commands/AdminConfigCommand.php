@@ -34,27 +34,27 @@ class AdminConfigCommand extends Command
     /**
      * Execute the console command.
      *
-     * @throws \Exception
+     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
-        $adminConfigData = config('services.admin_configs');
+        $configData = config('services.admin_configs');
         $type = $this->argument('type');
         switch ($type) {
             case 'new':
-                console_info('后台配置开始处理');
-                foreach ($adminConfigData as $key => $v) {
-                    console_info('　　　　当前处理：'.$v['name'].' '.$v['description']);
-                    $config = AdminConfig::firstOrCreate(['name' => $v['name']], $v);
-                    $config->update(['sort' => $key + 1, 'description' => $v['description']]);
+                $this->info('后台配置开始处理');
+                foreach ($configData as $key => $value) {
+                    $this->info('　　　　当前处理：' . $value['name'] . ' ' . $value['description']);
+                    $config = AdminConfig::firstOrCreate(['name' => $value['name']], $value);
+                    $config->update(['sort' => $key + 1, 'description' => $value['description']]);
                 }
-                console_comment('　　　　处理完成'.PHP_EOL);
+                $this->comment('　　　　处理完成' . PHP_EOL);
                 break;
             case 'delete':
-                console_info('后台删除配置开始处理');
+                $this->info('后台删除配置开始处理');
                 $configIds = [];
-                foreach ($adminConfigData as $key => $v) {
-                    $config = AdminConfig::where('name', $v['name'])->first();
+                foreach ($configData as $value) {
+                    $config = AdminConfig::where('name', $value['name'])->first();
                     if ($config) {
                         $configIds[] = $config->id;
                     }
@@ -62,13 +62,13 @@ class AdminConfigCommand extends Command
                 $configs = AdminConfig::whereNotIn('id', $configIds)->get();
                 $count = $configs->count();
                 if (0 == $count) {
-                    console_comment('　　　　处理完成：无将要删除的配置'.PHP_EOL);
+                    $this->comment('　　　　处理完成：无将要删除的配置' . PHP_EOL);
                 } else {
                     foreach ($configs as $config) {
-                        console_info('　　正在删除：'.$config->id.' '.$config->name.' ['.$config->description.']'.' ，配置值为：'.$config->value);
+                        $this->info('　　正在删除：' . $config->id . ' ' . $config->name . ' [' . $config->description . ']' . ' ，配置值为：' . $config->value);
                         $config->delete();
                     }
-                    console_comment('　　　　处理完成：共删除配置'.$count.'个'.PHP_EOL);
+                    $this->comment('　　　　处理完成：共删除配置' . $count . '个' . PHP_EOL);
                 }
                 break;
             default:

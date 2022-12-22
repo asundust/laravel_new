@@ -158,6 +158,53 @@ class SimpleMessage
     }
 
     /**
+     * Add a line of text to the notification if the given condition is true.
+     *
+     * @param  bool  $boolean
+     * @param  mixed  $line
+     * @return $this
+     */
+    public function lineIf($boolean, $line)
+    {
+        if ($boolean) {
+            return $this->line($line);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add lines of text to the notification.
+     *
+     * @param  iterable  $lines
+     * @return $this
+     */
+    public function lines($lines)
+    {
+        foreach ($lines as $line) {
+            $this->line($line);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add lines of text to the notification if the given condition is true.
+     *
+     * @param  bool  $boolean
+     * @param  iterable  $lines
+     * @return $this
+     */
+    public function linesIf($boolean, $lines)
+    {
+        if ($boolean) {
+            return $this->lines($lines);
+        }
+
+        return $this;
+    }
+
+    /**
      * Add a line of text to the notification.
      *
      * @param  mixed  $line
@@ -192,7 +239,7 @@ class SimpleMessage
             return implode(' ', array_map('trim', $line));
         }
 
-        return trim(implode(' ', array_map('trim', preg_split('/\\r\\n|\\r|\\n/', $line))));
+        return trim(implode(' ', array_map('trim', preg_split('/\\r\\n|\\r|\\n/', $line ?? ''))));
     }
 
     /**
@@ -239,7 +286,7 @@ class SimpleMessage
             'outroLines' => $this->outroLines,
             'actionText' => $this->actionText,
             'actionUrl' => $this->actionUrl,
-            'displayableActionUrl' => str_replace(['mailto:', 'tel:'], '', $this->actionUrl),
+            'displayableActionUrl' => str_replace(['mailto:', 'tel:'], '', $this->actionUrl ?? ''),
         ];
     }
 }

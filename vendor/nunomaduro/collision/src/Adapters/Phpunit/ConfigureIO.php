@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of Collision.
  *
@@ -23,15 +25,15 @@ final class ConfigureIO
 {
     /**
      * Configures both given input and output with
-     * options from the enviroment.
+     * options from the environment.
      *
      * @throws \ReflectionException
      */
     public static function of(InputInterface $input, Output $output): void
     {
         $application = new Application();
-        $reflector   = new ReflectionObject($application);
-        $method      = $reflector->getMethod('configureIO');
+        $reflector = new ReflectionObject($application);
+        $method = $reflector->getMethod('configureIO');
         $method->setAccessible(true);
         $method->invoke($application, $input, $output);
     }

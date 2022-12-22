@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'general' => [
         /*
          * Directory where log files will be saved
@@ -41,7 +42,7 @@ return [
          * - [separator] - extra separator line to make it easier to see where next query starts
          * - \n - new line separator.
          */
-        'entry_format' => env('SQL_LOGGER_FORMAT_ENTRY_FORMAT', "/* [origin]\n   编号 [query_nr] - [datetime] [[query_time]] */\n[query]\n[separator]\n"),
+        'entry_format' => env('SQL_LOGGER_FORMAT_ENTRY_FORMAT', "/* [origin]\n   Query [query_nr] - [datetime] [[query_time]] */\n[query]\n[separator]\n"),
     ],
 
     'all_queries' => [

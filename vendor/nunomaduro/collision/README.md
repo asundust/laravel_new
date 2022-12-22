@@ -1,3 +1,7 @@
+<a href="https://supportukrainenow.org/"><img src="https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct.svg" width="100%"></a>
+
+------
+
 <p align="center">
     <img src="https://raw.githubusercontent.com/nunomaduro/collision/stable/docs/logo.png" alt="Collision logo" width="480">
     <br>
@@ -5,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://travis-ci.org/nunomaduro/collision"><img src="https://img.shields.io/travis/nunomaduro/collision/stable.svg" alt="Build Status"></img></a>
+  <a href="https://github.com/nunomaduro/collision/actions"><img src="https://img.shields.io/github/workflow/status/nunomaduro/collision/Tests.svg" alt="Build Status"></img></a>
   <a href="https://scrutinizer-ci.com/g/nunomaduro/collision"><img src="https://img.shields.io/scrutinizer/g/nunomaduro/collision.svg" alt="Quality Score"></img></a>
   <a href="https://packagist.org/packages/nunomaduro/collision"><img src="https://poser.pugx.org/nunomaduro/collision/d/total.svg" alt="Total Downloads"></a>
   <a href="https://packagist.org/packages/nunomaduro/collision"><img src="https://poser.pugx.org/nunomaduro/collision/v/stable.svg" alt="Latest Stable Version"></a>
@@ -22,7 +26,7 @@ Collision was created by, and is maintained by **[Nuno Maduro](https://github.co
 
 ## Installation & Usage
 
-> **Requires [PHP 7.2.5+](https://php.net/releases/)**
+> **Requires [PHP 8.0+](https://php.net/releases/)**
 
 Require Collision using [Composer](https://getcomposer.org):
 
@@ -30,17 +34,24 @@ Require Collision using [Composer](https://getcomposer.org):
 composer require nunomaduro/collision --dev
 ```
 
-## Lumen adapter
+## Laravel Version Compatibility
 
-Configure the Collision service provider:
-```php
-// bootstrap/app.php:
-$app->register(\NunoMaduro\Collision\Adapters\Laravel\CollisionServiceProvider::class);
+ Laravel  | Collision
+:---------|:----------
+ 6.x      | 3.x
+ 7.x      | 4.x
+ 8.x      | 5.x
+ 9.x      | 6.x
+
+As an example, here is how to require Collision on Laravel 6.x:
+
+```bash
+composer require nunomaduro/collision:^3.0 --dev
 ```
 
 ## Phpunit adapter
 
-Phpunit must be 8.5.1 or higher.
+Phpunit must be 9.0 or higher.
 
 Add the Collision `printerClass` to your `phpunit.xml` in the `phpunit` section:
 
@@ -62,12 +73,6 @@ You need to register the handler in your code:
 Thank you for considering to contribute to Collision. All the contribution guidelines are mentioned [here](CONTRIBUTING.md).
 
 You can have a look at the [CHANGELOG](CHANGELOG.md) for constant updates & detailed information about the changes. You can also follow the twitter account for latest announcements or just come say hi!: [@enunomaduro](https://twitter.com/enunomaduro)
-
-## Support the development
-**Do you like this project? Support it by donating**
-
-- PayPal: [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=66BYDWAT92N6L)
-- Patreon: [Donate](https://www.patreon.com/nunomaduro)
 
 ## License
 

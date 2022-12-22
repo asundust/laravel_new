@@ -76,7 +76,7 @@ class NotificationSender
             return $this->queueNotification($notifiables, $notification);
         }
 
-        return $this->sendNow($notifiables, $notification);
+        $this->sendNow($notifiables, $notification);
     }
 
     /**
@@ -162,6 +162,11 @@ class NotificationSender
      */
     protected function shouldSendNotification($notifiable, $notification, $channel)
     {
+        if (method_exists($notification, 'shouldSend') &&
+            $notification->shouldSend($notifiable, $channel) === false) {
+            return false;
+        }
+
         return $this->events->until(
             new NotificationSending($notifiable, $notification, $channel)
         ) !== false;
@@ -186,7 +191,9 @@ class NotificationSender
             foreach ((array) $original->via($notifiable) as $channel) {
                 $notification = clone $original;
 
-                $notification->id = $notificationId;
+                if (! $notification->id) {
+                    $notification->id = $notificationId;
+                }
 
                 if (! is_null($this->locale)) {
                     $notification->locale = $this->locale;
@@ -198,11 +205,17 @@ class NotificationSender
                     $queue = $notification->viaQueues()[$channel] ?? null;
                 }
 
+                $delay = $notification->delay;
+
+                if (method_exists($notification, 'withDelay')) {
+                    $delay = $notification->withDelay($notifiable, $channel) ?? null;
+                }
+
                 $this->bus->dispatch(
                     (new SendQueuedNotifications($notifiable, $notification, [$channel]))
                             ->onConnection($notification->connection)
                             ->onQueue($queue)
-                            ->delay($notification->delay)
+                            ->delay(is_array($delay) ? ($delay[$channel] ?? null) : $delay)
                             ->through(
                                 array_merge(
                                     method_exists($notification, 'middleware') ? $notification->middleware() : [],

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="true"
+         verbose="true"
+        >
+    <testsuites>
+        <testsuite name="all">
+            <directory>tests/</directory>
+        </testsuite>
+    </testsuites>
+    <php>
+        <server name="APP_ENV" value="testing"/>
+        <server name="DB_HOST" value="127.0.0.1"/>
+        <server name="DB_DATABASE" value="laravel"/>
+        <server name="DB_USERNAME" value="root"/>
+        <server name="DB_PASSWORD" value="123456"/>
+    </php>
+</phpunit>

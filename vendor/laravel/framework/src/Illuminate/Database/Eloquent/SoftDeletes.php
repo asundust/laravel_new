@@ -3,9 +3,9 @@
 namespace Illuminate\Database\Eloquent;
 
 /**
- * @method static static|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder withTrashed()
- * @method static static|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder onlyTrashed()
- * @method static static|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder withoutTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder withoutTrashed()
  */
 trait SoftDeletes
 {
@@ -33,7 +33,9 @@ trait SoftDeletes
      */
     public function initializeSoftDeletes()
     {
-        $this->dates[] = $this->getDeletedAtColumn();
+        if (! isset($this->casts[$this->getDeletedAtColumn()])) {
+            $this->casts[$this->getDeletedAtColumn()] = 'datetime';
+        }
     }
 
     /**
@@ -62,9 +64,9 @@ trait SoftDeletes
     protected function performDeleteOnModel()
     {
         if ($this->forceDeleting) {
-            $this->exists = false;
-
-            return $this->setKeysForSaveQuery($this->newModelQuery())->forceDelete();
+            return tap($this->setKeysForSaveQuery($this->newModelQuery())->forceDelete(), function () {
+                $this->exists = false;
+            });
         }
 
         return $this->runSoftDelete();
@@ -85,7 +87,7 @@ trait SoftDeletes
 
         $this->{$this->getDeletedAtColumn()} = $time;
 
-        if ($this->timestamps && ! is_null($this->getUpdatedAtColumn())) {
+        if ($this->usesTimestamps() && ! is_null($this->getUpdatedAtColumn())) {
             $this->{$this->getUpdatedAtColumn()} = $time;
 
             $columns[$this->getUpdatedAtColumn()] = $this->fromDateTime($time);
@@ -94,6 +96,8 @@ trait SoftDeletes
         $query->update($columns);
 
         $this->syncOriginalAttributes(array_keys($columns));
+
+        $this->fireModelEvent('trashed', false);
     }
 
     /**
@@ -125,6 +129,16 @@ trait SoftDeletes
     }
 
     /**
+     * Restore a soft-deleted model instance without raising any events.
+     *
+     * @return bool|null
+     */
+    public function restoreQuietly()
+    {
+        return static::withoutEvents(fn () => $this->restore());
+    }
+
+    /**
      * Determine if the model instance has been soft-deleted.
      *
      * @return bool
@@ -132,6 +146,17 @@ trait SoftDeletes
     public function trashed()
     {
         return ! is_null($this->{$this->getDeletedAtColumn()});
+    }
+
+    /**
+     * Register a "softDeleted" model event callback with the dispatcher.
+     *
+     * @param  \Closure|string  $callback
+     * @return void
+     */
+    public static function softDeleted($callback)
+    {
+        static::registerModelEvent('trashed', $callback);
     }
 
     /**
@@ -184,7 +209,7 @@ trait SoftDeletes
      */
     public function getDeletedAtColumn()
     {
-        return defined('static::DELETED_AT') ? static::DELETED_AT : 'deleted_at';
+        return defined(static::class.'::DELETED_AT') ? static::DELETED_AT : 'deleted_at';
     }
 
     /**

@@ -211,7 +211,7 @@ class DynamoDbStore implements LockProvider, Store
     }
 
     /**
-     * Store multiple items in the cache for a given number of $seconds.
+     * Store multiple items in the cache for a given number of seconds.
      *
      * @param  array  $values
      * @param  int  $seconds
@@ -284,7 +284,7 @@ class DynamoDbStore implements LockProvider, Store
 
             return true;
         } catch (DynamoDbException $e) {
-            if (Str::contains($e->getMessage(), 'ConditionalCheckFailed')) {
+            if (str_contains($e->getMessage(), 'ConditionalCheckFailed')) {
                 return false;
             }
 
@@ -329,7 +329,7 @@ class DynamoDbStore implements LockProvider, Store
 
             return (int) $response['Attributes'][$this->valueAttribute]['N'];
         } catch (DynamoDbException $e) {
-            if (Str::contains($e->getMessage(), 'ConditionalCheckFailed')) {
+            if (str_contains($e->getMessage(), 'ConditionalCheckFailed')) {
                 return false;
             }
 
@@ -374,7 +374,7 @@ class DynamoDbStore implements LockProvider, Store
 
             return (int) $response['Attributes'][$this->valueAttribute]['N'];
         } catch (DynamoDbException $e) {
-            if (Str::contains($e->getMessage(), 'ConditionalCheckFailed')) {
+            if (str_contains($e->getMessage(), 'ConditionalCheckFailed')) {
                 return false;
             }
 
@@ -524,5 +524,15 @@ class DynamoDbStore implements LockProvider, Store
     public function setPrefix($prefix)
     {
         $this->prefix = ! empty($prefix) ? $prefix.':' : '';
+    }
+
+    /**
+     * Get the DynamoDb Client instance.
+     *
+     * @return \Aws\DynamoDb\DynamoDbClient
+     */
+    public function getClient()
+    {
+        return $this->dynamo;
     }
 }

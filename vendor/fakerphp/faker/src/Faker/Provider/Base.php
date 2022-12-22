@@ -168,6 +168,8 @@ class Base
 
     /**
      * Returns a random ASCII character (excluding accents and special chars)
+     *
+     * @return string
      */
     public static function randomAscii()
     {
@@ -361,7 +363,7 @@ class Base
         return implode('', static::shuffleArray($array));
     }
 
-    private static function replaceWildcard($string, $wildcard = '#', $callback = 'static::randomDigit')
+    private static function replaceWildcard($string, $wildcard, $callback)
     {
         if (($pos = strpos($string, $wildcard)) === false) {
             return $string;
@@ -413,7 +415,7 @@ class Base
                 $string[$toReplace[$i]] = $numbers[$i];
             }
         }
-        $string = self::replaceWildcard($string, '%', 'static::randomDigitNotNull');
+        $string = self::replaceWildcard($string, '%', [static::class, 'randomDigitNotNull']);
 
         return $string;
     }
@@ -427,14 +429,14 @@ class Base
      */
     public static function lexify($string = '????')
     {
-        return self::replaceWildcard($string, '?', 'static::randomLetter');
+        return self::replaceWildcard($string, '?', [static::class,  'randomLetter']);
     }
 
     /**
      * Replaces hash signs ('#') and question marks ('?') with random numbers and letters
      * An asterisk ('*') is replaced with either a random number or a random letter
      *
-     * @param string $string String that needs to bet parsed
+     * @param string $string String that needs to be parsed
      *
      * @return string
      */
@@ -458,7 +460,7 @@ class Base
      */
     public static function asciify($string = '****')
     {
-        return preg_replace_callback('/\*/u', 'static::randomAscii', $string);
+        return preg_replace_callback('/\*/u', [static::class, 'randomAscii'], $string);
     }
 
     /**
@@ -523,13 +525,15 @@ class Base
         }, $regex);
         // All [ABC] become B (or A or C)
         $regex = preg_replace_callback('/\[([^\]]+)\]/', static function ($matches) {
-            $randomElement = Base::randomElement(str_split($matches[1]));
+            // remove backslashes (that are not followed by another backslash) because they are escape characters
+            $match = preg_replace('/\\\(?!\\\)/', '', $matches[1]);
+            $randomElement = Base::randomElement(str_split($match));
             //[.] should not be a random character, but a literal .
             return str_replace('.', '\.', $randomElement);
         }, $regex);
         // replace \d with number and \w with letter and . with ascii
-        $regex = preg_replace_callback('/\\\w/', 'static::randomLetter', $regex);
-        $regex = preg_replace_callback('/\\\d/', 'static::randomDigit', $regex);
+        $regex = preg_replace_callback('/\\\w/', [static::class, 'randomLetter'], $regex);
+        $regex = preg_replace_callback('/\\\d/', [static::class, 'randomDigit'], $regex);
         //replace . with ascii except backslash
         $regex = preg_replace_callback('/(?<!\\\)\./', static function () {
             $chr = static::asciify('*');

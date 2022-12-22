@@ -30,19 +30,20 @@ class Publish extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle()
     {
-        $locale = \str_replace('_', '-', $this->argument('locales'));
+        $locale = \str_replace('-', '_', $this->argument('locales'));
         $force = $this->option('force') ? 'f' : 'n';
 
-        $sourcePath = base_path('vendor/laravel-lang/lang/src');
-        $sourceJsonPath = base_path('vendor/laravel-lang/lang/json');
-        $targetPath = base_path('resources/lang/');
+        $sourcePath = base_path('vendor/laravel-lang/lang/locales');
+        $sourceJsonPath = base_path('vendor/laravel-lang/lang/locales');
+        $targetPath = lang_path();
 
         if (!is_dir($targetPath) && !mkdir($targetPath)) {
-            return $this->error('The lang path "resources/lang/" does not exist or not writable.');
+            $this->error('The lang path "lang" does not exist or not writable.');
+            return;
         }
 
         $files = [];
@@ -53,7 +54,7 @@ class Publish extends Command
         if ('all' == $locale) {
             $files = [
                 \addslashes($sourcePath).'/*',
-                escapeshellarg($sourceJsonPath),
+                \addslashes($sourceJsonPath).'/*/*.json',
             ];
             $message = 'all';
             $copyEnFiles = true;
@@ -64,8 +65,10 @@ class Publish extends Command
 
                     continue;
                 }
-                $file = $sourcePath.'/'.trim($filename);
-                $jsonFile = $sourceJsonPath.'/'.trim($filename).'.json';
+
+                $trimFilename = trim($filename);
+                $file = $sourcePath.'/'.$trimFilename;
+                $jsonFile = $sourceJsonPath."/{$trimFilename}/{$trimFilename}".'.json';
 
                 if (!file_exists($file)) {
                     $this->error("'$filename' not found.");
@@ -98,11 +101,11 @@ class Publish extends Command
         $files = implode(' ', $files);
         $targetPath = escapeshellarg($targetPath);
         $command = "cp -r{$force} {$files} {$targetPath}";
-        $process = \method_exists(Process::class, 'fromShellCommandline') ? Process::fromShellCommandline($command) : new Process($command);
+        $process = \method_exists(Process::class, 'fromShellCommandline') ? Process::fromShellCommandline($command) : new Process([$command]);
 
         $process->run(function ($type, $buffer) {
             if (Process::ERR === $type) {
-                return $this->error(trim($buffer));
+                $this->error(trim($buffer));
             }
         });
 

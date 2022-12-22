@@ -56,8 +56,6 @@ class DatabaseLock extends Lock
      */
     public function acquire()
     {
-        $acquired = false;
-
         try {
             $this->connection->table($this->table)->insert([
                 'key' => $this->name,
@@ -135,5 +133,15 @@ class DatabaseLock extends Lock
     protected function getCurrentOwner()
     {
         return optional($this->connection->table($this->table)->where('key', $this->name)->first())->owner;
+    }
+
+    /**
+     * Get the name of the database connection being used to manage the lock.
+     *
+     * @return string
+     */
+    public function getConnectionName()
+    {
+        return $this->connection->getName();
     }
 }

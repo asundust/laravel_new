@@ -2,18 +2,24 @@
 
 namespace Illuminate\Foundation\Http;
 
+use Carbon\CarbonInterval;
+use DateTimeInterface;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Http\Kernel as KernelContract;
 use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Routing\Pipeline;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\InteractsWithTime;
 use InvalidArgumentException;
 use Throwable;
 
 class Kernel implements KernelContract
 {
+    use InteractsWithTime;
+
     /**
      * The application implementation.
      *
@@ -31,7 +37,7 @@ class Kernel implements KernelContract
     /**
      * The bootstrap classes for the application.
      *
-     * @var array
+     * @var string[]
      */
     protected $bootstrappers = [
         \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
@@ -64,18 +70,35 @@ class Kernel implements KernelContract
     protected $routeMiddleware = [];
 
     /**
+     * All of the registered request duration handlers.
+     *
+     * @var array
+     */
+    protected $requestLifecycleDurationHandlers = [];
+
+    /**
+     * When the kernel starting handling the current request.
+     *
+     * @var \Illuminate\Support\Carbon|null
+     */
+    protected $requestStartedAt;
+
+    /**
      * The priority-sorted list of middleware.
      *
      * Forces non-global middleware to always be in the given order.
      *
-     * @var array
+     * @var string[]
      */
     protected $middlewarePriority = [
+        \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
+        \Illuminate\Cookie\Middleware\EncryptCookies::class,
         \Illuminate\Session\Middleware\StartSession::class,
         \Illuminate\View\Middleware\ShareErrorsFromSession::class,
         \Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests::class,
         \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        \Illuminate\Session\Middleware\AuthenticateSession::class,
+        \Illuminate\Routing\Middleware\ThrottleRequestsWithRedis::class,
+        \Illuminate\Contracts\Session\Middleware\AuthenticatesSessions::class,
         \Illuminate\Routing\Middleware\SubstituteBindings::class,
         \Illuminate\Auth\Middleware\Authorize::class,
     ];
@@ -103,6 +126,8 @@ class Kernel implements KernelContract
      */
     public function handle($request)
     {
+        $this->requestStartedAt = Carbon::now();
+
         try {
             $request->enableHttpMethodParameterOverride();
 
@@ -178,6 +203,16 @@ class Kernel implements KernelContract
         $this->terminateMiddleware($request, $response);
 
         $this->app->terminate();
+
+        foreach ($this->requestLifecycleDurationHandlers as ['threshold' => $threshold, 'handler' => $handler]) {
+            $end ??= Carbon::now();
+
+            if ($this->requestStartedAt->diffInMilliseconds($end) > $threshold) {
+                $handler($this->requestStartedAt, $request, $response);
+            }
+        }
+
+        $this->requestStartedAt = null;
     }
 
     /**
@@ -207,6 +242,39 @@ class Kernel implements KernelContract
                 $instance->terminate($request, $response);
             }
         }
+    }
+
+    /**
+     * Register a callback to be invoked when the requests lifecyle duration exceeds a given amount of time.
+     *
+     * @param  \DateTimeInterface|\Carbon\CarbonInterval|float|int  $threshold
+     * @param  callable  $handler
+     * @return void
+     */
+    public function whenRequestLifecycleIsLongerThan($threshold, $handler)
+    {
+        $threshold = $threshold instanceof DateTimeInterface
+            ? $this->secondsUntil($threshold) * 1000
+            : $threshold;
+
+        $threshold = $threshold instanceof CarbonInterval
+            ? $threshold->totalMilliseconds
+            : $threshold;
+
+        $this->requestLifecycleDurationHandlers[] = [
+            'threshold' => $threshold,
+            'handler' => $handler,
+        ];
+    }
+
+    /**
+     * When the request being handled started.
+     *
+     * @return \Illuminate\Support\Carbon|null
+     */
+    public function requestStartedAt()
+    {
+        return $this->requestStartedAt;
     }
 
     /**
@@ -253,7 +321,7 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Add a new middleware to beginning of the stack if it does not already exist.
+     * Add a new middleware to the beginning of the stack if it does not already exist.
      *
      * @param  string  $middleware
      * @return $this
@@ -383,6 +451,16 @@ class Kernel implements KernelContract
     }
 
     /**
+     * Get the priority-sorted list of middleware.
+     *
+     * @return array
+     */
+    public function getMiddlewarePriority()
+    {
+        return $this->middlewarePriority;
+    }
+
+    /**
      * Get the bootstrap classes for the application.
      *
      * @return array
@@ -443,5 +521,18 @@ class Kernel implements KernelContract
     public function getApplication()
     {
         return $this->app;
+    }
+
+    /**
+     * Set the Laravel application instance.
+     *
+     * @param  \Illuminate\Contracts\Foundation\Application  $app
+     * @return $this
+     */
+    public function setApplication(Application $app)
+    {
+        $this->app = $app;
+
+        return $this;
     }
 }

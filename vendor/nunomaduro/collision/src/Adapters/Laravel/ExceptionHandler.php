@@ -1,13 +1,6 @@
 <?php
 
-/**
- * This file is part of Collision.
- *
- * (c) Nuno Maduro <enunomaduro@gmail.com>
- *
- *  For the full copyright and license information, please view the LICENSE
- *  file that was distributed with this source code.
- */
+declare(strict_types=1);
 
 namespace NunoMaduro\Collision\Adapters\Laravel;
 
@@ -18,13 +11,9 @@ use Symfony\Component\Console\Exception\ExceptionInterface as SymfonyConsoleExce
 use Throwable;
 
 /**
- * This is an Collision Laravel Adapter ExceptionHandler implementation.
- *
- * Registers the Error Handler on Laravel.
- *
- * @author Nuno Maduro <enunomaduro@gmail.com>
+ * @internal
  */
-class ExceptionHandler implements ExceptionHandlerContract
+final class ExceptionHandler implements ExceptionHandlerContract
 {
     /**
      * Holds an instance of the application exception handler.
@@ -45,7 +34,7 @@ class ExceptionHandler implements ExceptionHandlerContract
      */
     public function __construct(Container $container, ExceptionHandlerContract $appExceptionHandler)
     {
-        $this->container           = $container;
+        $this->container = $container;
         $this->appExceptionHandler = $appExceptionHandler;
     }
 
@@ -73,8 +62,10 @@ class ExceptionHandler implements ExceptionHandlerContract
         if ($e instanceof SymfonyConsoleExceptionInterface) {
             $this->appExceptionHandler->renderForConsole($output, $e);
         } else {
-            $handler = $this->container->make(ProviderContract::class)
-                ->register()
+            /** @var \NunoMaduro\Collision\Contracts\Provider $provider */
+            $provider = $this->container->make(ProviderContract::class);
+
+            $handler = $provider->register()
                 ->getHandler()
                 ->setOutput($output);
 

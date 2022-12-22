@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class UnitTestCase extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

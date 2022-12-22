@@ -3,27 +3,50 @@
 namespace App\Models;
 
 use DateTimeInterface;
-use Eloquent;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\BaseModel.
+ * App\Models\BaseModel
  *
- * @property mixed $status_string
- * @property mixed $created_at_format
- * @property mixed $updated_at_format
- * @mixin Eloquent
+ * @property-read string $created_at_format
+ * @property-read string $status_string
+ * @property-read string $updated_at_format
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BaseModel newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BaseModel newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BaseModel query()
+ * @mixin \Eloquent
  */
 class BaseModel extends Model
 {
     use BaseModelTrait;
+    use HasFactory;
 
     protected $guarded = [];
 
+    const SELECT_ARR_KEY = '-selectArr';
     const STATUS = [
         0 => '无效',
         1 => '有效',
     ];
+
+    // 状态名称 status_string
+    public function getStatusStringAttribute(): string
+    {
+        return self::STATUS[$this['status']] ?? '';
+    }
+
+    // 创建时间的格式化 created_at_format
+    public function getCreatedAtFormatAttribute(): string
+    {
+        return $this[self::CREATED_AT]->toDateTimeString();
+    }
+
+    // 更新时间的格式化 updated_at_format
+    public function getUpdatedAtFormatAttribute(): string
+    {
+        return $this[self::UPDATED_AT]->toDateTimeString();
+    }
 
     /**
      * 为数组 / JSON 序列化准备日期。

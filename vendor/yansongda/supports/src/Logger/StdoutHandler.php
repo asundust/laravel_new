@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Supports\Logger;
 
 use Monolog\Handler\AbstractProcessingHandler;
@@ -10,19 +12,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class StdoutHandler extends AbstractProcessingHandler
 {
     /**
-     * @var OutputInterface
+     * @var \Symfony\Component\Console\Output\OutputInterface
      */
     private $output;
 
-    /**
-     * Bootstrap.
-     *
-     * @param int  $level
-     * @param bool $bubble
-     */
-    public function __construct($level = Logger::DEBUG, $bubble = true, ?OutputInterface $output = null)
+    public function __construct($level = Logger::DEBUG, bool $bubble = true, ?OutputInterface $output = null)
     {
         $this->output = $output ?? new ConsoleOutput();
+
         parent::__construct($level, $bubble);
     }
 

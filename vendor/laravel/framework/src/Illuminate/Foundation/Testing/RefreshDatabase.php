@@ -3,9 +3,12 @@
 namespace Illuminate\Foundation\Testing;
 
 use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Foundation\Testing\Traits\CanConfigureMigrationCommands;
 
 trait RefreshDatabase
 {
+    use CanConfigureMigrationCommands;
+
     /**
      * Define hooks to migrate the database before and after each test.
      *
@@ -13,9 +16,13 @@ trait RefreshDatabase
      */
     public function refreshDatabase()
     {
+        $this->beforeRefreshingDatabase();
+
         $this->usingInMemoryDatabase()
                         ? $this->refreshInMemoryDatabase()
                         : $this->refreshTestDatabase();
+
+        $this->afterRefreshingDatabase();
     }
 
     /**
@@ -49,7 +56,10 @@ trait RefreshDatabase
      */
     protected function migrateUsing()
     {
-        return [];
+        return [
+            '--seed' => $this->shouldSeed(),
+            '--seeder' => $this->seeder(),
+        ];
     }
 
     /**
@@ -71,19 +81,6 @@ trait RefreshDatabase
     }
 
     /**
-     * The parameters that should be used when running "migrate:fresh".
-     *
-     * @return array
-     */
-    protected function migrateFreshUsing()
-    {
-        return [
-            '--drop-views' => $this->shouldDropViews(),
-            '--drop-types' => $this->shouldDropTypes(),
-        ];
-    }
-
-    /**
      * Begin a database transaction on the testing database.
      *
      * @return void
@@ -99,6 +96,12 @@ trait RefreshDatabase
             $connection->unsetEventDispatcher();
             $connection->beginTransaction();
             $connection->setEventDispatcher($dispatcher);
+
+            if ($this->app->resolved('db.transactions')) {
+                $this->app->make('db.transactions')->callbacksShouldIgnore(
+                    $this->app->make('db.transactions')->getTransactions()->first()
+                );
+            }
         }
 
         $this->beforeApplicationDestroyed(function () use ($database) {
@@ -107,7 +110,7 @@ trait RefreshDatabase
                 $dispatcher = $connection->getEventDispatcher();
 
                 $connection->unsetEventDispatcher();
-                $connection->rollback();
+                $connection->rollBack();
                 $connection->setEventDispatcher($dispatcher);
                 $connection->disconnect();
             }
@@ -126,24 +129,22 @@ trait RefreshDatabase
     }
 
     /**
-     * Determine if views should be dropped when refreshing the database.
+     * Perform any work that should take place before the database has started refreshing.
      *
-     * @return bool
+     * @return void
      */
-    protected function shouldDropViews()
+    protected function beforeRefreshingDatabase()
     {
-        return property_exists($this, 'dropViews')
-                            ? $this->dropViews : false;
+        // ...
     }
 
     /**
-     * Determine if types should be dropped when refreshing the database.
+     * Perform any work that should take place once the database has finished refreshing.
      *
-     * @return bool
+     * @return void
      */
-    protected function shouldDropTypes()
+    protected function afterRefreshingDatabase()
     {
-        return property_exists($this, 'dropTypes')
-                            ? $this->dropTypes : false;
+        // ...
     }
 }

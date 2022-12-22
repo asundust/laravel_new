@@ -2,9 +2,11 @@
 
 namespace Illuminate\Broadcasting\Broadcasters;
 
+use Closure;
 use Exception;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Broadcasting\Broadcaster as BroadcasterContract;
+use Illuminate\Contracts\Broadcasting\HasBroadcastChannel;
 use Illuminate\Contracts\Routing\BindingRegistrar;
 use Illuminate\Contracts\Routing\UrlRoutable;
 use Illuminate\Support\Arr;
@@ -16,6 +18,13 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 abstract class Broadcaster implements BroadcasterContract
 {
+    /**
+     * The callback to resolve the authenticated user information.
+     *
+     * @var \Closure|null
+     */
+    protected $authenticatedUserCallback = null;
+
     /**
      * The registered channel authenticators.
      *
@@ -38,15 +47,49 @@ abstract class Broadcaster implements BroadcasterContract
     protected $bindingRegistrar;
 
     /**
+     * Resolve the authenticated user payload for the incoming connection request.
+     *
+     * See: https://pusher.com/docs/channels/library_auth_reference/auth-signatures/#user-authentication.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|null
+     */
+    public function resolveAuthenticatedUser($request)
+    {
+        if ($this->authenticatedUserCallback) {
+            return $this->authenticatedUserCallback->__invoke($request);
+        }
+    }
+
+    /**
+     * Register the user retrieval callback used to authenticate connections.
+     *
+     * See: https://pusher.com/docs/channels/library_auth_reference/auth-signatures/#user-authentication.
+     *
+     * @param  \Closure  $callback
+     * @return void
+     */
+    public function resolveAuthenticatedUserUsing(Closure $callback)
+    {
+        $this->authenticatedUserCallback = $callback;
+    }
+
+    /**
      * Register a channel authenticator.
      *
-     * @param  string  $channel
+     * @param  \Illuminate\Contracts\Broadcasting\HasBroadcastChannel|string  $channel
      * @param  callable|string  $callback
      * @param  array  $options
      * @return $this
      */
     public function channel($channel, $callback, $options = [])
     {
+        if ($channel instanceof HasBroadcastChannel) {
+            $channel = $channel->broadcastChannelRoute();
+        } elseif (is_string($channel) && class_exists($channel) && is_a($channel, HasBroadcastChannel::class, true)) {
+            $channel = (new $channel)->broadcastChannelRoute();
+        }
+
         $this->channels[$channel] = $callback;
 
         $this->channelOptions[$channel] = $options;
@@ -317,7 +360,7 @@ abstract class Broadcaster implements BroadcasterContract
     }
 
     /**
-     * Check if channel name from request match a pattern from registered channels.
+     * Check if the channel name from the request matches a pattern from registered channels.
      *
      * @param  string  $channel
      * @param  string  $pattern

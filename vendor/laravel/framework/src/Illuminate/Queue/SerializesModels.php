@@ -71,6 +71,12 @@ trait SerializesModels
                 continue;
             }
 
+            $value = $this->getPropertyValue($property);
+
+            if ($property->hasDefaultValue() && $value === $property->getDefaultValue()) {
+                continue;
+            }
+
             $name = $property->getName();
 
             if ($property->isPrivate()) {
@@ -79,9 +85,7 @@ trait SerializesModels
                 $name = "\0*\0{$name}";
             }
 
-            $values[$name] = $this->getSerializedPropertyValue(
-                $this->getPropertyValue($property)
-            );
+            $values[$name] = $this->getSerializedPropertyValue($value);
         }
 
         return $values;
@@ -91,7 +95,7 @@ trait SerializesModels
      * Restore the model after serialization.
      *
      * @param  array  $values
-     * @return array
+     * @return void
      */
     public function __unserialize(array $values)
     {
@@ -122,8 +126,6 @@ trait SerializesModels
                 $this, $this->getRestoredPropertyValue($values[$name])
             );
         }
-
-        return $values;
     }
 
     /**
