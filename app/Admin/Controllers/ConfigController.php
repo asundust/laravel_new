@@ -31,7 +31,7 @@ class ConfigController extends BaseConfigController
     /**
      * 编辑.
      *
-     * @param int $id
+     * @param  int  $id
      */
     public function edit($id, Content $content): Content
     {

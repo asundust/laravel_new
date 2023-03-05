@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\Cache;
 /**
  * App\Models\Admin\AdminConfig.
  *
- * @property int                             $id
- * @property string                          $name
- * @property string|null                     $value
- * @property string|null                     $description
- * @property int|null                        $sort
+ * @property int $id
+ * @property string $name
+ * @property string|null $value
+ * @property string|null $description
+ * @property int|null $sort
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  *
