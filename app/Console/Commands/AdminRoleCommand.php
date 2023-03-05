@@ -42,7 +42,7 @@ class AdminRoleCommand extends Command
         $count = 0;
         $adminRoleData = config('services.admin_roles');
         foreach ($adminRoleData as $role) {
-            $this->info('　　　　当前处理：'.$role['name'].' '.$role['slug']);
+            $this->info('　　　　当前处理：' . $role['name'] . ' ' . $role['slug']);
             $result = Role::firstOrCreate(Arr::only($role, ['name', 'slug']));
             if (false !== $result) {
                 if (count($role['permissions']) > 0) {
@@ -51,6 +51,6 @@ class AdminRoleCommand extends Command
                 $count++;
             }
         }
-        $this->comment('　　　　　处理完成：共'.$count.'条'.PHP_EOL);
+        $this->comment('　　　　　处理完成：共' . $count . '条' . PHP_EOL);
     }
 }

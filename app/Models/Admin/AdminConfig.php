@@ -25,8 +25,8 @@ class AdminConfig extends ConfigModel
 {
     protected $fillable = ['name', 'value', 'description', 'sort'];
 
-    const CACHE_KEY_PREFIX = 'admin_config_cache_';
-    const CACHE_TTL = 864000;
+    public const CACHE_KEY_PREFIX = 'admin_config_cache_';
+    public const CACHE_TTL = 864000;
 
     /**
      * 配置缓存操作.
@@ -37,7 +37,7 @@ class AdminConfig extends ConfigModel
         $configs = self::all(['name', 'value']);
         Cache::put(self::CACHE_KEY_PREFIX, 1, $ttl);
         foreach ($configs as $config) {
-            Cache::put(self::CACHE_KEY_PREFIX.$config['name'], $config['value'], $ttl);
+            Cache::put(self::CACHE_KEY_PREFIX . $config['name'], $config['value'], $ttl);
             config([$config['name'] => $config['value']]);
         }
     }

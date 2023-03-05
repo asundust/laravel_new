@@ -25,8 +25,8 @@ class BaseModel extends Model
 
     protected $guarded = [];
 
-    const SELECT_ARR_KEY = '-selectArr';
-    const STATUS = [
+    public const SELECT_ARR_KEY = '-selectArr';
+    public const STATUS = [
         0 => '无效',
         1 => '有效',
     ];

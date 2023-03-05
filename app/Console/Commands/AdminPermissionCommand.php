@@ -114,18 +114,18 @@ class AdminPermissionCommand extends Command
                 $count++;
             }
         }
-        $this->comment('权限名称本地化完成：共'.$count.'条'.PHP_EOL);
+        $this->comment('权限名称本地化完成：共' . $count . '条' . PHP_EOL);
 
         $this->info('自定义权限开始处理');
         $count = 0;
         $adminPermissionData = config('services.admin_permissions');
         foreach ($adminPermissionData as $permission) {
-            $this->info('　　　　　当前处理：'.$permission['name'].' '.$permission['slug']);
+            $this->info('　　　　　当前处理：' . $permission['name'] . ' ' . $permission['slug']);
             $result = Permission::updateOrCreate(Arr::only($permission, self::$permissionKeys1), Arr::only($permission, self::$permissionKeys2));
             if (false !== $result) {
                 $count++;
             }
         }
-        $this->comment('　　　　　处理完成：共'.$count.'条'.PHP_EOL);
+        $this->comment('　　　　　处理完成：共' . $count . '条' . PHP_EOL);
     }
 }

@@ -42,11 +42,11 @@ class AdminConfigCommand extends Command
             case 'new':
                 $this->info('后台配置开始处理');
                 foreach ($configData as $key => $value) {
-                    $this->info('　　　　当前处理：'.$value['name'].' '.$value['description']);
+                    $this->info('　　　　当前处理：' . $value['name'] . ' ' . $value['description']);
                     $config = AdminConfig::firstOrCreate(['name' => $value['name']], $value);
                     $config->update(['sort' => $key + 1, 'description' => $value['description']]);
                 }
-                $this->comment('　　　　处理完成'.PHP_EOL);
+                $this->comment('　　　　处理完成' . PHP_EOL);
                 break;
             case 'delete':
                 $this->info('后台删除配置开始处理');
@@ -60,13 +60,13 @@ class AdminConfigCommand extends Command
                 $configs = AdminConfig::whereNotIn('id', $configIds)->get();
                 $count = $configs->count();
                 if (0 == $count) {
-                    $this->comment('　　　　处理完成：无将要删除的配置'.PHP_EOL);
+                    $this->comment('　　　　处理完成：无将要删除的配置' . PHP_EOL);
                 } else {
                     foreach ($configs as $config) {
-                        $this->info('　　正在删除：'.$config->id.' '.$config->name.' ['.$config->description.']'.' ，配置值为：'.$config->value);
+                        $this->info('　　正在删除：' . $config->id . ' ' . $config->name . ' [' . $config->description . ']' . ' ，配置值为：' . $config->value);
                         $config->delete();
                     }
-                    $this->comment('　　　　处理完成：共删除配置'.$count.'个'.PHP_EOL);
+                    $this->comment('　　　　处理完成：共删除配置' . $count . '个' . PHP_EOL);
                 }
                 break;
             default:

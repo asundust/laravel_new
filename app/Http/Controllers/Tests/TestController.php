@@ -10,7 +10,7 @@ class TestController extends Controller
 {
     // use WechatTrait;
 
-    const ALLOW_LISTS = [
+    public const ALLOW_LISTS = [
         // 'wechatOauthTest',
     ];
 
@@ -33,7 +33,7 @@ class TestController extends Controller
         if (! empty($result)) {
             return $result;
         }
-        dd('结束运行方法：'.$fun);
+        dd('结束运行方法：' . $fun);
     }
 
     // public function wechatOauthTest()

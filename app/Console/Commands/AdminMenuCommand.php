@@ -106,9 +106,11 @@ class AdminMenuCommand extends Command
         $adminMenuData = config('services.admin_menus', []);
         foreach ($adminMenuData as $parentValue) {
             $uriParent = $this->getUri($parentValue);
-            $this->info('当前处理父菜单：'.$parentValue['title'].' '.$uriParent);
+            $this->info('当前处理父菜单：' . $parentValue['title'] . ' ' . $uriParent);
             $menuParent = $menu->where(
-                'parent_id', 0)
+                'parent_id',
+                0
+            )
                 ->where('title', $parentValue['title'])
                 ->where('uri', $uriParent)
                 ->first();
@@ -128,7 +130,7 @@ class AdminMenuCommand extends Command
 
             foreach ($parentValue['data'] ?? [] as $k => $v) {
                 $uriChild = $this->getUri($v);
-                $this->info('　　　　子菜单：'.$v['title'].' '.$uriChild);
+                $this->info('　　　　子菜单：' . $v['title'] . ' ' . $uriChild);
                 $menuChild = $menu->where('parent_id', $menuParent->id)
                     ->where('title', $v['title'])
                     ->where('uri', $uriChild)
@@ -149,7 +151,7 @@ class AdminMenuCommand extends Command
             }
         }
 
-        $this->comment('　　　　处理完成'.PHP_EOL);
+        $this->comment('　　　　处理完成' . PHP_EOL);
     }
 
     /**
@@ -160,7 +162,7 @@ class AdminMenuCommand extends Command
     private function getUri($value): string
     {
         return match ($value['type']) {
-            1 => url('/').(str_starts_with($value['uri'], '/') ? $value['uri'] : '/'.$value['uri']),
+            1 => url('/') . (str_starts_with($value['uri'], '/') ? $value['uri'] : '/' . $value['uri']),
             default => $value['uri'],
         };
     }

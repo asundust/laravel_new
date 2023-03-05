@@ -12,7 +12,7 @@ trait BaseModelTrait
      */
     public static function getNewNumber(string $fieldName = 'number'): string
     {
-        $number = now()->format('ymdHis').rand(10000, 99999);
+        $number = now()->format('ymdHis') . rand(10000, 99999);
         if (self::findNumber($number, $fieldName)) {
             return self::getNewNumber();
         }
@@ -38,7 +38,7 @@ trait BaseModelTrait
      */
     public static function selectArr(bool|string $appendNull = '无', string $key = 'id', string $value = 'name', array $suffixData = []): array
     {
-        $cacheKey = get_called_class().self::SELECT_ARR_KEY.$key.$value.md5(implode('|', $suffixData));
+        $cacheKey = get_called_class() . self::SELECT_ARR_KEY . $key . $value . md5(implode('|', $suffixData));
 
         return Cache::remember($cacheKey, 60, function () use ($appendNull, $key, $value, $suffixData) {
             $data = [];
@@ -50,7 +50,7 @@ trait BaseModelTrait
                 if ($suffixData && 4 == count($suffixData)) {
                     $suffix = $model[$suffixData[0]] == $suffixData[1] ? $suffixData[2] : $suffixData[3];
                 }
-                $data[$model[$key]] = $model[$value].$suffix;
+                $data[$model[$key]] = $model[$value] . $suffix;
             }
 
             return $data;

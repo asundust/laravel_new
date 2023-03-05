@@ -24,7 +24,7 @@ class ConfigController extends BaseConfigController
     {
         return $content
             ->header('网站配置')
-            ->description('列表&nbsp;<span class="small">[默认缓存时间为'.AdminConfig::CACHE_TTL.'秒]</span>')
+            ->description('列表&nbsp;<span class="small">[默认缓存时间为' . AdminConfig::CACHE_TTL . '秒]</span>')
             ->body($this->grid());
     }
 
@@ -78,7 +78,7 @@ class ConfigController extends BaseConfigController
         });
         $grid->column('value', '值')->editable();
         $grid->column('cache_value', '缓存值')->display(function () {
-            return Cache::get(AdminConfig::CACHE_KEY_PREFIX.$this->name);
+            return Cache::get(AdminConfig::CACHE_KEY_PREFIX . $this->name);
         })->help('如果与“值”不一致，点击“刷新配置缓存”');
         $grid->column('description', '描述');
         $grid->column('sort', '排序')->sortable();
@@ -91,7 +91,7 @@ class ConfigController extends BaseConfigController
         })->hide();
 
         $grid->tools(function (Grid\Tools $tools) {
-            $tools->append('<div class="btn-group"><a href="'.admin_url('config/refresh').'" class="btn btn-success btn-sm" title="刷新配置缓存"><i class="fa fa-refresh"></i><span class="hidden-xs">&nbsp;刷新配置缓存</span></a></div>');
+            $tools->append('<div class="btn-group"><a href="' . admin_url('config/refresh') . '" class="btn btn-success btn-sm" title="刷新配置缓存"><i class="fa fa-refresh"></i><span class="hidden-xs">&nbsp;刷新配置缓存</span></a></div>');
         });
 
         $grid->filter(function ($filter) {

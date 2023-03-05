@@ -9,7 +9,7 @@ if (! function_exists('cache_config')) {
      */
     function cache_config($key, $default = null): mixed
     {
-        return \Illuminate\Support\Facades\Cache::get(\App\Models\Admin\AdminConfig::CACHE_KEY_PREFIX.$key, $default);
+        return \Illuminate\Support\Facades\Cache::get(\App\Models\Admin\AdminConfig::CACHE_KEY_PREFIX . $key, $default);
     }
 }
 
@@ -46,7 +46,7 @@ if (! function_exists('admin_select_arr')) {
             if ($suffixData && 4 == count($suffixData)) {
                 $suffix .= $item[$suffixData[0]] == $suffixData[1] ? $suffixData[2] : $suffixData[3];
             }
-            $data[$item[$key]] = $item[$value].$suffix;
+            $data[$item[$key]] = $item[$value] . $suffix;
         }
 
         return $data;
