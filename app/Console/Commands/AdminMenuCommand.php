@@ -106,7 +106,7 @@ class AdminMenuCommand extends Command
         $adminMenuData = config('services.admin_menus', []);
         foreach ($adminMenuData as $parentValue) {
             $uriParent = $this->getUri($parentValue);
-            $this->info('当前处理父菜单：'.$parentValue['title']. ' ' .$uriParent);
+            $this->info('当前处理父菜单：' . $parentValue['title'] . ' ' . $uriParent);
             $menuParent = $menu->where('parent_id', 0)
                 ->where('title', $parentValue['title'])
                 ->where('uri', $uriParent)
