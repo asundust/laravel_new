@@ -100,7 +100,7 @@ if (!function_exists('pluck_to_array')) {
      */
     function pluck_to_array($array, $value = 'value', $key = 'id')
     {
-        if (method_exists($array, 'toArray')) {
+        if (is_object($array) && method_exists($array, 'toArray')) {
             $array = $array->toArray();
         }
         $data = [];
@@ -250,5 +250,23 @@ if (!function_exists('console_question')) {
     function console_question($text)
     {
         console_line($text, 'question');
+    }
+}
+
+if (!function_exists('get_package_version')) {
+    /**
+     * 获取已安装扩展的版本号.
+     *
+     * @param $packageName
+     *
+     * @return false|string
+     */
+    function get_package_version($packageName)
+    {
+        try {
+            return \Composer\InstalledVersions::getVersion($packageName);
+        } catch (\OutOfBoundsException $exception) {
+            return false;
+        }
     }
 }

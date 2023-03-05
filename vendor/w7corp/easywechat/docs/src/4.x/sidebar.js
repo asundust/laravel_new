@@ -196,6 +196,13 @@ exports = module.exports = [
     ]
   },
   {
+    text: '通用',
+    collapsible: true,
+    items: [
+      { text: 'API 调用', link: '/4.x/client.html' }
+    ]
+  },
+  {
     text: '其他',
     collapsible: true,
     items: [

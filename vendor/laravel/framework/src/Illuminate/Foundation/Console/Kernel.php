@@ -146,6 +146,10 @@ class Kernel implements KernelContract
         $this->commandStartedAt = Carbon::now();
 
         try {
+            if (in_array($input->getFirstArgument(), ['env:encrypt', 'env:decrypt'], true)) {
+                $this->bootstrapWithoutBootingProviders();
+            }
+
             $this->bootstrap();
 
             return $this->getArtisan()->run($input, $output);
@@ -181,7 +185,7 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Register a callback to be invoked when the command lifecyle duration exceeds a given amount of time.
+     * Register a callback to be invoked when the command lifecycle duration exceeds a given amount of time.
      *
      * @param  \DateTimeInterface|\Carbon\CarbonInterval|float|int  $threshold
      * @param  callable  $handler
@@ -323,6 +327,10 @@ class Kernel implements KernelContract
      */
     public function call($command, array $parameters = [], $outputBuffer = null)
     {
+        if (in_array($command, ['env:encrypt', 'env:decrypt'], true)) {
+            $this->bootstrapWithoutBootingProviders();
+        }
+
         $this->bootstrap();
 
         return $this->getArtisan()->call($command, $parameters, $outputBuffer);
@@ -382,6 +390,20 @@ class Kernel implements KernelContract
 
             $this->commandsLoaded = true;
         }
+    }
+
+    /**
+     * Bootstrap the application without booting service providers.
+     *
+     * @return void
+     */
+    public function bootstrapWithoutBootingProviders()
+    {
+        $this->app->bootstrapWith(
+            collect($this->bootstrappers())->reject(function ($bootstrapper) {
+                return $bootstrapper === \Illuminate\Foundation\Bootstrap\BootProviders::class;
+            })->all()
+        );
     }
 
     /**

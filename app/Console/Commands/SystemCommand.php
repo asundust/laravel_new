@@ -41,7 +41,7 @@ class SystemCommand extends Command
         $type = $this->argument('type');
         switch ($type) {
             case 'ready':
-                if (! app()->isLocal()) {
+                if (!app()->isLocal()) {
                     $this->error('非法环境');
 
                     return 0;
@@ -155,9 +155,8 @@ class SystemCommand extends Command
         ], $this->output);
         $this->comment('Admin语言包更新完成' . PHP_EOL);
 
-        Artisan::call('lang:publish', [
-            'locales' => 'zh_CN',
-            '--force' => true,
+        Artisan::call('lang:add', [
+            'locales' => ['en', 'zh_CN'],
         ], $this->output);
         $this->comment('Laravel语言包更新完成' . PHP_EOL);
     }

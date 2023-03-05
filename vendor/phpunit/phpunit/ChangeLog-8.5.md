@@ -2,6 +2,18 @@
 
 All notable changes of the PHPUnit 8.5 release series are documented in this file using the [Keep a CHANGELOG](https://keepachangelog.com/) principles.
 
+## [8.5.33] - 2023-02-27
+
+### Fixed
+
+* [#5186](https://github.com/sebastianbergmann/phpunit/issues/5186): SBOM does not validate
+
+## [8.5.32] - 2023-01-26
+
+### Fixed
+
+* [#5120](https://github.com/sebastianbergmann/phpunit/issues/5120): Test Runner incorrectly treats `--testsuite` and `--list-tests` as not combinable options
+
 ## [8.5.31] - 2022-10-28
 
 ### Fixed
@@ -256,6 +268,8 @@ All notable changes of the PHPUnit 8.5 release series are documented in this fil
 * [#3967](https://github.com/sebastianbergmann/phpunit/issues/3967): Cannot double interface that extends interface that extends `\Throwable`
 * [#3968](https://github.com/sebastianbergmann/phpunit/pull/3968): Test class run in a separate PHP process are passing when `exit` called inside
 
+[8.5.33]: https://github.com/sebastianbergmann/phpunit/compare/8.5.32...8.5.33
+[8.5.32]: https://github.com/sebastianbergmann/phpunit/compare/8.5.31...8.5.32
 [8.5.31]: https://github.com/sebastianbergmann/phpunit/compare/8.5.30...8.5.31
 [8.5.30]: https://github.com/sebastianbergmann/phpunit/compare/8.5.29...8.5.30
 [8.5.29]: https://github.com/sebastianbergmann/phpunit/compare/8.5.28...8.5.29

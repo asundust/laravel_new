@@ -77,6 +77,7 @@ trait InteractWithHandlers
                 $handler[0]
             ).$handler[1],
             $handler instanceof Closure => spl_object_hash($handler),
+            is_callable($handler) => spl_object_hash($handler),
             default => throw new InvalidArgumentException('Invalid handler: '.gettype($handler)),
         };
     }
@@ -93,6 +94,7 @@ trait InteractWithHandlers
         if (class_exists($handler) && method_exists($handler, '__invoke')) {
             /**
              * @psalm-suppress InvalidFunctionCall
+             *
              * @phpstan-ignore-next-line https://github.com/phpstan/phpstan/issues/5867
              */
             return fn (): mixed => (new $handler())(...func_get_args());

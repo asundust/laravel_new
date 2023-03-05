@@ -20,6 +20,11 @@ use EasyWeChat\OpenWork\Contracts\Application as ApplicationInterface;
 use EasyWeChat\OpenWork\Contracts\SuiteTicket as SuiteTicketInterface;
 use Overtrue\Socialite\Contracts\ProviderInterface as SocialiteProviderInterface;
 use Overtrue\Socialite\Providers\OpenWeWork;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class Application implements ApplicationInterface
 {
@@ -42,6 +47,8 @@ class Application implements ApplicationInterface
     protected ?AccessTokenInterface $accessToken = null;
 
     protected ?AccessTokenInterface $suiteAccessToken = null;
+
+    protected ?AuthorizerAccessToken $authorizerAccessToken = null;
 
     public function getAccount(): AccountInterface
     {
@@ -247,21 +254,14 @@ class Application implements ApplicationInterface
         ?AccessTokenInterface $suiteAccessToken = null
     ): AuthorizerAccessToken {
         $suiteAccessToken = $suiteAccessToken ?? $this->getSuiteAccessToken();
-        $response = $this->getHttpClient()->request('POST', 'cgi-bin/service/get_corp_token', [
-            'query' => [
-                'suite_access_token' => $suiteAccessToken->getToken(),
-            ],
-            'json' => [
-                'auth_corpid' => $corpId,
-                'permanent_code' => $permanentCode,
-            ],
-        ])->toArray(false);
 
-        if (empty($response['access_token'])) {
-            throw new HttpException('Failed to get access_token: '.json_encode($response, JSON_UNESCAPED_UNICODE));
-        }
-
-        return new AuthorizerAccessToken($corpId, accessToken: $response['access_token']);
+        return new AuthorizerAccessToken(
+            corpId: $corpId,
+            permanentCodeOrAccessToken: $permanentCode,
+            suiteAccessToken: $suiteAccessToken,
+            cache: $this->getCache(),
+            httpClient: $this->getHttpClient(),
+        );
     }
 
     public function createClient(): AccessTokenAwareClient
@@ -274,16 +274,52 @@ class Application implements ApplicationInterface
         ))->setPresets($this->config->all());
     }
 
+    /**
+     * @throws HttpException
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
+    public function getAuthorizerClient(string $corpId, string $permanentCode, ?AccessTokenInterface $suiteAccessToken = null): AccessTokenAwareClient
+    {
+        return (new AccessTokenAwareClient(
+            client: $this->getHttpClient(),
+            accessToken: $this->getAuthorizerAccessToken($corpId, $permanentCode, $suiteAccessToken),
+            failureJudge: fn (Response $response) => (bool) ($response->toArray()['errcode'] ?? 0),
+            throw: (bool) $this->config->get('http.throw', true),
+        ))->setPresets($this->config->all());
+    }
+
+    /**
+     * @throws HttpException
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
+    public function getJsApiTicket(string $corpId, string $permanentCode, ?AccessTokenInterface $suiteAccessToken = null): JsApiTicket
+    {
+        return new JsApiTicket(
+            corpId: $corpId,
+            cache: $this->getCache(),
+            httpClient: $this->getAuthorizerClient($corpId, $permanentCode, $suiteAccessToken),
+        );
+    }
+
     public function getOAuth(
         string $suiteId,
         ?AccessTokenInterface $suiteAccessToken = null
     ): SocialiteProviderInterface {
         $suiteAccessToken = $suiteAccessToken ?? $this->getSuiteAccessToken();
 
-        return (new OpenWeWork([
+        return (new OpenWeWork(array_filter([
             'client_id' => $suiteId,
             'redirect_url' => $this->config->get('oauth.redirect_url'),
-        ]))->withSuiteTicket($this->getSuiteTicket()->getTicket())
+            'base_url' => $this->config->get('http.base_uri'),
+        ])))->withSuiteTicket($this->getSuiteTicket()->getTicket())
             ->withSuiteAccessToken($suiteAccessToken->getToken())
             ->scopes((array) $this->config->get('oauth.scopes', ['snsapi_base']));
     }
@@ -294,10 +330,11 @@ class Application implements ApplicationInterface
     ): SocialiteProviderInterface {
         $suiteAccessToken = $suiteAccessToken ?? $this->getSuiteAccessToken();
 
-        return (new OpenWeWork([
+        return (new OpenWeWork(array_filter([
             'client_id' => $corpId,
             'redirect_url' => $this->config->get('oauth.redirect_url'),
-        ]))->withSuiteTicket($this->getSuiteTicket()->getTicket())
+            'base_url' => $this->config->get('http.base_uri'),
+        ])))->withSuiteTicket($this->getSuiteTicket()->getTicket())
             ->withSuiteAccessToken($suiteAccessToken->getToken())
             ->scopes((array) $this->config->get('oauth.scopes', ['snsapi_base']));
     }

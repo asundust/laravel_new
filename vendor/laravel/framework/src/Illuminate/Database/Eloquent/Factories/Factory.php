@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Enumerable;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\ForwardsCalls;
@@ -68,7 +69,7 @@ abstract class Factory
      *
      * @var \Illuminate\Support\Collection
      */
-    public $recycle;
+    protected $recycle;
 
     /**
      * The "after making" callbacks that will be applied to the model.
@@ -328,6 +329,12 @@ abstract class Factory
 
             $model->save();
 
+            foreach ($model->getRelations() as $name => $items) {
+                if ($items instanceof Enumerable && $items->isEmpty()) {
+                    $model->unsetRelation($name);
+                }
+            }
+
             $this->createChildren($model);
         });
     }
@@ -464,9 +471,8 @@ abstract class Factory
         return collect($definition)
             ->map($evaluateRelations = function ($attribute) {
                 if ($attribute instanceof self) {
-                    $attribute = $this->recycle->has($attribute->modelName())
-                            ? $this->recycle->get($attribute->modelName())
-                            : $attribute->recycle($this->recycle)->create()->getKey();
+                    $attribute = $this->getRandomRecycledModel($attribute->modelName())
+                        ?? $attribute->recycle($this->recycle)->create()->getKey();
                 } elseif ($attribute instanceof Model) {
                     $attribute = $attribute->getKey();
                 }
@@ -519,7 +525,7 @@ abstract class Factory
     /**
      * Add a new sequenced state transformation to the model definition.
      *
-     * @param  array  $sequence
+     * @param  mixed  ...$sequence
      * @return static
      */
     public function sequence(...$sequence)
@@ -530,7 +536,7 @@ abstract class Factory
     /**
      * Add a new sequenced state transformation to the model definition and update the pending creation count to the size of the sequence.
      *
-     * @param  array  $sequence
+     * @param  array  ...$sequence
      * @return static
      */
     public function forEachSequence(...$sequence)
@@ -541,7 +547,7 @@ abstract class Factory
     /**
      * Add a new cross joined sequenced state transformation to the model definition.
      *
-     * @param  array  $sequence
+     * @param  array  ...$sequence
      * @return static
      */
     public function crossJoinSequence(...$sequence)
@@ -619,19 +625,33 @@ abstract class Factory
     }
 
     /**
-     * Provide a model instance to use instead of any nested factory calls when creating relationships.
+     * Provide model instances to use instead of any nested factory calls when creating relationships.
      *
-     * @param  \Illuminate\Eloquent\Model|\Illuminate\Support\Collection|array  $model
+     * @param  \Illuminate\Database\Eloquent\Model|\Illuminate\Support\Collection|array  $model
      * @return static
      */
     public function recycle($model)
     {
+        // Group provided models by the type and merge them into existing recycle collection
         return $this->newInstance([
-            'recycle' => $this->recycle->merge(
-                Collection::wrap($model instanceof Model ? func_get_args() : $model)
-                    ->keyBy(fn ($model) => get_class($model))
-            ),
+            'recycle' => $this->recycle
+                ->flatten()
+                ->merge(
+                    Collection::wrap($model instanceof Model ? func_get_args() : $model)
+                        ->flatten()
+                )->groupBy(fn ($model) => get_class($model)),
         ]);
+    }
+
+    /**
+     * Retrieve a random model of a given type from previously provided models to recycle.
+     *
+     * @param  string  $modelClassName
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function getRandomRecycledModel($modelClassName)
+    {
+        return $this->recycle->get($modelClassName)?->random();
     }
 
     /**

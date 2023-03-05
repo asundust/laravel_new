@@ -456,12 +456,16 @@ if (! function_exists('fake') && class_exists(\Faker\Factory::class)) {
     /**
      * Get a faker instance.
      *
-     * @param  ?string  $locale
+     * @param  string|null  $locale
      * @return \Faker\Generator
      */
     function fake($locale = null)
     {
-        $locale ??= app('config')->get('app.faker_locale') ?? 'en_US';
+        if (app()->bound('config')) {
+            $locale ??= app('config')->get('app.faker_locale');
+        }
+
+        $locale ??= 'en_US';
 
         $abstract = \Faker\Generator::class.':'.$locale;
 
@@ -681,6 +685,38 @@ if (! function_exists('report')) {
     }
 }
 
+if (! function_exists('report_if')) {
+    /**
+     * Report an exception if the given condition is true.
+     *
+     * @param  bool  $boolean
+     * @param  \Throwable|string  $exception
+     * @return void
+     */
+    function report_if($boolean, $exception)
+    {
+        if ($boolean) {
+            report($exception);
+        }
+    }
+}
+
+if (! function_exists('report_unless')) {
+    /**
+     * Report an exception unless the given condition is true.
+     *
+     * @param  bool  $boolean
+     * @param  \Throwable|string  $exception
+     * @return void
+     */
+    function report_unless($boolean, $exception)
+    {
+        if (! $boolean) {
+            report($exception);
+        }
+    }
+}
+
 if (! function_exists('request')) {
     /**
      * Get an instance of the current request or an input item from the request.
@@ -711,7 +747,7 @@ if (! function_exists('rescue')) {
      *
      * @param  callable  $callback
      * @param  mixed  $rescue
-     * @param  bool  $report
+     * @param  bool|callable  $report
      * @return mixed
      */
     function rescue(callable $callback, $rescue = null, $report = true)
@@ -719,7 +755,7 @@ if (! function_exists('rescue')) {
         try {
             return $callback();
         } catch (Throwable $e) {
-            if ($report) {
+            if (value($report, $e)) {
                 report($e);
             }
 

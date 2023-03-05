@@ -1,6 +1,6 @@
 <?php
 
-if (! function_exists('cache_config')) {
+if (!function_exists('cache_config')) {
     /**
      * 获取Admin Config的缓存键的值
      *
@@ -13,7 +13,7 @@ if (! function_exists('cache_config')) {
     }
 }
 
-if (! function_exists('admin_switch_arr')) {
+if (!function_exists('admin_switch_arr')) {
     /**
      * Laravel-Admin系统的switch选项.
      *
@@ -32,28 +32,7 @@ if (! function_exists('admin_switch_arr')) {
     }
 }
 
-if (! function_exists('admin_select_arr')) {
-    /**
-     * Laravel-Admin系统的select选项.
-     *
-     * @param $items
-     */
-    function admin_select_arr($items, string $key = 'id', string $value = 'name', array $suffixData = []): array
-    {
-        $data = [];
-        foreach ($items as $item) {
-            $suffix = '';
-            if ($suffixData && 4 == count($suffixData)) {
-                $suffix .= $item[$suffixData[0]] == $suffixData[1] ? $suffixData[2] : $suffixData[3];
-            }
-            $data[$item[$key]] = $item[$value] . $suffix;
-        }
-
-        return $data;
-    }
-}
-
-if (! function_exists('is_wechat')) {
+if (!function_exists('is_wechat')) {
     /**
      * 判断是否是微信访问.
      */
@@ -63,7 +42,7 @@ if (! function_exists('is_wechat')) {
     }
 }
 
-if (! function_exists('is_mobile')) {
+if (!function_exists('is_mobile')) {
     /**
      * 是否手机.
      */

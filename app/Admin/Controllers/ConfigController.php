@@ -31,7 +31,7 @@ class ConfigController extends BaseConfigController
     /**
      * 编辑.
      *
-     * @param  int  $id
+     * @param int $id
      */
     public function edit($id, Content $content): Content
     {
@@ -56,6 +56,8 @@ class ConfigController extends BaseConfigController
      * 详情.
      *
      * @param $id
+     * @param Content $content
+     * @return Content
      */
     public function show($id, Content $content): Content
     {
@@ -72,23 +74,33 @@ class ConfigController extends BaseConfigController
     {
         $grid = new Grid(new AdminConfig());
 
-        $grid->column('id', 'ID')->sortable()->hide();
-        $grid->column('name', '名称')->display(function ($name) {
-            return "<a tabindex=\"0\" class=\"btn btn-xs btn-twitter\" role=\"button\" data-toggle=\"popover\" data-html=true title=\"用法\" data-content=\"<code>cache_config('$name');</code>\">$name</a>";
-        });
+        $grid->column('id', 'ID')
+            ->sortable()
+            ->hide();
+        $grid->column('name', '名称')
+            ->display(function ($name) {
+                return "<a tabindex=\"0\" class=\"btn btn-xs btn-twitter\" role=\"button\" data-toggle=\"popover\" data-html=true title=\"用法\" data-content=\"<code>cache_config('$name');</code>\">$name</a>";
+            });
         $grid->column('value', '值')->editable();
-        $grid->column('cache_value', '缓存值')->display(function () {
-            return Cache::get(AdminConfig::CACHE_KEY_PREFIX . $this->name);
-        })->help('如果与“值”不一致，点击“刷新配置缓存”');
+        $grid->column('cache_value', '缓存值')
+            ->display(function () {
+                /* @var AdminConfig $this */
+                return Cache::get(AdminConfig::CACHE_KEY_PREFIX . $this->name);
+            })
+            ->help('如果与“值”不一致，点击“刷新配置缓存”');
         $grid->column('description', '描述');
         $grid->column('sort', '排序')->sortable();
 
-        $grid->column('created_at', '创建时间')->display(function ($createdAt) {
-            return Carbon::parse($createdAt)->toDateTimeString();
-        })->hide();
-        $grid->column('updated_at', '更新时间')->display(function ($updatedAt) {
-            return Carbon::parse($updatedAt)->toDateTimeString();
-        })->hide();
+        $grid->column('created_at', '创建时间')
+            ->display(function ($createdAt) {
+                return Carbon::parse($createdAt)->toDateTimeString();
+            })
+            ->hide();
+        $grid->column('updated_at', '更新时间')
+            ->display(function ($updatedAt) {
+                return Carbon::parse($updatedAt)->toDateTimeString();
+            })
+            ->hide();
 
         $grid->tools(function (Grid\Tools $tools) {
             $tools->append('<div class="btn-group"><a href="' . admin_url('config/refresh') . '" class="btn btn-success btn-sm" title="刷新配置缓存"><i class="fa fa-refresh"></i><span class="hidden-xs">&nbsp;刷新配置缓存</span></a></div>');
@@ -110,6 +122,7 @@ class ConfigController extends BaseConfigController
      * 详情字段.
      *
      * @param $id
+     * @return Show
      */
     protected function detail($id): Show
     {
@@ -128,6 +141,8 @@ class ConfigController extends BaseConfigController
 
     /**
      * 表单字段.
+     *
+     * @return Form
      */
     public function form(): Form
     {
@@ -147,6 +162,8 @@ class ConfigController extends BaseConfigController
 
     /**
      * 刷新配置缓存.
+     *
+     * @return RedirectResponse
      */
     public function refresh(): RedirectResponse
     {

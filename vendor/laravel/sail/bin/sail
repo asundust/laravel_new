@@ -82,6 +82,7 @@ function display_help {
     echo "${YELLOW}Running Tests:${NC}"
     echo "  ${GREEN}sail test${NC}          Run the PHPUnit tests via the Artisan test command"
     echo "  ${GREEN}sail phpunit ...${NC}   Run PHPUnit"
+    echo "  ${GREEN}sail pest ...${NC}      Run Pest"
     echo "  ${GREEN}sail pint ...${NC}      Run Pint"
     echo "  ${GREEN}sail dusk${NC}          Run the Dusk tests (Requires the laravel/dusk package)"
     echo "  ${GREEN}sail dusk:fails${NC}    Re-run previously failed Dusk tests (Requires the laravel/dusk package)"
@@ -95,6 +96,7 @@ function display_help {
     echo
     echo "${YELLOW}Sharing:${NC}"
     echo "  ${GREEN}sail share${NC}   Share the application publicly via a temporary URL"
+    echo "  ${GREEN}sail open${NC}    Open the site in your browser"
     echo
     echo "${YELLOW}Binaries:${NC}"
     echo "  ${GREEN}sail bin ...${NC}   Run Composer binary scripts from the vendor/bin directory"
@@ -134,6 +136,7 @@ export SAIL_SHARE_DASHBOARD=${SAIL_SHARE_DASHBOARD:-4040}
 export SAIL_SHARE_SERVER_HOST=${SAIL_SHARE_SERVER_HOST:-"laravel-sail.site"}
 export SAIL_SHARE_SERVER_PORT=${SAIL_SHARE_SERVER_PORT:-8080}
 export SAIL_SHARE_SUBDOMAIN=${SAIL_SHARE_SUBDOMAIN:-""}
+export SAIL_SHARE_DOMAIN=${SAIL_SHARE_DOMAIN:-"$SAIL_SHARE_SERVER_HOST"}
 
 # Function that outputs Sail is not running...
 function sail_is_not_running {
@@ -283,6 +286,18 @@ elif [ "$1" == "phpunit" ]; then
         ARGS+=(exec -u sail)
         [ ! -t 0 ] && ARGS+=(-T)
         ARGS+=("$APP_SERVICE" php vendor/bin/phpunit "$@")
+    else
+        sail_is_not_running
+    fi
+
+# Proxy the "pest" command to "php vendor/bin/pest"...
+elif [ "$1" == "pest" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        ARGS+=(exec -u sail)
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=("$APP_SERVICE" php vendor/bin/pest "$@")
     else
         sail_is_not_running
     fi
@@ -472,7 +487,20 @@ elif [ "$1" == "share" ]; then
             --server-port="$SAIL_SHARE_SERVER_PORT" \
             --auth="$SAIL_SHARE_TOKEN" \
             --subdomain="$SAIL_SHARE_SUBDOMAIN" \
+            --domain="$SAIL_SHARE_DOMAIN" \
             "$@"
+
+        exit
+    else
+        sail_is_not_running
+    fi
+
+# Open the site...
+elif [ "$1" == "open" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        open $APP_URL
 
         exit
     else

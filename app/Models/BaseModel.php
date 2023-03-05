@@ -31,19 +31,34 @@ class BaseModel extends Model
         1 => '有效',
     ];
 
-    // 状态名称 status_string
+    /**
+     * status_string
+     *
+     * @comment 状态名称
+     * @return string
+     */
     public function getStatusStringAttribute(): string
     {
         return self::STATUS[$this['status']] ?? '';
     }
 
-    // 创建时间的格式化 created_at_format
+    /**
+     * created_at_format
+     *
+     * @comment 创建时间的格式化
+     * @return string
+     */
     public function getCreatedAtFormatAttribute(): string
     {
         return $this[self::CREATED_AT]->toDateTimeString();
     }
 
-    // 更新时间的格式化 updated_at_format
+    /**
+     * updated_at_format
+     *
+     * @comment 更新时间的格式化
+     * @return string
+     */
     public function getUpdatedAtFormatAttribute(): string
     {
         return $this[self::UPDATED_AT]->toDateTimeString();

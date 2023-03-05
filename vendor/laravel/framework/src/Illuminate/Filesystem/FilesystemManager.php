@@ -23,6 +23,7 @@ use League\Flysystem\Visibility;
 
 /**
  * @mixin \Illuminate\Contracts\Filesystem\Filesystem
+ * @mixin \Illuminate\Filesystem\FilesystemAdapter
  */
 class FilesystemManager implements FactoryContract
 {
@@ -265,7 +266,7 @@ class FilesystemManager implements FactoryContract
             $config['credentials'] = Arr::only($config, ['key', 'secret', 'token']);
         }
 
-        return $config;
+        return Arr::except($config, ['token']);
     }
 
     /**

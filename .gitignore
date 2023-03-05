@@ -6,6 +6,7 @@
 lang/*
 !lang/en/
 !lang/zh_CN/
+!lang/en.json
 !lang/zh_CN.json
 public/uploads
 public/vendor

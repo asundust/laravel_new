@@ -63,35 +63,35 @@ return [
                 ],
             ],
         ],
-        [
-            'title' => '企业微信消息推送',
-            'icon' => 'fa-wechat',
-            'type' => 0,
-            'uri' => '',
-            'permission' => '',
-            'roles' => [
-            ],
-            'data' => [
-                [
-                    'title' => '用户配置',
-                    'icon' => 'fa-users',
-                    'type' => 0,
-                    'uri' => 'wechatWorkPushUsers',
-                    'permission' => '',
-                    'roles' => [
-                    ],
-                ],
-                [
-                    'title' => '默认配置',
-                    'icon' => 'fa-toggle-on',
-                    'type' => 0,
-                    'uri' => 'wechatWorkPushConfig',
-                    'permission' => '',
-                    'roles' => [
-                    ],
-                ],
-            ],
-        ],
+        // [
+        //     'title' => '企业微信消息推送',
+        //     'icon' => 'fa-wechat',
+        //     'type' => 0,
+        //     'uri' => '',
+        //     'permission' => '',
+        //     'roles' => [
+        //     ],
+        //     'data' => [
+        //         [
+        //             'title' => '用户配置',
+        //             'icon' => 'fa-users',
+        //             'type' => 0,
+        //             'uri' => 'wechatWorkPushUsers',
+        //             'permission' => '',
+        //             'roles' => [
+        //             ],
+        //         ],
+        //         [
+        //             'title' => '默认配置',
+        //             'icon' => 'fa-toggle-on',
+        //             'type' => 0,
+        //             'uri' => 'wechatWorkPushConfig',
+        //             'permission' => '',
+        //             'roles' => [
+        //             ],
+        //         ],
+        //     ],
+        // ],
     ],
     // Admin后台权限
     'admin_permissions' => [
