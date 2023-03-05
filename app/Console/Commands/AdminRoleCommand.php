@@ -48,7 +48,7 @@ class AdminRoleCommand extends Command
                 if (count($role['permissions']) > 0) {
                     $result->permissions()->sync(Permission::whereIn('slug', $role['permissions'])->get());
                 }
-                ++$count;
+                $count++;
             }
         }
         $this->comment('　　　　　处理完成：共'.$count.'条'.PHP_EOL);

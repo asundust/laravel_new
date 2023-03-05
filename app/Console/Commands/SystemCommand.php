@@ -41,7 +41,7 @@ class SystemCommand extends Command
         $type = $this->argument('type');
         switch ($type) {
             case 'ready':
-                if (!app()->isLocal()) {
+                if (! app()->isLocal()) {
                     $this->error('非法环境');
 
                     return 0;

@@ -19,7 +19,7 @@ class TestController extends Controller
      */
     public function __construct()
     {
-        if (!app()->isLocal() && in_array(__FUNCTION__, self::ALLOW_LISTS)) {
+        if (! app()->isLocal() && in_array(__FUNCTION__, self::ALLOW_LISTS)) {
             abort(404);
         }
     }
@@ -30,7 +30,7 @@ class TestController extends Controller
             $fun = 'a';
         }
         $result = $this->$fun();
-        if (!empty($result)) {
+        if (! empty($result)) {
             return $result;
         }
         dd('结束运行方法：'.$fun);

@@ -111,7 +111,7 @@ class AdminPermissionCommand extends Command
         foreach ($list1 as $k => $list) {
             $result = Permission::where($list)->update($list2[$k]);
             if (false !== $result) {
-                ++$count;
+                $count++;
             }
         }
         $this->comment('权限名称本地化完成：共'.$count.'条'.PHP_EOL);
@@ -123,7 +123,7 @@ class AdminPermissionCommand extends Command
             $this->info('　　　　　当前处理：'.$permission['name'].' '.$permission['slug']);
             $result = Permission::updateOrCreate(Arr::only($permission, self::$permissionKeys1), Arr::only($permission, self::$permissionKeys2));
             if (false !== $result) {
-                ++$count;
+                $count++;
             }
         }
         $this->comment('　　　　　处理完成：共'.$count.'条'.PHP_EOL);

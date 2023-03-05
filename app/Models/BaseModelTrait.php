@@ -31,10 +31,10 @@ trait BaseModelTrait
     /**
      * 选项数字.
      *
-     * @param bool|string $appendNull 是否添加空选项
-     * @param string      $key        键名
-     * @param string      $value      键值
-     * @param array       $suffixData 后缀选项 ['status', 1, '[无效]', []] [字段名, 等于判断值, 真返回值, 假返回值]
+     * @param  bool|string  $appendNull  是否添加空选项
+     * @param  string  $key  键名
+     * @param  string  $value  键值
+     * @param  array  $suffixData  后缀选项 ['status', 1, '[无效]', []] [字段名, 等于判断值, 真返回值, 假返回值]
      */
     public static function selectArr(bool|string $appendNull = '无', string $key = 'id', string $value = 'name', array $suffixData = []): array
     {
