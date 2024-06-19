@@ -3,7 +3,7 @@
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/admin', fn() => Slowlyo\OwlAdmin\Admin::view());
+Route::get('/admin', fn () => Slowlyo\OwlAdmin\Admin::view());
 
 Route::group([
     'domain' => config('admin.route.domain'),
