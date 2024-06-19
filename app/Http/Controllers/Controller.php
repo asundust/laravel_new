@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Validator;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, ValidatesRequests;
+    use AuthorizesRequests;
+    use ValidatesRequests;
 
     /**
      * 简易验证方法

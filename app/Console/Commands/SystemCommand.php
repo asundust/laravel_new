@@ -11,6 +11,7 @@ use Slowlyo\OwlAdmin\Admin;
 use Slowlyo\OwlAdmin\Events\ExtensionChanged;
 use Slowlyo\OwlAdmin\Support\Cores\Database;
 use Slowlyo\OwlDict\Services\AdminDictService;
+
 use function Laravel\Prompts\select;
 
 class SystemCommand extends Command implements PromptsForMissingInput
@@ -82,7 +83,7 @@ class SystemCommand extends Command implements PromptsForMissingInput
     protected function promptForMissingArgumentsUsing(): array
     {
         return [
-            'action' => fn() => select(
+            'action' => fn () => select(
                 label: '选择一个操作',
                 options: [
                     'source' => '升级资源',

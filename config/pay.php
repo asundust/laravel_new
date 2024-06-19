@@ -55,7 +55,7 @@ return [
             'sub_mch_id' => '',
             // 选填-微信公钥证书路径, optional，强烈建议 php-fpm 模式下配置此参数
             'wechat_public_cert_path' => [
-                '45F59D4DABF31918AFCEC556D5D2C6E376675D57' => __DIR__.'/Cert/wechatPublicKey.crt',
+                '45F59D4DABF31918AFCEC556D5D2C6E376675D57' => __DIR__ . '/Cert/wechatPublicKey.crt',
             ],
             // 选填-默认为正常模式。可选为： MODE_NORMAL, MODE_SERVICE
             'mode' => Pay::MODE_NORMAL,

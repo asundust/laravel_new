@@ -65,9 +65,9 @@ trait BaseModelTrait
             }
             if ($relation) {
                 if ($whereHasFunction == 'whereHasIn') {
-                    return $builder->whereHasIn($relation, fn(Builder $builder) => $this->scopeLike($builder, $field, $inputField));
+                    return $builder->whereHasIn($relation, fn (Builder $builder) => $this->scopeLike($builder, $field, $inputField));
                 } else {
-                    return $builder->whereHas($relation, fn(Builder $builder) => $this->scopeLike($builder, $field, $inputField));
+                    return $builder->whereHas($relation, fn (Builder $builder) => $this->scopeLike($builder, $field, $inputField));
                 }
             } else {
                 return $builder->when(strlen($keyword), function (Builder $builder) use ($fields, $keyword) {
@@ -181,9 +181,9 @@ trait BaseModelTrait
         if (strlen($keyword)) {
             if ($relation) {
                 if ($whereHasFunction == 'whereHasIn') {
-                    return $builder->whereHasIn($relation, fn(Builder $builder) => $this->scopeCompare($builder, $compareType, $field, $inputField));
+                    return $builder->whereHasIn($relation, fn (Builder $builder) => $this->scopeCompare($builder, $compareType, $field, $inputField));
                 } else {
-                    return $builder->whereHas($relation, fn(Builder $builder) => $this->scopeCompare($builder, $compareType, $field, $inputField));
+                    return $builder->whereHas($relation, fn (Builder $builder) => $this->scopeCompare($builder, $compareType, $field, $inputField));
                 }
             } else {
                 switch ($compareType) {

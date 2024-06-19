@@ -34,7 +34,8 @@ class HomeController extends AdminController
     public function codeView()
     {
         return amis()->Panel()->className('h-full clear-card-mb rounded-md')->body([
-            amis()->Markdown()->options(['html' => true, 'breaks' => true])->value(<<<MD
+            amis()->Markdown()->options(['html' => true, 'breaks' => true])->value(
+                <<<MD
 ### __The beginning of everything__
 
 ```php
@@ -53,7 +54,8 @@ MD
             amis()->Custom()
                 ->name('clock')
                 ->html('<div id="clock" class="text-4xl"></div><div id="clock-date" class="mt-5"></div>')
-                ->onMount(<<<JS
+                ->onMount(
+                    <<<JS
 const clock = document.getElementById('clock');
 const tick = () => {
     clock.innerHTML = (new Date()).toLocaleTimeString();
@@ -189,7 +191,8 @@ JS
     public function cube()
     {
         return amis()->Card()->className('h-96 ml-4 w-8/12')->body(
-            amis()->Html()->html(<<<HTML
+            amis()->Html()->html(
+                <<<HTML
 <style>
     .cube-box{ height: 300px; display: flex; align-items: center; justify-content: center; }
   .cube { width: 100px; height: 100px; position: relative; transform-style: preserve-3d; animation: rotate 10s linear infinite; }
