@@ -33,10 +33,10 @@ return [
             //     'enforce_https' => true,
             // ],
 
-        /**
-         * 接口请求相关配置，超时时间等，具体可用参数请参考：
-         * https://github.com/symfony/symfony/blob/6.0/src/Symfony/Contracts/HttpClient/HttpClientInterface.php#L26
-         */
+            /**
+             * 接口请求相关配置，超时时间等，具体可用参数请参考：
+             * https://github.com/symfony/symfony/blob/6.0/src/Symfony/Contracts/HttpClient/HttpClientInterface.php#L26
+             */
             //'http' => [
             //  'timeout' => 5.0,
             //   // 如果你在国外想要覆盖默认的 url 的时候才使用，根据不同的模块配置不同的 uri
@@ -55,10 +55,10 @@ return [
     //         'token'      => env('WECHAT_OPEN_PLATFORM_TOKEN', ''),
     //         'aes_key'    => env('WECHAT_OPEN_PLATFORM_AES_KEY', ''),
 
-/**
- * 接口请求相关配置，超时时间等，具体可用参数请参考：
- * https://github.com/symfony/symfony/blob/6.0/src/Symfony/Contracts/HttpClient/HttpClientInterface.php#L26
- */
+    /**
+     * 接口请求相关配置，超时时间等，具体可用参数请参考：
+     * https://github.com/symfony/symfony/blob/6.0/src/Symfony/Contracts/HttpClient/HttpClientInterface.php#L26
+     */
     //          'http' => [
     //            'timeout' => 5.0,
     //             // 如果你在国外想要覆盖默认的 url 的时候才使用，根据不同的模块配置不同的 uri
@@ -77,10 +77,10 @@ return [
     //         'token'      => env('WECHAT_MINI_APP_TOKEN', ''),
     //         'aes_key'    => env('WECHAT_MINI_APP_AES_KEY', ''),
 
-/**
- * 接口请求相关配置，超时时间等，具体可用参数请参考：
- * https://github.com/symfony/symfony/blob/6.0/src/Symfony/Contracts/HttpClient/HttpClientInterface.php#L26
- */
+    /**
+     * 接口请求相关配置，超时时间等，具体可用参数请参考：
+     * https://github.com/symfony/symfony/blob/6.0/src/Symfony/Contracts/HttpClient/HttpClientInterface.php#L26
+     */
     //          'http' => [
     //            'timeout' => 5.0,
     //             // 如果你在国外想要覆盖默认的 url 的时候才使用，根据不同的模块配置不同的 uri
@@ -132,10 +132,10 @@ return [
     //         'token'      => env('WECHAT_WORK_TOKEN', ''),
     //         'aes_key'    => env('WECHAT_WORK_AES_KEY', ''),
 
-/**
- * 接口请求相关配置，超时时间等，具体可用参数请参考：
- * https://github.com/symfony/symfony/blob/6.0/src/Symfony/Contracts/HttpClient/HttpClientInterface.php#L26
- */
+    /**
+     * 接口请求相关配置，超时时间等，具体可用参数请参考：
+     * https://github.com/symfony/symfony/blob/6.0/src/Symfony/Contracts/HttpClient/HttpClientInterface.php#L26
+     */
     //          'http' => [
     //            'timeout' => 5.0,
     //             // 如果你在国外想要覆盖默认的 url 的时候才使用，根据不同的模块配置不同的 uri
@@ -154,10 +154,10 @@ return [
     //         'token'              => env('WECHAT_OPEN_WORK_TOKEN', ''),
     //         'aes_key'            => env('WECHAT_OPEN_WORK_AES_KEY', ''),
 
-/**
- * 接口请求相关配置，超时时间等，具体可用参数请参考：
- * https://github.com/symfony/symfony/blob/6.0/src/Symfony/Contracts/HttpClient/HttpClientInterface.php#L26
- */
+    /**
+     * 接口请求相关配置，超时时间等，具体可用参数请参考：
+     * https://github.com/symfony/symfony/blob/6.0/src/Symfony/Contracts/HttpClient/HttpClientInterface.php#L26
+     */
     //          'http' => [
     //            'timeout' => 5.0,
     //             // 如果你在国外想要覆盖默认的 url 的时候才使用，根据不同的模块配置不同的 uri

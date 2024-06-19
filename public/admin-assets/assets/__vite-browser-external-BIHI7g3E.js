@@ -1,1 +1,2 @@
-const e={};export{e as default};
+const e = {};
+export {e as default};

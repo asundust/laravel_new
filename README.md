@@ -2,13 +2,13 @@
 
 ## 关于
 
-[Laravel](https://github.com/laravel/laravel)本地化(中文化)项目模板，带[Owl-Admin](https://github.com/slowlyo/owl-admin)、
+[Laravel](https://github.com/laravel/laravel)本地化(中文化)项目模板，带[Owl-Admin](https://github.com/slowlyo/owl-admin)
 
 同步[github.com](https://github.com/asundust/laravel_new)和[gitee.com](https://gitee.com/asundust/laravel_new)
 
 关于`Composer源`的声明：由于连接性的问题故使用的是`腾讯云Composer源`(本地全局更改，非项目更改)，故产生的`composer.lock`文件会有`腾讯云Composer源`的链接。
 
-## **大道至简**
+## 大道至简
 
 适配跟进速度跟不上Laravel框架迭代速度，取消了所有用不到的东西，只留下最基础的东西，保留了一些开发上可能需要的安装包。
 具体可以查看`composer.json`文件可以查看安装了什么。

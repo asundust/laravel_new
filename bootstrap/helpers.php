@@ -3,6 +3,7 @@
 if (!function_exists('is_wechat')) {
     /**
      * 是否微信
+     *
      * @return bool
      */
     function is_wechat(): bool
@@ -14,6 +15,7 @@ if (!function_exists('is_wechat')) {
 if (!function_exists('is_mobile')) {
     /**
      * 是否手机
+     *
      * @return bool
      */
     function is_mobile(): bool
