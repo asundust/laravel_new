@@ -11,43 +11,37 @@ namespace SebastianBergmann\CodeUnitReverseLookup;
 
 use function array_merge;
 use function assert;
+use function class_exists;
+use function function_exists;
 use function get_declared_classes;
 use function get_declared_traits;
 use function get_defined_functions;
 use function is_array;
 use function range;
+use function trait_exists;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
 
-/**
- * @since Class available since Release 1.0.0
- */
-class Wizard
+final class Wizard
 {
     /**
-     * @var array
+     * @psalm-var array<string,array<int,string>>
      */
-    private $lookupTable = [];
+    private array $lookupTable = [];
 
     /**
-     * @var array
+     * @psalm-var array<class-string,true>
      */
-    private $processedClasses = [];
+    private array $processedClasses = [];
 
     /**
-     * @var array
+     * @psalm-var array<string,true>
      */
-    private $processedFunctions = [];
+    private array $processedFunctions = [];
 
-    /**
-     * @param string $filename
-     * @param int    $lineNumber
-     *
-     * @return string
-     */
-    public function lookup($filename, $lineNumber)
+    public function lookup(string $filename, int $lineNumber): string
     {
         if (!isset($this->lookupTable[$filename][$lineNumber])) {
             $this->updateLookupTable();
@@ -71,17 +65,16 @@ class Wizard
         $classes = get_declared_classes();
         $traits  = get_declared_traits();
 
-        assert(is_array($classes));
         assert(is_array($traits));
 
         foreach (array_merge($classes, $traits) as $classOrTrait) {
+            assert(class_exists($classOrTrait) || trait_exists($classOrTrait));
+
             if (isset($this->processedClasses[$classOrTrait])) {
                 continue;
             }
 
-            $reflector = new ReflectionClass($classOrTrait);
-
-            foreach ($reflector->getMethods() as $method) {
+            foreach ((new ReflectionClass($classOrTrait))->getMethods() as $method) {
                 $this->processFunctionOrMethod($method);
             }
 
@@ -92,6 +85,8 @@ class Wizard
     private function processFunctions(): void
     {
         foreach (get_defined_functions()['user'] as $function) {
+            assert(function_exists($function));
+
             if (isset($this->processedFunctions[$function])) {
                 continue;
             }

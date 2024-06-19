@@ -9,7 +9,9 @@
  */
 namespace PHPUnit\Framework\Constraint;
 
+use function gettype;
 use function sprintf;
+use function strtolower;
 use Countable;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\SelfDescribing;
@@ -22,11 +24,6 @@ use SebastianBergmann\Exporter\Exporter;
 abstract class Constraint implements Countable, SelfDescribing
 {
     /**
-     * @var ?Exporter
-     */
-    private $exporter;
-
-    /**
      * Evaluates the constraint for parameter $other.
      *
      * If $returnResult is set to false (the default), an exception is thrown
@@ -36,10 +33,9 @@ abstract class Constraint implements Countable, SelfDescribing
      * a boolean value instead: true in case of success, false in case of a
      * failure.
      *
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws ExpectationFailedException
      */
-    public function evaluate($other, string $description = '', bool $returnResult = false): ?bool
+    public function evaluate(mixed $other, string $description = '', bool $returnResult = false): ?bool
     {
         $success = false;
 
@@ -66,26 +62,13 @@ abstract class Constraint implements Countable, SelfDescribing
         return 1;
     }
 
-    protected function exporter(): Exporter
-    {
-        if ($this->exporter === null) {
-            $this->exporter = new Exporter;
-        }
-
-        return $this->exporter;
-    }
-
     /**
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
      *
      * This method can be overridden to implement the evaluation algorithm.
-     *
-     * @param mixed $other value or object to evaluate
-     *
-     * @codeCoverageIgnore
      */
-    protected function matches($other): bool
+    protected function matches(mixed $other): bool
     {
         return false;
     }
@@ -93,20 +76,13 @@ abstract class Constraint implements Countable, SelfDescribing
     /**
      * Throws an exception for the given compared value and test description.
      *
-     * @param mixed             $other             evaluated value or object
-     * @param string            $description       Additional information about the test
-     * @param ComparisonFailure $comparisonFailure
-     *
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws ExpectationFailedException
-     *
-     * @psalm-return never-return
      */
-    protected function fail($other, $description, ComparisonFailure $comparisonFailure = null): void
+    protected function fail(mixed $other, string $description, ?ComparisonFailure $comparisonFailure = null): never
     {
         $failureDescription = sprintf(
             'Failed asserting that %s.',
-            $this->failureDescription($other)
+            $this->failureDescription($other),
         );
 
         $additionalFailureDescription = $this->additionalFailureDescription($other);
@@ -121,7 +97,7 @@ abstract class Constraint implements Countable, SelfDescribing
 
         throw new ExpectationFailedException(
             $failureDescription,
-            $comparisonFailure
+            $comparisonFailure,
         );
     }
 
@@ -130,10 +106,8 @@ abstract class Constraint implements Countable, SelfDescribing
      *
      * The function can be overridden to provide additional failure
      * information like a diff
-     *
-     * @param mixed $other evaluated value or object
      */
-    protected function additionalFailureDescription($other): string
+    protected function additionalFailureDescription(mixed $other): string
     {
         return '';
     }
@@ -146,14 +120,10 @@ abstract class Constraint implements Countable, SelfDescribing
      *
      * To provide additional failure information additionalFailureDescription
      * can be used.
-     *
-     * @param mixed $other evaluated value or object
-     *
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
-    protected function failureDescription($other): string
+    protected function failureDescription(mixed $other): string
     {
-        return $this->exporter()->export($other) . ' ' . $this->toString();
+        return (new Exporter)->export($other) . ' ' . $this->toString();
     }
 
     /**
@@ -167,11 +137,8 @@ abstract class Constraint implements Countable, SelfDescribing
      *
      * The method shall return empty string, when it does not handle
      * customization by itself.
-     *
-     * @param Operator $operator the $operator of the expression
-     * @param mixed    $role     role of $this constraint in the $operator expression
      */
-    protected function toStringInContext(Operator $operator, $role): string
+    protected function toStringInContext(Operator $operator, mixed $role): string
     {
         return '';
     }
@@ -187,12 +154,8 @@ abstract class Constraint implements Countable, SelfDescribing
      *
      * The method shall return empty string, when it does not handle
      * customization by itself.
-     *
-     * @param Operator $operator the $operator of the expression
-     * @param mixed    $role     role of $this constraint in the $operator expression
-     * @param mixed    $other    evaluated value or object
      */
-    protected function failureDescriptionInContext(Operator $operator, $role, $other): string
+    protected function failureDescriptionInContext(Operator $operator, mixed $role, mixed $other): string
     {
         $string = $this->toStringInContext($operator, $role);
 
@@ -200,7 +163,7 @@ abstract class Constraint implements Countable, SelfDescribing
             return '';
         }
 
-        return $this->exporter()->export($other) . ' ' . $string;
+        return (new Exporter)->export($other) . ' ' . $string;
     }
 
     /**
@@ -266,5 +229,28 @@ abstract class Constraint implements Countable, SelfDescribing
     protected function reduce(): self
     {
         return $this;
+    }
+
+    /**
+     * @psalm-return non-empty-string
+     */
+    protected function valueToTypeStringFragment(mixed $value): string
+    {
+        $type = strtolower(gettype($value));
+
+        if ($type === 'double') {
+            $type = 'float';
+        }
+
+        if ($type === 'resource (closed)') {
+            $type = 'closed resource';
+        }
+
+        return match ($type) {
+            'array', 'integer', 'object' => 'an ' . $type . ' ',
+            'boolean', 'closed resource', 'float', 'resource', 'string' => 'a ' . $type . ' ',
+            'null'  => 'null ',
+            default => 'a value of ' . $type . ' ',
+        };
     }
 }

@@ -10,20 +10,24 @@
 namespace PHPUnit\Util;
 
 use function in_array;
-use function sprintf;
 
 /**
- * @internal This class is not covered by the backward compatibility promise for PHPUnit
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
  *
  * @psalm-immutable
  */
-final class VersionComparisonOperator
+final readonly class VersionComparisonOperator
 {
     /**
      * @psalm-var '<'|'lt'|'<='|'le'|'>'|'gt'|'>='|'ge'|'=='|'='|'eq'|'!='|'<>'|'ne'
      */
-    private $operator;
+    private string $operator;
 
+    /**
+     * @psalm-param '<'|'lt'|'<='|'le'|'>'|'gt'|'>='|'ge'|'=='|'='|'eq'|'!='|'<>'|'ne' $operator
+     *
+     * @throws InvalidVersionOperatorException
+     */
     public function __construct(string $operator)
     {
         $this->ensureOperatorIsValid($operator);
@@ -32,7 +36,7 @@ final class VersionComparisonOperator
     }
 
     /**
-     * @return '!='|'<'|'<='|'<>'|'='|'=='|'>'|'>='|'eq'|'ge'|'gt'|'le'|'lt'|'ne'
+     * @psalm-return '<'|'lt'|'<='|'le'|'>'|'gt'|'>='|'ge'|'=='|'='|'eq'|'!='|'<>'|'ne'
      */
     public function asString(): string
     {
@@ -40,19 +44,14 @@ final class VersionComparisonOperator
     }
 
     /**
-     * @throws Exception
+     * @psalm-param '<'|'lt'|'<='|'le'|'>'|'gt'|'>='|'ge'|'=='|'='|'eq'|'!='|'<>'|'ne' $operator
      *
-     * @psalm-assert '<'|'lt'|'<='|'le'|'>'|'gt'|'>='|'ge'|'=='|'='|'eq'|'!='|'<>'|'ne' $operator
+     * @throws InvalidVersionOperatorException
      */
     private function ensureOperatorIsValid(string $operator): void
     {
         if (!in_array($operator, ['<', 'lt', '<=', 'le', '>', 'gt', '>=', 'ge', '==', '=', 'eq', '!=', '<>', 'ne'], true)) {
-            throw new Exception(
-                sprintf(
-                    '"%s" is not a valid version_compare() operator',
-                    $operator
-                )
-            );
+            throw new InvalidVersionOperatorException($operator);
         }
     }
 }

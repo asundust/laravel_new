@@ -1,12 +1,13 @@
 <p align="center">
-      <a href="https://pay.yansongda.cn" target="_blank" rel="noopener noreferrer"><img width="200" src="https://pay.yansongda.cn/images/logo.png" alt="Logo"></a>
+      <a href="https://pay.yansongda.cn" target="_blank" rel="noopener noreferrer"><img width="200" src="https://cdn.jsdelivr.net/gh/yansongda/pay/web/public/images/logo.png" alt="Logo"></a>
 </p>
 
 <p align="center">
     <a href="https://codecov.io/gh/yansongda/pay" ><img src="https://codecov.io/gh/yansongda/pay/branch/master/graph/badge.svg?token=tYMV0YT5jj"/></a>
     <a href="https://scrutinizer-ci.com/g/yansongda/pay/?branch=master"><img src="https://scrutinizer-ci.com/g/yansongda/pay/badges/quality-score.png?b=master" alt="scrutinizer"></a>
-    <a href="https://github.com/yansongda/pay/actions"><img src="https://github.com/yansongda/pay/workflows/Linter/badge.svg" alt="Linter Status"></a>
     <a href="https://github.com/yansongda/pay/actions"><img src="https://github.com/yansongda/pay/workflows/Tester/badge.svg" alt="Tester Status"></a>
+    <a href="https://github.com/yansongda/pay/actions"><img src="https://github.com/yansongda/pay/workflows/Code%20Coverage/badge.svg" alt="Code Coverage Status"></a>
+    <a href="https://github.com/yansongda/pay/actions"><img src="https://github.com/yansongda/pay/workflows/Coding%20Style/badge.svg" alt="Coding Style Status"></a>
     <a href="https://packagist.org/packages/yansongda/pay"><img src="https://poser.pugx.org/yansongda/pay/v/stable" alt="Stable Version"></a>
     <a href="https://packagist.org/packages/yansongda/pay"><img src="https://poser.pugx.org/yansongda/pay/downloads" alt="Total Downloads"></a>
     <a href="https://packagist.org/packages/yansongda/pay"><img src="https://poser.pugx.org/yansongda/pay/license" alt="License"></a>
@@ -41,9 +42,9 @@ yii 扩展包请 [传送至这里](https://github.com/guanguans/yii-pay)
 - 内置自动获取微信公共证书方法，再也不用再费劲去考虑第一次获取证书的的问题了
 - 符合 PSR2、PSR3、PSR4、PSR7、PSR11、PSR14、PSR18 等各项标准，你可以各种方便的与你的框架集成
 
-## 运行环境
-- PHP 7.3+ (v3.1.0 开始需 7.4+)
-- composer
+## 版本计划
+
+[https://pay.yansongda.cn/docs/v3/overview/planning](https://pay.yansongda.cn/docs/v3/overview/planning)
 
 ## 详细文档
 
@@ -73,10 +74,8 @@ yansongda/pay 100% 兼容 支付宝/微信/银联 所有功能（包括服务商
 - H5 支付
 - 扫码支付
 - APP 支付
+- 刷卡支付
 - ...
-- ~~刷卡支付，微信v3版暂不支持，计划后续内置支持v2版，或直接使用 Pay v2 版本~~
-- ~~普通红包，微信v3版暂不支持，计划后续内置支持v2版，或直接使用 Pay v2 版本~~
-- ~~分裂红包，微信v3版暂不支持，计划后续内置支持v2版，或直接使用 Pay v2 版本~~
 
 ### 银联
 
@@ -88,7 +87,7 @@ yansongda/pay 100% 兼容 支付宝/微信/银联 所有功能（包括服务商
 
 ## 安装
 ```shell
-composer require yansongda/pay:~3.2.0 -vvv
+composer require yansongda/pay:~3.7.0 -vvv
 ```
 
 ## 深情一撇
@@ -197,7 +196,9 @@ class WechatController
             'default' => [
                 // 必填-商户号
                 'mch_id' => '',
-                // 必填-商户秘钥
+                // 选填-v2商户私钥
+                'mch_secret_key_v2' => '',
+                // 必填-v3商户秘钥
                 'mch_secret_key' => '',
                 // 必填-商户私钥 字符串或路径
                 'mch_secret_cert' => '',
@@ -211,10 +212,6 @@ class WechatController
                 'mini_app_id' => '',
                 // 选填-app 的 app_id
                 'app_id' => '',
-                // 选填-合单 app_id
-                'combine_app_id' => '',
-                // 选填-合单商户号 
-                'combine_mch_id' => '',
                 // 选填-服务商模式下，子公众号 的 app_id
                 'sub_mp_app_id' => '',
                 // 选填-服务商模式下，子 app 的 app_id
@@ -290,7 +287,7 @@ class WechatController
 
 ## 赏一杯咖啡吧
 
-![pay](https://cdn.jsdelivr.net/gh/yansongda/pay-site/.vuepress/public/images/pay.jpg)
+![pay](https://cdn.jsdelivr.net/gh/yansongda/pay/web/public/images/pay.jpg)
 
 ## LICENSE
 

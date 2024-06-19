@@ -1,0 +1,50 @@
+{
+    "name": "slowlyo/owl-admin",
+    "description": "基于 laravel、amis 开发的后台框架~",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "slowlyo",
+            "email": "slowlyo_email@qq.com",
+            "homepage": "https://github.com/slowlyo"
+        }
+    ],
+    "homepage": "https://github.com/slowlyo/owl-admin",
+    "support": {
+        "email": "slowlyo_email@qq.com",
+        "issues": "https://github.com/Slowlyo/owl-admin/issues",
+        "forum": "https://github.com/orgs/owl-admin/discussions",
+        "wiki": "https://doc.owladmin.com/"
+    },
+    "keywords": [
+        "laravel",
+        "owl-admin",
+        "admin",
+        "amis"
+    ],
+    "require": {
+        "php": ">=8.0",
+        "illuminate/support": ">=9",
+        "slowlyo/laravel-support": "*",
+        "ext-zip": "*",
+        "ext-gd": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Slowlyo\\OwlAdmin\\": "src/"
+        },
+        "files": [
+            "src/Support/helpers.php"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Slowlyo\\OwlAdmin\\AdminServiceProvider"
+            ],
+            "aliases": {
+                "OwlAdmin": "Slowlyo\\OwlAdmin\\Facades\\OwlAdmin"
+            }
+        }
+    }
+}

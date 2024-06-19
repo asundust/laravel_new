@@ -3,6 +3,9 @@
     "API Tokens",
     "CSV (.csv)",
     "Email",
+    "email",
     "Excel (.xlsx)",
-    "ID"
+    "ID",
+    "Nova",
+    "SKU"
 ]

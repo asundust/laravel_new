@@ -6,9 +6,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @author Andrey Helldar <helldar@ai-rus.com>
+ * @author Andrey Helldar <helldar@dragon-code.pro>
  *
- * @copyright 2023 Andrey Helldar
+ * @copyright 2024 Andrey Helldar
  *
  * @license MIT
  *
@@ -27,10 +27,8 @@ class Instance
     /**
      * Checks if the item being checked inherits from other objects and interfaces.
      *
-     * @param object|callable|string $haystack
-     * @param string|string[] $needles
-     *
-     * @return bool
+     * @param  object|callable|string  $haystack
+     * @param  string|array<string>  $needles
      */
     public function of(mixed $haystack, mixed $needles): bool
     {
@@ -59,10 +57,6 @@ class Instance
 
     /**
      * Extract the trailing name component from a file path.
-     *
-     * @param object|string $class
-     *
-     * @return string|null
      */
     public function basename(object|string $class): ?string
     {
@@ -73,12 +67,8 @@ class Instance
 
     /**
      * Gets the class name of the object.
-     *
-     * @param object|string|null $class
-     *
-     * @return string|null
      */
-    public function classname(object|string $class = null): ?string
+    public function classname(object|string|null $class = null): ?string
     {
         if (IsHelper::object($class)) {
             return get_class($class);
@@ -90,9 +80,7 @@ class Instance
     /**
      * Checks if the object exists.
      *
-     * @param object|string $haystack
-     *
-     * @return bool
+     * @param  object|string  $haystack
      */
     public function exists(mixed $haystack): bool
     {
@@ -105,10 +93,6 @@ class Instance
 
     /**
      * Creates a ReflectionClass object.
-     *
-     * @param object|string $class
-     *
-     * @return ReflectionClass
      */
     protected function resolve(object|string $class): ReflectionClass
     {

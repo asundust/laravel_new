@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EasyWeChat\Kernel;
 
 use ArrayAccess;
+use EasyWeChat\Kernel\Contracts\Jsonable;
 use EasyWeChat\Kernel\Exceptions\BadRequestException;
 use EasyWeChat\Kernel\Support\Xml;
 use EasyWeChat\Kernel\Traits\HasAttributes;
@@ -17,7 +18,7 @@ use Psr\Http\Message\ServerRequestInterface;
  *
  * @implements ArrayAccess<array-key, mixed>
  */
-abstract class Message implements ArrayAccess
+abstract class Message implements \JsonSerializable, ArrayAccess, Jsonable
 {
     use HasAttributes;
 
@@ -30,9 +31,6 @@ abstract class Message implements ArrayAccess
     }
 
     /**
-     * @param  ServerRequestInterface  $request
-     * @return Message
-     *
      * @throws BadRequestException
      */
     public static function createFromRequest(ServerRequestInterface $request): Message
@@ -49,14 +47,14 @@ abstract class Message implements ArrayAccess
      */
     public static function format(string $originContent): array
     {
-        if (0 === stripos($originContent, '<')) {
+        if (stripos($originContent, '<') === 0) {
             $attributes = Xml::parse($originContent);
         }
 
         // Handle JSON format.
         $dataSet = json_decode($originContent, true);
 
-        if (JSON_ERROR_NONE === json_last_error() && $originContent) {
+        if (json_last_error() === JSON_ERROR_NONE && $originContent) {
             $attributes = $dataSet;
         }
 

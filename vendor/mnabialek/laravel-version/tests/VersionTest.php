@@ -5,6 +5,7 @@ namespace Mnabialek\LaravelVersion\Tests;
 use Illuminate\Container\Container;
 use Mockery;
 use Mnabialek\LaravelVersion\Version;
+use PHPUnit\Framework\Attributes\Test;
 
 class VersionTest extends UnitTestCase
 {
@@ -24,7 +25,7 @@ class VersionTest extends UnitTestCase
         $this->version = new Version($this->app);
     }
 
-    /** @test */
+    #[Test]
     public function it_confirms_when_application_is_laravel()
     {
         $this->app->shouldReceive('version')->withNoArgs()->once()->andReturn('5.5.28');
@@ -34,7 +35,7 @@ class VersionTest extends UnitTestCase
         $this->assertFalse($this->version->isLaravel());
     }
 
-    /** @test */
+    #[Test]
     public function it_confirms_when_application_is_lumen()
     {
         $this->app->shouldReceive('version')->withNoArgs()->once()->andReturn('Lumen (5.5.2) (Laravel Components 5.5.*)');
@@ -44,7 +45,7 @@ class VersionTest extends UnitTestCase
         $this->assertFalse($this->version->isLumen());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_full_version_string()
     {
         $version = 'Lumen 23238 test version';
@@ -52,7 +53,7 @@ class VersionTest extends UnitTestCase
         $this->assertSame($version, $this->version->full());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_valid_application_version_for_laravel()
     {
         $version = '5.5.28';
@@ -60,7 +61,7 @@ class VersionTest extends UnitTestCase
         $this->assertSame($version, $this->version->get());
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_valid_application_version_for_lumen()
     {
         $version = 'Lumen (5.5.2) (Laravel Components 5.5.*)';
@@ -68,7 +69,7 @@ class VersionTest extends UnitTestCase
         $this->assertSame('5.5.2', $this->version->get());
     }
 
-    /** @test */
+    #[Test]
     public function it_confirms_when_application_is_minimum_at_given_version_for_laravel()
     {
         $version = '5.5.28';
@@ -78,7 +79,7 @@ class VersionTest extends UnitTestCase
         $this->assertFalse($this->version->min('5.5.29'));
     }
 
-    /** @test */
+    #[Test]
     public function it_confirms_when_application_is_minimum_at_given_version_for_lumen()
     {
         $version = 'Lumen (5.5.28) (Laravel Components 5.5.*)';

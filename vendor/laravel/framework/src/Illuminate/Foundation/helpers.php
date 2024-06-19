@@ -16,6 +16,7 @@ use Illuminate\Foundation\Bus\PendingClosureDispatch;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Foundation\Mix;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Log\Context\Repository as ContextRepository;
 use Illuminate\Queue\CallQueuedClosure;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Date;
@@ -33,6 +34,7 @@ if (! function_exists('abort')) {
      *
      * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @throws \Illuminate\Http\Exceptions\HttpResponseException
      */
     function abort($code, $message = '', array $headers = [])
     {
@@ -109,7 +111,7 @@ if (! function_exists('app')) {
      *
      * @param  string|null  $abstract
      * @param  array  $parameters
-     * @return mixed|\Illuminate\Contracts\Foundation\Application
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Foundation\Application|mixed
      */
     function app($abstract = null, array $parameters = [])
     {
@@ -226,15 +228,13 @@ if (! function_exists('cache')) {
      *
      * If an array is passed, we'll assume you want to put to the cache.
      *
-     * @param  dynamic  key|key,default|data,expiration|null
+     * @param  mixed  ...$arguments  key|key,default|data,expiration|null
      * @return mixed|\Illuminate\Cache\CacheManager
      *
      * @throws \InvalidArgumentException
      */
-    function cache()
+    function cache(...$arguments)
     {
-        $arguments = func_get_args();
-
         if (empty($arguments)) {
             return app('cache');
         }
@@ -290,6 +290,24 @@ if (! function_exists('config_path')) {
     }
 }
 
+if (! function_exists('context')) {
+    /**
+     * Get / set the specified context value.
+     *
+     * @param  array|string|null  $key
+     * @param  mixed  $default
+     * @return mixed|\Illuminate\Log\Context\Repository
+     */
+    function context($key = null, $default = null)
+    {
+        return match (true) {
+            is_null($key) => app(ContextRepository::class),
+            is_array($key) => app(ContextRepository::class)->add($key),
+            default => app(ContextRepository::class)->get($key, $default),
+        };
+    }
+}
+
 if (! function_exists('cookie')) {
     /**
      * Create a new cookie instance.
@@ -325,7 +343,7 @@ if (! function_exists('csrf_field')) {
      */
     function csrf_field()
     {
-        return new HtmlString('<input type="hidden" name="_token" value="'.csrf_token().'">');
+        return new HtmlString('<input type="hidden" name="_token" value="'.csrf_token().'" autocomplete="off">');
     }
 }
 
@@ -404,22 +422,6 @@ if (! function_exists('dispatch_sync')) {
     function dispatch_sync($job, $handler = null)
     {
         return app(Dispatcher::class)->dispatchSync($job, $handler);
-    }
-}
-
-if (! function_exists('dispatch_now')) {
-    /**
-     * Dispatch a command to its appropriate handler in the current process.
-     *
-     * @param  mixed  $job
-     * @param  mixed  $handler
-     * @return mixed
-     *
-     * @deprecated Will be removed in a future Laravel version.
-     */
-    function dispatch_now($job, $handler = null)
-    {
-        return app(Dispatcher::class)->dispatchNow($job, $handler);
     }
 }
 
@@ -628,7 +630,7 @@ if (! function_exists('precognitive')) {
         });
 
         if (request()->isPrecognitive()) {
-            abort(204);
+            abort(204, headers: ['Precognition-Success' => 'true']);
         }
 
         return $payload;
@@ -644,7 +646,7 @@ if (! function_exists('public_path')) {
      */
     function public_path($path = '')
     {
-        return app()->make('path.public').($path ? DIRECTORY_SEPARATOR.ltrim($path, DIRECTORY_SEPARATOR) : $path);
+        return app()->publicPath($path);
     }
 }
 
@@ -745,10 +747,13 @@ if (! function_exists('rescue')) {
     /**
      * Catch a potential exception and return a default value.
      *
-     * @param  callable  $callback
-     * @param  mixed  $rescue
+     * @template TRescueValue
+     * @template TRescueFallback
+     *
+     * @param  callable(): TRescueValue  $callback
+     * @param  (callable(\Throwable): TRescueFallback)|TRescueFallback  $rescue
      * @param  bool|callable  $report
-     * @return mixed
+     * @return TRescueValue|TRescueFallback
      */
     function rescue(callable $callback, $rescue = null, $report = true)
     {
@@ -816,7 +821,7 @@ if (! function_exists('route')) {
     /**
      * Generate the URL to a named route.
      *
-     * @param  array|string  $name
+     * @param  string  $name
      * @param  mixed  $parameters
      * @param  bool  $absolute
      * @return string
@@ -944,7 +949,7 @@ if (! function_exists('trans_choice')) {
      * Translates the given message based on a count.
      *
      * @param  string  $key
-     * @param  \Countable|int|array  $number
+     * @param  \Countable|int|float|array  $number
      * @param  array  $replace
      * @param  string|null  $locale
      * @return string
@@ -1000,10 +1005,10 @@ if (! function_exists('validator')) {
      * @param  array  $data
      * @param  array  $rules
      * @param  array  $messages
-     * @param  array  $customAttributes
+     * @param  array  $attributes
      * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Contracts\Validation\Factory
      */
-    function validator(array $data = [], array $rules = [], array $messages = [], array $customAttributes = [])
+    function validator(array $data = [], array $rules = [], array $messages = [], array $attributes = [])
     {
         $factory = app(ValidationFactory::class);
 
@@ -1011,7 +1016,7 @@ if (! function_exists('validator')) {
             return $factory;
         }
 
-        return $factory->make($data, $rules, $messages, $customAttributes);
+        return $factory->make($data, $rules, $messages, $attributes);
     }
 }
 

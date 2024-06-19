@@ -14,11 +14,16 @@ return [
     |
     */
 
-    'mailgun' => [
-        'domain' => env('MAILGUN_DOMAIN'),
-        'secret' => env('MAILGUN_SECRET'),
-        'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
-        'scheme' => 'https',
+    'admin_dict' => [
+        // [
+        //     'category' => '参数分类',
+        //     'children' => [
+        //         [
+        //             'key' => '参数名',
+        //             'value' => '参数值',
+        //         ]
+        //     ]
+        // ]
     ],
 
     'postmark' => [
@@ -31,86 +36,15 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    // Admin命令行执行的自动化配置
-    // 后台配置
-    'admin_configs' => [
-        [
-            'description' => '网站首页标题(默认“Laravel”)',
-            'name' => 'index_title',
-            'value' => '',
+    'resend' => [
+        'key' => env('RESEND_KEY'),
+    ],
+
+    'slack' => [
+        'notifications' => [
+            'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
+            'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-    // Admin后台菜单
-    // icon图标去这里找 http://demo.test/admin/auth/menu
-    // type 0=>默认的laravel-admin链接，1=>本站内的链接，2=>外部链接(需带http头)，
-    'admin_menus' => [
-        [
-            'title' => '网站管理',
-            'icon' => 'fa-cog',
-            'type' => 0,
-            'uri' => '',
-            'permission' => '',
-            'roles' => [
-            ],
-            'data' => [
-                [
-                    'title' => '网站配置',
-                    'icon' => 'fa-toggle-on',
-                    'type' => 0,
-                    'uri' => 'config',
-                    'permission' => '',
-                    'roles' => [
-                    ],
-                ],
-            ],
-        ],
-        // [
-        //     'title' => '企业微信消息推送',
-        //     'icon' => 'fa-wechat',
-        //     'type' => 0,
-        //     'uri' => '',
-        //     'permission' => '',
-        //     'roles' => [
-        //     ],
-        //     'data' => [
-        //         [
-        //             'title' => '用户配置',
-        //             'icon' => 'fa-users',
-        //             'type' => 0,
-        //             'uri' => 'wechatWorkPushUsers',
-        //             'permission' => '',
-        //             'roles' => [
-        //             ],
-        //         ],
-        //         [
-        //             'title' => '默认配置',
-        //             'icon' => 'fa-toggle-on',
-        //             'type' => 0,
-        //             'uri' => 'wechatWorkPushConfig',
-        //             'permission' => '',
-        //             'roles' => [
-        //             ],
-        //         ],
-        //     ],
-        // ],
-    ],
-    // Admin后台权限
-    'admin_permissions' => [
-        [
-            'name' => '后台配置管理权限',
-            'slug' => 'ext.config',
-            'http_method' => '',
-            'http_path' => '/config*',
-        ],
-    ],
-    // Admin后台角色
-    'admin_roles' => [
-        // [
-        //     'name' => '角色名',
-        //     'slug' => 'role.role_name',
-        //     'permissions' => [
-        //         'permission.role_name',
-        //     ],
-        // ],
-    ],
+
 ];

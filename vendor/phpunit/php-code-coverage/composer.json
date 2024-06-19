@@ -17,37 +17,38 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues"
+        "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
+        "security": "https://github.com/sebastianbergmann/php-code-coverage/security/policy"
     },
     "config": {
         "platform": {
-            "php": "7.3.0"
+            "php": "8.2.0"
         },
         "optimize-autoloader": true,
         "sort-packages": true
     },
     "prefer-stable": true,
     "require": {
-        "php": ">=7.3",
+        "php": ">=8.2",
         "ext-dom": "*",
         "ext-libxml": "*",
         "ext-xmlwriter": "*",
-        "nikic/php-parser": "^4.15",
-        "phpunit/php-file-iterator": "^3.0.3",
-        "phpunit/php-text-template": "^2.0.2",
-        "sebastian/code-unit-reverse-lookup": "^2.0.2",
-        "sebastian/complexity": "^2.0",
-        "sebastian/environment": "^5.1.2",
-        "sebastian/lines-of-code": "^1.0.3",
-        "sebastian/version": "^3.0.1",
+        "nikic/php-parser": "^5.0",
+        "phpunit/php-file-iterator": "^5.0",
+        "phpunit/php-text-template": "^4.0",
+        "sebastian/code-unit-reverse-lookup": "^4.0",
+        "sebastian/complexity": "^4.0",
+        "sebastian/environment": "^7.0",
+        "sebastian/lines-of-code": "^3.0",
+        "sebastian/version": "^5.0",
         "theseer/tokenizer": "^1.2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.3"
+        "phpunit/phpunit": "^11.0"
     },
     "suggest": {
-        "ext-pcov": "*",
-        "ext-xdebug": "*"
+        "ext-pcov": "PHP extension that provides line coverage",
+        "ext-xdebug": "PHP extension that provides line coverage as well as branch and path coverage"
     },
     "autoload": {
         "classmap": [
@@ -62,7 +63,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "9.2-dev"
+            "dev-main": "11.0-dev"
         }
     }
 }

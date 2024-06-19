@@ -45,9 +45,7 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
 
     private static string $nextId = 'a';
 
-    private AmpClientState $multi;
     private ?array $options;
-    private CancellationTokenSource $canceller;
     private \Closure $onProgress;
 
     private static ?string $delay = null;
@@ -55,9 +53,12 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
     /**
      * @internal
      */
-    public function __construct(AmpClientState $multi, Request $request, array $options, ?LoggerInterface $logger)
-    {
-        $this->multi = $multi;
+    public function __construct(
+        private AmpClientState $multi,
+        Request $request,
+        array $options,
+        ?LoggerInterface $logger,
+    ) {
         $this->options = &$options;
         $this->logger = $logger;
         $this->timeout = $options['timeout'];
@@ -67,13 +68,11 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
             $request->setHeader('Accept-Encoding', 'gzip');
         }
 
-        $this->initializer = static function (self $response) {
-            return null !== $response->options;
-        };
+        $this->initializer = static fn (self $response) => null !== $response->options;
 
         $info = &$this->info;
         $headers = &$this->headers;
-        $canceller = $this->canceller = new CancellationTokenSource();
+        $canceller = new CancellationTokenSource();
         $handle = &$this->handle;
 
         $info['url'] = (string) $request->getUri();
@@ -103,7 +102,7 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
         $throttleWatcher = null;
 
         $this->id = $id = self::$nextId++;
-        Loop::defer(static function () use ($request, $multi, &$id, &$info, &$headers, $canceller, &$options, $onProgress, &$handle, $logger, &$pause) {
+        Loop::defer(static function () use ($request, $multi, $id, &$info, &$headers, $canceller, &$options, $onProgress, &$handle, $logger, &$pause) {
             return new Coroutine(self::generateResponse($request, $multi, $id, $info, $headers, $canceller, $options, $onProgress, $handle, $logger, $pause));
         });
 
@@ -137,7 +136,7 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
         });
     }
 
-    public function getInfo(string $type = null): mixed
+    public function getInfo(?string $type = null): mixed
     {
         return null !== $type ? $this->info[$type] ?? null : $this->info;
     }
@@ -147,7 +146,7 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
         throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
     }
@@ -182,7 +181,7 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
     /**
      * @param AmpClientState $multi
      */
-    private static function perform(ClientState $multi, array &$responses = null): void
+    private static function perform(ClientState $multi, ?array &$responses = null): void
     {
         if ($responses) {
             foreach ($responses as $response) {
@@ -204,9 +203,9 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
      */
     private static function select(ClientState $multi, float $timeout): int
     {
-        $timeout += microtime(true);
+        $timeout += hrtime(true) / 1E9;
         self::$delay = Loop::defer(static function () use ($timeout) {
-            if (0 < $timeout -= microtime(true)) {
+            if (0 < $timeout -= hrtime(true) / 1E9) {
                 self::$delay = Loop::delay(ceil(1000 * $timeout), Loop::stop(...));
             } else {
                 Loop::stop();
@@ -349,7 +348,7 @@ final class AmpResponse implements ResponseInterface, StreamableInterface
             }
 
             foreach ($originRequest->getRawHeaders() as [$name, $value]) {
-                $request->setHeader($name, $value);
+                $request->addHeader($name, $value);
             }
 
             if ($request->getUri()->getAuthority() !== $originRequest->getUri()->getAuthority()) {

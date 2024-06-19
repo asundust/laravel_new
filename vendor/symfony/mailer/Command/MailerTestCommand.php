@@ -28,12 +28,10 @@ final class MailerTestCommand extends Command
 {
     public function __construct(private TransportInterface $transport)
     {
-        $this->transport = $transport;
-
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->addArgument('to', InputArgument::REQUIRED, 'The recipient of the message')

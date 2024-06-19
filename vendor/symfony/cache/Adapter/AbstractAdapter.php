@@ -33,8 +33,7 @@ abstract class AbstractAdapter implements AdapterInterface, CacheInterface, Logg
      */
     protected const NS_SEPARATOR = ':';
 
-    private static $apcuSupported;
-    private static $phpFilesSupported;
+    private static bool $apcuSupported;
 
     protected function __construct(string $namespace = '', int $defaultLifetime = 0)
     {
@@ -47,7 +46,7 @@ abstract class AbstractAdapter implements AdapterInterface, CacheInterface, Logg
             static function ($key, $value, $isHit) {
                 $item = new CacheItem();
                 $item->key = $key;
-                $item->value = $v = $value;
+                $item->value = $value;
                 $item->isHit = $isHit;
                 $item->unpack();
 
@@ -87,7 +86,7 @@ abstract class AbstractAdapter implements AdapterInterface, CacheInterface, Logg
      *
      * Using ApcuAdapter makes system caches compatible with read-only filesystems.
      */
-    public static function createSystemCache(string $namespace, int $defaultLifetime, string $version, string $directory, LoggerInterface $logger = null): AdapterInterface
+    public static function createSystemCache(string $namespace, int $defaultLifetime, string $version, string $directory, ?LoggerInterface $logger = null): AdapterInterface
     {
         $opcache = new PhpFilesAdapter($namespace, $defaultLifetime, $directory, true);
         if (null !== $logger) {
@@ -98,7 +97,7 @@ abstract class AbstractAdapter implements AdapterInterface, CacheInterface, Logg
             return $opcache;
         }
 
-        if (\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) && !filter_var(\ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOL)) {
+        if ('cli' === \PHP_SAPI && !filter_var(\ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOL)) {
             return $opcache;
         }
 
@@ -110,7 +109,7 @@ abstract class AbstractAdapter implements AdapterInterface, CacheInterface, Logg
         return new ChainAdapter([$apcu, $opcache]);
     }
 
-    public static function createConnection(string $dsn, array $options = [])
+    public static function createConnection(#[\SensitiveParameter] string $dsn, array $options = []): mixed
     {
         if (str_starts_with($dsn, 'redis:') || str_starts_with($dsn, 'rediss:')) {
             return RedisAdapter::createConnection($dsn, $options);
@@ -119,14 +118,17 @@ abstract class AbstractAdapter implements AdapterInterface, CacheInterface, Logg
             return MemcachedAdapter::createConnection($dsn, $options);
         }
         if (str_starts_with($dsn, 'couchbase:')) {
-            if (CouchbaseBucketAdapter::isSupported()) {
+            if (class_exists('CouchbaseBucket') && CouchbaseBucketAdapter::isSupported()) {
                 return CouchbaseBucketAdapter::createConnection($dsn, $options);
             }
 
             return CouchbaseCollectionAdapter::createConnection($dsn, $options);
         }
+        if (preg_match('/^(mysql|oci|pgsql|sqlsrv|sqlite):/', $dsn)) {
+            return PdoAdapter::createConnection($dsn, $options);
+        }
 
-        throw new InvalidArgumentException(sprintf('Unsupported DSN: "%s".', $dsn));
+        throw new InvalidArgumentException('Unsupported DSN: it does not start with "redis[s]:", "memcached:", "couchbase:", "mysql:", "oci:", "pgsql:", "sqlsrv:" nor "sqlite:".');
     }
 
     public function commit(): bool

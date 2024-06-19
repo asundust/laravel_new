@@ -1,6 +1,21 @@
 CHANGELOG
 =========
 
+7.1
+---
+
+ * Add support for getting all the enum cases with `!php/enum Foo`
+
+7.0
+---
+
+ * Remove the `!php/const:` tag, use `!php/const` instead (without the colon)
+
+6.3
+---
+
+ * Add support to dump int keys as strings by using the `Yaml::DUMP_NUMERIC_KEY_AS_STRING` flag
+
 6.2
 ---
 

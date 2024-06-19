@@ -52,8 +52,8 @@ class PhpFileParser
         }
 
         // return early if there is no chance of matching anything in this file
-        Preg::matchAll('{\b(?:class|interface|trait'.$extraTypes.')\s}i', $contents, $matches);
-        if (!$matches) {
+        Preg::matchAllStrictGroups('{\b(?:class|interface|trait'.$extraTypes.')\s}i', $contents, $matches);
+        if (0 === \count($matches)) {
             return array();
         }
 
@@ -63,8 +63,8 @@ class PhpFileParser
 
         Preg::matchAll('{
             (?:
-                 \b(?<![\$:>])(?P<type>class|interface|trait'.$extraTypes.') \s++ (?P<name>[a-zA-Z_\x7f-\xff:][a-zA-Z0-9_\x7f-\xff:\-]*+)
-               | \b(?<![\$:>])(?P<ns>namespace) (?P<nsname>\s++[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+(?:\s*+\\\\\s*+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+)*+)? \s*+ [\{;]
+                 \b(?<![\\\\$:>])(?P<type>class|interface|trait'.$extraTypes.') \s++ (?P<name>[a-zA-Z_\x7f-\xff:][a-zA-Z0-9_\x7f-\xff:\-]*+)
+               | \b(?<![\\\\$:>])(?P<ns>namespace) (?P<nsname>\s++[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+(?:\s*+\\\\\s*+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+)*+)? \s*+ [\{;]
             )
         }ix', $contents, $matches);
 
@@ -76,6 +76,7 @@ class PhpFileParser
                 $namespace = str_replace(array(' ', "\t", "\r", "\n"), '', (string) $matches['nsname'][$i]) . '\\';
             } else {
                 $name = $matches['name'][$i];
+                assert(is_string($name));
                 // skip anon classes extending/implementing
                 if ($name === 'extends' || $name === 'implements') {
                     continue;
@@ -83,7 +84,7 @@ class PhpFileParser
                 if ($name[0] === ':') {
                     // This is an XHP class, https://github.com/facebook/xhp
                     $name = 'xhp'.substr(str_replace(array('-', ':'), array('_', '__'), $name), 1);
-                } elseif (strtolower($matches['type'][$i]) === 'enum') {
+                } elseif (strtolower((string) $matches['type'][$i]) === 'enum') {
                     // something like:
                     //   enum Foo: int { HERP = '123'; }
                     // The regex above captures the colon, which isn't part of
@@ -117,7 +118,10 @@ class PhpFileParser
                 $extraTypes .= '|enum';
             }
 
-            PhpFileCleaner::setTypeConfig(array_merge(['class', 'interface', 'trait'], array_filter(explode('|', $extraTypes))));
+            $extraTypesArray = array_filter(explode('|', $extraTypes), function (string $type) {
+                return $type !== '';
+            });
+            PhpFileCleaner::setTypeConfig(array_merge(['class', 'interface', 'trait'], $extraTypesArray));
         }
 
         return $extraTypes;

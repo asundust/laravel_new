@@ -6,9 +6,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @author Andrey Helldar <helldar@ai-rus.com>
+ * @author Andrey Helldar <helldar@dragon-code.pro>
  *
- * @copyright 2023 Andrey Helldar
+ * @copyright 2024 Andrey Helldar
  *
  * @license MIT
  *
@@ -28,40 +28,24 @@ use voku\helper\ASCII;
 
 class Str
 {
-    /**
-     * The cache of snake-cased words.
-     *
-     * @var array
-     */
-    protected static array $snakeCache = [];
-
-    /**
-     * The cache of camel-cased words.
-     *
-     * @var array
-     */
-    protected static array $camelCache = [];
-
-    /**
-     * The cache of studly-cased words.
-     *
-     * @var array
-     */
-    protected static array $studlyCache = [];
-
     protected array $escaping_methods = [
         DeferringDisplayableValue::class => 'resolveDisplayableValue',
         Htmlable::class                  => 'toHtml',
     ];
 
+    /** The cache of snake-cased words. */
+    protected static array $snakeCache = [];
+
+    /** The cache of camel-cased words. */
+    protected static array $camelCache = [];
+
+    /** The cache of studly-cased words. */
+    protected static array $studlyCache = [];
+
     /**
      * Get a new stringable object from the given string.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string|null $value
-     *
-     * @return \DragonCode\Support\Helpers\Ables\Stringable
      */
     public function of(?string $value): Ables\Stringable
     {
@@ -70,11 +54,6 @@ class Str
 
     /**
      * Escape HTML special characters in a string.
-     *
-     * @param string|null $value
-     * @param bool $double
-     *
-     * @return string|null
      */
     public function e(?string $value, bool $double = true): ?string
     {
@@ -87,10 +66,6 @@ class Str
 
     /**
      * Convert special HTML entities back to characters.
-     *
-     * @param string|null $value
-     *
-     * @return string|null
      */
     public function de(?string $value): ?string
     {
@@ -101,26 +76,16 @@ class Str
      * Replacing multiple spaces with a single space.
      *
      * @see https://laravel.com/docs/9.x/helpers#method-str-squish
-     *
-     * @param string|null $value
-     *
-     * @return string|null
      */
     public function squish(?string $value): ?string
     {
-        $value = $this->pregReplace($value, '~^\s+|\s+$~u', '');
+        $value = $this->pregReplace($value, '~^[\s\x{FEFF}]+|[\s\x{FEFF}]+$~u', '');
 
-        return $this->pregReplace($value, '~(\s|\x{3164})+~u', ' ');
+        return $this->pregReplace($value, '~(\s|\x{3164}|\x{1160})+~u', ' ');
     }
 
     /**
      * Get a string according to an integer value.
-     *
-     * @param float $number
-     * @param array $choice
-     * @param string|null $extra
-     *
-     * @return string
      */
     public function choice(float $number, array $choice = [], ?string $extra = null): string
     {
@@ -133,7 +98,6 @@ class Str
             case ($number % 100 >= 11) && ($number % 100 <= 20):
                 $result = $choice[2] ?? '';
                 break;
-
             case $mod >= 2 && $mod <= 4:
                 $result = $choice[1] ?? '';
                 break;
@@ -153,11 +117,6 @@ class Str
      * Begin a string with a single instance of a given value.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string|null $value
-     * @param string $prefix
-     *
-     * @return string
      */
     public function start(?string $value, string $prefix): string
     {
@@ -168,11 +127,6 @@ class Str
 
     /**
      * End a string with a single instance of a given value.
-     *
-     * @param string|null $value
-     * @param string $suffix
-     *
-     * @return string
      */
     public function end(?string $value, string $suffix): string
     {
@@ -183,11 +137,6 @@ class Str
 
     /**
      * Adds a substring to the end of a string.
-     *
-     * @param mixed $value
-     * @param string $suffix
-     *
-     * @return string
      */
     public function append(mixed $value, string $suffix): string
     {
@@ -196,11 +145,6 @@ class Str
 
     /**
      * Adds a substring to the start of a string.
-     *
-     * @param mixed $value
-     * @param string $prefix
-     *
-     * @return string
      */
     public function prepend(mixed $value, string $prefix): string
     {
@@ -211,11 +155,6 @@ class Str
      * Cap a string with a single instance of a given value.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string $value
-     * @param string $cap
-     *
-     * @return string
      */
     public function finish(string $value, string $cap = '/'): string
     {
@@ -228,11 +167,6 @@ class Str
      * Determine if a given string matches a given pattern.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string|array $pattern
-     * @param mixed $value
-     *
-     * @return bool
      */
     public function is(array|string $pattern, mixed $value): bool
     {
@@ -272,10 +206,7 @@ class Str
     /**
      * Determine if a given string starts with a given substring.
      *
-     * @param string $haystack
-     * @param string|string[] $needles
-     *
-     * @return bool
+     * @param  string|array<string>  $needles
      */
     public function startsWith(string $haystack, mixed $needles): bool
     {
@@ -291,10 +222,7 @@ class Str
     /**
      * Determine if a given string ends with a given substring.
      *
-     * @param string $haystack
-     * @param string|string[] $needles
-     *
-     * @return bool
+     * @param  string|array<string>  $needles
      */
     public function endsWith(string $haystack, mixed $needles): bool
     {
@@ -311,10 +239,6 @@ class Str
      * Convert the given string to lower-case.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string|null $value
-     *
-     * @return string
      */
     public function lower(?string $value): string
     {
@@ -325,10 +249,6 @@ class Str
      * Convert the given string to upper-case.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string|null $value
-     *
-     * @return string
      */
     public function upper(?string $value): ?string
     {
@@ -339,10 +259,6 @@ class Str
      * Convert a value to studly caps case.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string|null $value
-     *
-     * @return string|null
      */
     public function studly(?string $value): ?string
     {
@@ -361,10 +277,6 @@ class Str
      * Convert a value to camel case.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string|null $value
-     *
-     * @return string|null
      */
     public function camel(?string $value): ?string
     {
@@ -379,11 +291,6 @@ class Str
      * Convert a string to snake case.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string|null $value
-     * @param string $delimiter
-     *
-     * @return string|null
      */
     public function snake(?string $value, string $delimiter = '_'): ?string
     {
@@ -406,12 +313,6 @@ class Str
      * Generate a URL friendly "slug" from a given string.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string $title
-     * @param string $separator
-     * @param string|null $language
-     *
-     * @return string
      */
     public function slug(string $title, string $separator = '-', ?string $language = 'en'): string
     {
@@ -438,10 +339,6 @@ class Str
      * Convert the given string to title case.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string|null $value
-     *
-     * @return string|null
      */
     public function title(?string $value): ?string
     {
@@ -456,11 +353,6 @@ class Str
      * Return the length of the given string.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string|null $value
-     * @param string|null $encoding
-     *
-     * @return int
      */
     public function length(?string $value, ?string $encoding = null): int
     {
@@ -471,12 +363,6 @@ class Str
 
     /**
      * Count the number of substring occurrences.
-     *
-     * @param string|null $value
-     * @param string $needle
-     * @param int $offset
-     *
-     * @return int
      */
     public function count(?string $value, string $needle, int $offset = 0): int
     {
@@ -487,12 +373,6 @@ class Str
      * Returns the portion of string specified by the start and length parameters.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string $string
-     * @param int $start
-     * @param int|null $length
-     *
-     * @return string|null
      */
     public function substr(string $string, int $start, ?int $length = null): ?string
     {
@@ -501,12 +381,6 @@ class Str
 
     /**
      * Replace all occurrences of the search string with the replacement string by format.
-     *
-     * @param string $template
-     * @param array $values
-     * @param string|null $key_format
-     *
-     * @return string
      */
     public function replaceFormat(string $template, array $values, ?string $key_format = null): string
     {
@@ -518,11 +392,8 @@ class Str
     /**
      * Replace all occurrences of the search string with the replacement string.
      *
-     * @param string|null $value
-     * @param array|string|string[]|int|float $search
-     * @param array|string|string[]|int|float|null $replace
-     *
-     * @return string
+     * @param  array|string|array<string>|int|float  $search
+     * @param  array|string|array<string>|int|float|null  $replace
      */
     public function replace(?string $value, mixed $search, mixed $replace = null): string
     {
@@ -538,11 +409,6 @@ class Str
      * Get the portion of a string before the first occurrence of a given value.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string $subject
-     * @param string $search
-     *
-     * @return string
      */
     public function before(string $subject, string $search): ?string
     {
@@ -553,11 +419,6 @@ class Str
      * Return the remainder of a string after the first occurrence of a given value.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string $subject
-     * @param string $search
-     *
-     * @return string
      */
     public function after(string $subject, string $search): ?string
     {
@@ -567,10 +428,7 @@ class Str
     /**
      * Determine if a given string contains a given substring.
      *
-     * @param string $haystack
-     * @param string|string[] $needles
-     *
-     * @return bool
+     * @param  string|array<string>  $needles
      */
     public function contains(string $haystack, mixed $needles): bool
     {
@@ -588,11 +446,7 @@ class Str
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
      *
-     * @param int $length
-     *
      * @throws Exception
-     *
-     * @return string
      */
     public function random(int $length = 16): string
     {
@@ -613,11 +467,6 @@ class Str
      * Get the string matching the given pattern.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string $value
-     * @param string $pattern
-     *
-     * @return string|null
      */
     public function match(string $value, string $pattern): ?string
     {
@@ -630,11 +479,6 @@ class Str
      * Get the all string matching the given pattern.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string $value
-     * @param string $pattern
-     *
-     * @return array|null
      */
     public function matchAll(string $value, string $pattern): ?array
     {
@@ -645,11 +489,6 @@ class Str
 
     /**
      * Determine if a given string contains a given substring by regex.
-     *
-     * @param string $value
-     * @param array|string $pattern
-     *
-     * @return bool
      */
     public function matchContains(string $value, array|string $pattern): bool
     {
@@ -664,12 +503,6 @@ class Str
 
     /**
      * Replace a given value in the string.
-     *
-     * @param string|null $value
-     * @param string $pattern
-     * @param string $replacement
-     *
-     * @return string|null
      */
     public function pregReplace(?string $value, string $pattern, string $replacement): ?string
     {
@@ -678,10 +511,6 @@ class Str
 
     /**
      * Determines if the value is empty.
-     *
-     * @param mixed $value
-     *
-     * @return bool
      */
     public function isEmpty(mixed $value): bool
     {
@@ -692,10 +521,6 @@ class Str
 
     /**
      * Determines if the value is doesn't empty.
-     *
-     * @param mixed $value
-     *
-     * @return bool
      */
     public function doesntEmpty(mixed $value): bool
     {
@@ -706,11 +531,6 @@ class Str
      * Transliterate a UTF-8 value to ASCII.
      *
      * @see https://github.com/illuminate/support/blob/master/Str.php
-     *
-     * @param string|null $value
-     * @param string|null $language
-     *
-     * @return string
      */
     public function ascii(?string $value, ?string $language = 'en'): string
     {
@@ -719,10 +539,6 @@ class Str
 
     /**
      * Converts a value to a string.
-     *
-     * @param string|null $value
-     *
-     * @return string
      */
     public function toString(?string $value): string
     {
@@ -731,11 +547,6 @@ class Str
 
     /**
      * Using a call-back function to process a value.
-     *
-     * @param string|null $value
-     * @param callable $callback
-     *
-     * @return string|null
      */
     public function map(?string $value, callable $callback): ?string
     {
@@ -744,13 +555,6 @@ class Str
 
     /**
      * Get the portion of a string between two given values.
-     *
-     * @param string|null $value
-     * @param mixed $from
-     * @param mixed $to
-     * @param bool $trim
-     *
-     * @return string
      */
     public function between(?string $value, mixed $from, mixed $to, bool $trim = true): string
     {
@@ -763,11 +567,6 @@ class Str
 
     /**
      * Strip whitespace (or other characters) from the beginning and end of a string.
-     *
-     * @param string|null $string
-     * @param string $characters
-     *
-     * @return string
      */
     public function trim(?string $string, string $characters = " \t\n\r\0\x0B"): string
     {
@@ -776,11 +575,6 @@ class Str
 
     /**
      * Strip whitespace (or other characters) from the beginning of a string.
-     *
-     * @param string|null $string
-     * @param string $characters
-     *
-     * @return string
      */
     public function ltrim(?string $string, string $characters = " \t\n\r\0\x0B"): string
     {
@@ -789,11 +583,6 @@ class Str
 
     /**
      * Strip whitespace (or other characters) from the end of a string.
-     *
-     * @param string|null $string
-     * @param string $characters
-     *
-     * @return string
      */
     public function rtrim(?string $string, string $characters = " \t\n\r\0\x0B"): string
     {

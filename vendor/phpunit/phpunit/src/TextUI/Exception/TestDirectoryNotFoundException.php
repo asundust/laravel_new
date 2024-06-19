@@ -13,7 +13,7 @@ use function sprintf;
 use RuntimeException;
 
 /**
- * @internal This interface is not covered by the backward compatibility promise for PHPUnit
+ * @internal This class is not covered by the backward compatibility promise for PHPUnit
  */
 final class TestDirectoryNotFoundException extends RuntimeException implements Exception
 {
@@ -22,8 +22,8 @@ final class TestDirectoryNotFoundException extends RuntimeException implements E
         parent::__construct(
             sprintf(
                 'Test directory "%s" not found',
-                $path
-            )
+                $path,
+            ),
         );
     }
 }

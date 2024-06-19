@@ -21,18 +21,8 @@ class EnvironmentEncryptCommand extends Command
                     {--key= : The encryption key}
                     {--cipher= : The encryption cipher}
                     {--env= : The environment to be encrypted}
+                    {--prune : Delete the original environment file}
                     {--force : Overwrite the existing encrypted environment file}';
-
-    /**
-     * The name of the console command.
-     *
-     * This name is used to identify the command during lazy loading.
-     *
-     * @var string|null
-     *
-     * @deprecated
-     */
-    protected static $defaultName = 'env:encrypt';
 
     /**
      * The console command description.
@@ -75,7 +65,7 @@ class EnvironmentEncryptCommand extends Command
         $keyPassed = $key !== null;
 
         $environmentFile = $this->option('env')
-                            ? base_path('.env').'.'.$this->option('env')
+                            ? Str::finish(dirname($this->laravel->environmentFilePath()), DIRECTORY_SEPARATOR).'.env.'.$this->option('env')
                             : $this->laravel->environmentFilePath();
 
         $encryptedFile = $environmentFile.'.encrypted';
@@ -109,9 +99,13 @@ class EnvironmentEncryptCommand extends Command
             return Command::FAILURE;
         }
 
+        if ($this->option('prune')) {
+            $this->files->delete($environmentFile);
+        }
+
         $this->components->info('Environment successfully encrypted.');
 
-        $this->components->twoColumnDetail('Key', ($keyPassed ? $key : 'base64:'.base64_encode($key)));
+        $this->components->twoColumnDetail('Key', $keyPassed ? $key : 'base64:'.base64_encode($key));
         $this->components->twoColumnDetail('Cipher', $cipher);
         $this->components->twoColumnDetail('Encrypted file', $encryptedFile);
 

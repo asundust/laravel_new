@@ -27,8 +27,8 @@ final class ProxyHelper
      */
     public static function generateLazyGhost(\ReflectionClass $class): string
     {
-        if (\PHP_VERSION_ID >= 80200 && \PHP_VERSION_ID < 80300 && $class->isReadOnly()) {
-            throw new LogicException(sprintf('Cannot generate lazy ghost: class "%s" is readonly.', $class->name));
+        if (\PHP_VERSION_ID < 80300 && $class->isReadOnly()) {
+            throw new LogicException(sprintf('Cannot generate lazy ghost with PHP < 8.3: class "%s" is readonly.', $class->name));
         }
         if ($class->isFinal()) {
             throw new LogicException(sprintf('Cannot generate lazy ghost: class "%s" is final.', $class->name));
@@ -91,8 +91,8 @@ final class ProxyHelper
         if ($class?->isFinal()) {
             throw new LogicException(sprintf('Cannot generate lazy proxy: class "%s" is final.', $class->name));
         }
-        if (\PHP_VERSION_ID >= 80200 && \PHP_VERSION_ID < 80300 && $class?->isReadOnly()) {
-            throw new LogicException(sprintf('Cannot generate lazy proxy: class "%s" is readonly.', $class->name));
+        if (\PHP_VERSION_ID < 80300 && $class?->isReadOnly()) {
+            throw new LogicException(sprintf('Cannot generate lazy proxy with PHP < 8.3: class "%s" is readonly.', $class->name));
         }
 
         $methodReflectors = [$class?->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED) ?? []];
@@ -142,15 +142,15 @@ final class ProxyHelper
                 continue;
             }
 
-            $signature = self::exportSignature($method);
-            $parentCall = $method->isAbstract() ? "throw new \BadMethodCallException('Cannot forward abstract method \"{$method->class}::{$method->name}()\".')" : "parent::{$method->name}(...\\func_get_args())";
+            $signature = self::exportSignature($method, true, $args);
+            $parentCall = $method->isAbstract() ? "throw new \BadMethodCallException('Cannot forward abstract method \"{$method->class}::{$method->name}()\".')" : "parent::{$method->name}({$args})";
 
             if ($method->isStatic()) {
                 $body = "        $parentCall;";
             } elseif (str_ends_with($signature, '): never') || str_ends_with($signature, '): void')) {
                 $body = <<<EOPHP
                         if (isset(\$this->lazyObjectState)) {
-                            (\$this->lazyObjectState->realInstance ??= (\$this->lazyObjectState->initializer)())->{$method->name}(...\\func_get_args());
+                            (\$this->lazyObjectState->realInstance ??= (\$this->lazyObjectState->initializer)())->{$method->name}({$args});
                         } else {
                             {$parentCall};
                         }
@@ -172,7 +172,7 @@ final class ProxyHelper
 
                 $body = <<<EOPHP
                         if (isset(\$this->lazyObjectState)) {
-                            return (\$this->lazyObjectState->realInstance ??= (\$this->lazyObjectState->initializer)())->{$method->name}(...\\func_get_args());
+                            return (\$this->lazyObjectState->realInstance ??= (\$this->lazyObjectState->initializer)())->{$method->name}({$args});
                         }
 
                         return {$parentCall};
@@ -213,15 +213,34 @@ final class ProxyHelper
             EOPHP;
     }
 
-    public static function exportSignature(\ReflectionFunctionAbstract $function, bool $withParameterTypes = true): string
+    public static function exportSignature(\ReflectionFunctionAbstract $function, bool $withParameterTypes = true, ?string &$args = null): string
     {
+        $byRefIndex = 0;
+        $args = '';
+        $param = null;
         $parameters = [];
+        $namespace = $function instanceof \ReflectionMethod ? $function->class : $function->getNamespaceName().'\\';
+        $namespace = substr($namespace, 0, strrpos($namespace, '\\') ?: 0);
         foreach ($function->getParameters() as $param) {
             $parameters[] = ($param->getAttributes(\SensitiveParameter::class) ? '#[\SensitiveParameter] ' : '')
                 .($withParameterTypes && $param->hasType() ? self::exportType($param).' ' : '')
                 .($param->isPassedByReference() ? '&' : '')
                 .($param->isVariadic() ? '...' : '').'$'.$param->name
-                .($param->isOptional() && !$param->isVariadic() ? ' = '.self::exportDefault($param) : '');
+                .($param->isOptional() && !$param->isVariadic() ? ' = '.self::exportDefault($param, $namespace) : '');
+            if ($param->isPassedByReference()) {
+                $byRefIndex = 1 + $param->getPosition();
+            }
+            $args .= ($param->isVariadic() ? '...$' : '$').$param->name.', ';
+        }
+
+        if (!$param || !$byRefIndex) {
+            $args = '...\func_get_args()';
+        } elseif ($param->isVariadic()) {
+            $args = substr($args, 0, -2);
+        } else {
+            $args = explode(', ', $args, 1 + $byRefIndex);
+            $args[$byRefIndex] = sprintf('...\array_slice(\func_get_args(), %d)', $byRefIndex);
+            $args = implode(', ', $args);
         }
 
         $signature = 'function '.($function->returnsReference() ? '&' : '')
@@ -253,7 +272,7 @@ final class ProxyHelper
         return $signature;
     }
 
-    public static function exportType(\ReflectionFunctionAbstract|\ReflectionProperty|\ReflectionParameter $owner, bool $noBuiltin = false, \ReflectionType $type = null): ?string
+    public static function exportType(\ReflectionFunctionAbstract|\ReflectionProperty|\ReflectionParameter $owner, bool $noBuiltin = false, ?\ReflectionType $type = null): ?string
     {
         if (!$type ??= $owner instanceof \ReflectionFunctionAbstract ? $owner->getReturnType() : $owner->getType()) {
             return null;
@@ -294,7 +313,7 @@ final class ProxyHelper
             return '';
         }
         if (null === $glue) {
-            return (!$noBuiltin && $type->allowsNull() && 'mixed' !== $name ? '?' : '').$types[0];
+            return (!$noBuiltin && $type->allowsNull() && !\in_array($name, ['mixed', 'null'], true) ? '?' : '').$types[0];
         }
         sort($types);
 
@@ -305,6 +324,9 @@ final class ProxyHelper
     {
         $propertyScopes = Hydrator::$propertyScopes[$parent] ??= Hydrator::getPropertyScopes($parent);
         uksort($propertyScopes, 'strnatcmp');
+        foreach ($propertyScopes as $k => $v) {
+            unset($propertyScopes[$k][3]);
+        }
         $propertyScopes = VarExporter::export($propertyScopes);
         $propertyScopes = str_replace(VarExporter::export($parent), 'parent::class', $propertyScopes);
         $propertyScopes = preg_replace("/(?|(,)\n( )       |\n        |,\n    (\]))/", '$1$2', $propertyScopes);
@@ -313,7 +335,7 @@ final class ProxyHelper
         return $propertyScopes;
     }
 
-    private static function exportDefault(\ReflectionParameter $param): string
+    private static function exportDefault(\ReflectionParameter $param, $namespace): string
     {
         $default = rtrim(substr(explode('$'.$param->name.' = ', (string) $param, 2)[1] ?? '', 0, -2));
 
@@ -327,7 +349,7 @@ final class ProxyHelper
         $regexp = "/(\"(?:[^\"\\\\]*+(?:\\\\.)*+)*+\"|'(?:[^'\\\\]*+(?:\\\\.)*+)*+')/";
         $parts = preg_split($regexp, $default, -1, \PREG_SPLIT_DELIM_CAPTURE | \PREG_SPLIT_NO_EMPTY);
 
-        $regexp = '/([\[\( ]|^)([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+(?:\\\\[a-zA-Z0-9_\x7f-\xff]++)*+)(?!: )/';
+        $regexp = '/([\[\( ]|^)([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+(?:\\\\[a-zA-Z0-9_\x7f-\xff]++)*+)(\(?)(?!: )/';
         $callback = (false !== strpbrk($default, "\\:('") && $class = $param->getDeclaringClass())
             ? fn ($m) => $m[1].match ($m[2]) {
                 'new', 'false', 'true', 'null' => $m[2],
@@ -335,18 +357,32 @@ final class ProxyHelper
                 'self' => '\\'.$class->name,
                 'namespace\\parent',
                 'parent' => ($parent = $class->getParentClass()) ? '\\'.$parent->name : 'parent',
-                default => '\\'.$m[2],
-            }
+                default => self::exportSymbol($m[2], '(' !== $m[3], $namespace),
+            }.$m[3]
             : fn ($m) => $m[1].match ($m[2]) {
                 'new', 'false', 'true', 'null', 'self', 'parent' => $m[2],
                 'NULL' => 'null',
-                default => '\\'.$m[2],
-            };
+                default => self::exportSymbol($m[2], '(' !== $m[3], $namespace),
+            }.$m[3];
 
         return implode('', array_map(fn ($part) => match ($part[0]) {
             '"' => $part, // for internal classes only
             "'" => false !== strpbrk($part, "\\\0\r\n") ? '"'.substr(str_replace(['$', "\0", "\r", "\n"], ['\$', '\0', '\r', '\n'], $part), 1, -1).'"' : $part,
             default => preg_replace_callback($regexp, $callback, $part),
         }, $parts));
+    }
+
+    private static function exportSymbol(string $symbol, bool $mightBeRootConst, string $namespace): string
+    {
+        if (!$mightBeRootConst
+            || false === ($ns = strrpos($symbol, '\\'))
+            || substr($symbol, 0, $ns) !== $namespace
+            || \defined($symbol)
+            || !\defined(substr($symbol, $ns + 1))
+        ) {
+            return '\\'.$symbol;
+        }
+
+        return '\\'.substr($symbol, $ns + 1);
     }
 }

@@ -2,27 +2,20 @@
 
 namespace EasyWeChat\Kernel\HttpClient;
 
-use function array_key_exists;
+use const JSON_UNESCAPED_UNICODE;
+
 use ArrayAccess;
-use function base64_encode;
 use Closure;
 use EasyWeChat\Kernel\Contracts\Arrayable;
 use EasyWeChat\Kernel\Contracts\Jsonable;
 use EasyWeChat\Kernel\Exceptions\BadMethodCallException;
 use EasyWeChat\Kernel\Exceptions\BadResponseException;
 use EasyWeChat\Kernel\Support\Xml;
-use function file_put_contents;
 use Http\Discovery\Exception\NotFoundException;
 use Http\Discovery\Psr17FactoryDiscovery;
-use function json_encode;
-use const JSON_UNESCAPED_UNICODE;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
-use function sprintf;
-use function str_contains;
-use function str_starts_with;
-use function strtolower;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\HttpClient\Response\StreamableInterface;
 use Symfony\Component\HttpClient\Response\StreamWrapper;
@@ -34,12 +27,21 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Throwable;
 
+use function array_key_exists;
+use function base64_encode;
+use function file_put_contents;
+use function json_encode;
+use function sprintf;
+use function str_contains;
+use function str_starts_with;
+use function strtolower;
+
 /**
  * @implements \ArrayAccess<array-key, mixed>
  *
  * @see \Symfony\Contracts\HttpClient\ResponseInterface
  */
-class Response implements Jsonable, Arrayable, ArrayAccess, ResponseInterface, StreamableInterface
+class Response implements Arrayable, ArrayAccess, Jsonable, ResponseInterface, StreamableInterface
 {
     public function __construct(
         protected ResponseInterface $response,
@@ -96,7 +98,7 @@ class Response implements Jsonable, Arrayable, ArrayAccess, ResponseInterface, S
         }
 
         try {
-            return 400 <= $this->getStatusCode();
+            return $this->getStatusCode() >= 400;
         } catch (Throwable $e) {
             return true;
         }
@@ -173,11 +175,11 @@ class Response implements Jsonable, Arrayable, ArrayAccess, ResponseInterface, S
         return 'data:'.$this->getHeaderLine('content-type').';base64,'.base64_encode($this->getContent());
     }
 
-    public function toPsrResponse(ResponseFactoryInterface $responseFactory = null, StreamFactoryInterface $streamFactory = null): \Psr\Http\Message\ResponseInterface
+    public function toPsrResponse(?ResponseFactoryInterface $responseFactory = null, ?StreamFactoryInterface $streamFactory = null): \Psr\Http\Message\ResponseInterface
     {
         $streamFactory ??= $responseFactory instanceof StreamFactoryInterface ? $responseFactory : null;
 
-        if (null === $responseFactory || null === $streamFactory) {
+        if ($responseFactory === null || $streamFactory === null) {
             if (! class_exists(Psr17Factory::class) && ! class_exists(Psr17FactoryDiscovery::class)) {
                 throw new \LogicException('You cannot use the "Symfony\Component\HttpClient\Psr18Client" as no PSR-17 factories have been provided. Try running "composer require nyholm/psr7".');
             }
@@ -303,7 +305,7 @@ class Response implements Jsonable, Arrayable, ArrayAccess, ResponseInterface, S
         $this->response->cancel();
     }
 
-    public function getInfo(string $type = null): mixed
+    public function getInfo(?string $type = null): mixed
     {
         return $this->response->getInfo($type);
     }

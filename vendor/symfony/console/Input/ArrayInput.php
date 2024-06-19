@@ -25,12 +25,10 @@ use Symfony\Component\Console\Exception\InvalidOptionException;
  */
 class ArrayInput extends Input
 {
-    private array $parameters;
-
-    public function __construct(array $parameters, InputDefinition $definition = null)
-    {
-        $this->parameters = $parameters;
-
+    public function __construct(
+        private array $parameters,
+        ?InputDefinition $definition = null,
+    ) {
         parent::__construct($definition);
     }
 
@@ -113,7 +111,7 @@ class ArrayInput extends Input
         return implode(' ', $params);
     }
 
-    protected function parse()
+    protected function parse(): void
     {
         foreach ($this->parameters as $key => $value) {
             if ('--' === $key) {
@@ -134,7 +132,7 @@ class ArrayInput extends Input
      *
      * @throws InvalidOptionException When option given doesn't exist
      */
-    private function addShortOption(string $shortcut, mixed $value)
+    private function addShortOption(string $shortcut, mixed $value): void
     {
         if (!$this->definition->hasShortcut($shortcut)) {
             throw new InvalidOptionException(sprintf('The "-%s" option does not exist.', $shortcut));
@@ -149,7 +147,7 @@ class ArrayInput extends Input
      * @throws InvalidOptionException When option given doesn't exist
      * @throws InvalidOptionException When a required value is missing
      */
-    private function addLongOption(string $name, mixed $value)
+    private function addLongOption(string $name, mixed $value): void
     {
         if (!$this->definition->hasOption($name)) {
             if (!$this->definition->hasNegation($name)) {
@@ -182,7 +180,7 @@ class ArrayInput extends Input
      *
      * @throws InvalidArgumentException When argument given doesn't exist
      */
-    private function addArgument(string|int $name, mixed $value)
+    private function addArgument(string|int $name, mixed $value): void
     {
         if (!$this->definition->hasArgument($name)) {
             throw new InvalidArgumentException(sprintf('The "%s" argument does not exist.', $name));

@@ -22,9 +22,9 @@ use Throwable;
 
 class Server implements ServerInterface
 {
-    use RespondXmlMessage;
     use DecryptXmlMessage;
     use InteractWithHandlers;
+    use RespondXmlMessage;
 
     protected ServerRequestInterface $request;
 

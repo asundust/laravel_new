@@ -6,9 +6,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @author Andrey Helldar <helldar@ai-rus.com>
+ * @author Andrey Helldar <helldar@dragon-code.pro>
  *
- * @copyright 2022 Andrey Helldar
+ * @copyright 2024 Andrey Helldar
  *
  * @license MIT
  *
@@ -34,12 +34,6 @@ class File
 {
     /**
      * Get a list of filenames with a full paths.
-     *
-     * @param string $path
-     * @param callable|null $callback
-     * @param bool $recursive
-     *
-     * @return array
      */
     public function allPaths(string $path, ?callable $callback = null, bool $recursive = false): array
     {
@@ -66,12 +60,6 @@ class File
 
     /**
      * Get a list of filenames along a path.
-     *
-     * @param string $path
-     * @param callable|null $callback
-     * @param bool $recursive
-     *
-     * @return array
      */
     public function names(string $path, ?callable $callback = null, bool $recursive = false): array
     {
@@ -85,13 +73,9 @@ class File
     /**
      * Save content to file.
      *
-     * @param string $path
-     * @param string $content
-     * @param int $mode
-     *
      * @return string returns the full path to the saved file
      */
-    public function store(string $path, string $content, int $mode = 0755): string
+    public function store(string $path, string $content, int $mode = 0o755): string
     {
         Directory::ensureDirectory(Path::dirname($path), $mode);
 
@@ -103,11 +87,7 @@ class File
     /**
      * Load content from the file.
      *
-     * @param string $path
-     *
-     * @throws \DragonCode\Support\Exceptions\FileNotFoundException
-     *
-     * @return array
+     * @throws FileNotFoundException
      */
     public function load(string $path): array
     {
@@ -132,12 +112,8 @@ class File
 
     /**
      * Copies file.
-     *
-     * @param string $source
-     * @param string $target
-     * @param int $mode
      */
-    public function copy(string $source, string $target, int $mode = 0755): void
+    public function copy(string $source, string $target, int $mode = 0o755): void
     {
         Directory::ensureDirectory(Path::dirname($target), $mode);
 
@@ -147,13 +123,9 @@ class File
     /**
      * Moving a file to a new path.
      *
-     * @param string $source
-     * @param string $target
-     * @param int $mode
-     *
-     * @throws \DragonCode\Support\Exceptions\FileNotFoundException
+     * @throws FileNotFoundException
      */
-    public function move(string $source, string $target, int $mode = 0755): void
+    public function move(string $source, string $target, int $mode = 0o755): void
     {
         Directory::ensureDirectory(Path::dirname($target), $mode);
 
@@ -162,10 +134,6 @@ class File
 
     /**
      * Checks if the file exists.
-     *
-     * @param string $path
-     *
-     * @return bool
      */
     public function exists(string $path): bool
     {
@@ -175,11 +143,9 @@ class File
     /**
      * Deletes files in the specified paths.
      *
-     * @param string|string[] $paths
+     * @param  string|array<string>  $paths
      *
-     * @throws \DragonCode\Support\Exceptions\FileNotFoundException
-     *
-     * @return void
+     * @throws FileNotFoundException
      */
     public function delete(array|string $paths): void
     {
@@ -195,11 +161,7 @@ class File
     /**
      * Ensure the file has been deleted.
      *
-     * @param array|string $paths
-     *
-     * @throws \DragonCode\Support\Exceptions\FileNotFoundException
-     *
-     * @return void
+     * @throws FileNotFoundException
      */
     public function ensureDelete(array|string $paths): void
     {
@@ -211,9 +173,7 @@ class File
     /**
      * Checks if an object or link is a file at the specified path.
      *
-     * @param DirectoryIterator|SplFileInfo|string $value
-     *
-     * @return bool
+     * @param  DirectoryIterator|SplFileInfo|string  $value
      */
     public function isFile(mixed $value): bool
     {
@@ -227,9 +187,9 @@ class File
     /**
      * Checks the existence of a file.
      *
-     * @param DirectoryIterator|SplFileInfo|string $path
+     * @param  DirectoryIterator|SplFileInfo|string  $path
      *
-     * @throws \DragonCode\Support\Exceptions\FileNotFoundException
+     * @throws FileNotFoundException
      */
     public function validate(mixed $path): void
     {
@@ -241,11 +201,9 @@ class File
     /**
      * Checks the existence of a file and return full path if exist.
      *
-     * @param DirectoryIterator|SplFileInfo|string $path
+     * @param  DirectoryIterator|SplFileInfo|string  $path
      *
-     * @throws \DragonCode\Support\Exceptions\FileNotFoundException
-     *
-     * @return string
+     * @throws FileNotFoundException
      */
     public function validated(mixed $path): string
     {

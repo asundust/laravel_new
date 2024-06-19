@@ -6,9 +6,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @author Andrey Helldar <helldar@ai-rus.com>
+ * @author Andrey Helldar <helldar@dragon-code.pro>
  *
- * @copyright 2022 Andrey Helldar
+ * @copyright 2024 Andrey Helldar
  *
  * @license MIT
  *
@@ -18,14 +18,13 @@
 namespace DragonCode\Support\Callbacks;
 
 use DragonCode\Support\Facades\Helpers\Str;
-use JetBrains\PhpStorm\Pure;
 
 class Sorter
 {
     /**
      * Gets an array of special characters.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function specialChars(): array
     {
@@ -69,8 +68,6 @@ class Sorter
 
     /**
      * Gets a callback function for sorting.
-     *
-     * @return callable
      */
     public function default(): callable
     {
@@ -97,8 +94,6 @@ class Sorter
     /**
      * Prepares a value for case-insensitive sorting.
      *
-     * @param $value
-     *
      * @return mixed|string|null
      */
     protected function lower($value): mixed
@@ -108,12 +103,7 @@ class Sorter
 
     /**
      * Determine if a value is a special character.
-     *
-     * @param $value
-     *
-     * @return bool
      */
-    #[Pure]
     protected function hasSpecialChar($value): bool
     {
         return in_array($value, $this->specialChars());

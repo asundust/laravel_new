@@ -1,16 +1,16 @@
 <?php
 
 /**
- * This file is part of the "Laravel-Lang/publisher" project.
+ * This file is part of the "laravel-lang/publisher" project.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2022 Andrey Helldar
+ * @copyright 2024 Laravel Lang Team
  * @license MIT
  *
- * @see https://github.com/Laravel-Lang/publisher
+ * @see https://laravel-lang.com
  */
 
 declare(strict_types=1);
@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace LaravelLang\Publisher\Concerns;
 
 use DragonCode\Support\Facades\Filesystem\Path;
-use DragonCode\Support\Facades\Helpers\Str;
+use Illuminate\Support\Str;
 
 trait Has
 {
@@ -26,13 +26,13 @@ trait Has
     {
         $name = $extension ? Path::extension($path) : Path::filename($path);
 
-        return Str::of($name)->lower()->contains('json');
+        return Str::contains($name, 'json', true);
     }
 
     protected function hasValidation(string $path): bool
     {
         $name = Path::filename($path);
 
-        return Str::of($name)->lower()->contains('validation');
+        return Str::contains($name, 'validation', true);
     }
 }

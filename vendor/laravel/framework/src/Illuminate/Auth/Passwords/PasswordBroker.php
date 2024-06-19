@@ -3,9 +3,11 @@
 namespace Illuminate\Auth\Passwords;
 
 use Closure;
+use Illuminate\Auth\Events\PasswordResetLinkSent;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Contracts\Auth\PasswordBroker as PasswordBrokerContract;
 use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
 use UnexpectedValueException;
 
@@ -26,16 +28,25 @@ class PasswordBroker implements PasswordBrokerContract
     protected $users;
 
     /**
+     * The event dispatcher instance.
+     *
+     * @var \Illuminate\Contracts\Events\Dispatcher
+     */
+    protected $events;
+
+    /**
      * Create a new password broker instance.
      *
      * @param  \Illuminate\Auth\Passwords\TokenRepositoryInterface  $tokens
      * @param  \Illuminate\Contracts\Auth\UserProvider  $users
+     * @param  \Illuminate\Contracts\Events\Dispatcher  $users
      * @return void
      */
-    public function __construct(TokenRepositoryInterface $tokens, UserProvider $users)
+    public function __construct(TokenRepositoryInterface $tokens, UserProvider $users, ?Dispatcher $dispatcher = null)
     {
         $this->users = $users;
         $this->tokens = $tokens;
+        $this->events = $dispatcher;
     }
 
     /**
@@ -45,7 +56,7 @@ class PasswordBroker implements PasswordBrokerContract
      * @param  \Closure|null  $callback
      * @return string
      */
-    public function sendResetLink(array $credentials, Closure $callback = null)
+    public function sendResetLink(array $credentials, ?Closure $callback = null)
     {
         // First we will check to see if we found a user at the given credentials and
         // if we did not we will redirect back to this current URI with a piece of
@@ -63,12 +74,16 @@ class PasswordBroker implements PasswordBrokerContract
         $token = $this->tokens->create($user);
 
         if ($callback) {
-            $callback($user, $token);
-        } else {
-            // Once we have the reset token, we are ready to send the message out to this
-            // user with a link to reset their password. We will then redirect back to
-            // the current URI having nothing set in the session to indicate errors.
-            $user->sendPasswordResetNotification($token);
+            return $callback($user, $token) ?? static::RESET_LINK_SENT;
+        }
+
+        // Once we have the reset token, we are ready to send the message out to this
+        // user with a link to reset their password. We will then redirect back to
+        // the current URI having nothing set in the session to indicate errors.
+        $user->sendPasswordResetNotification($token);
+
+        if ($this->events) {
+            $this->events->dispatch(new PasswordResetLinkSent($user));
         }
 
         return static::RESET_LINK_SENT;

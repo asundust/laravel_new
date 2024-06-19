@@ -8,12 +8,13 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\ForwardsCalls;
 use Illuminate\Support\Traits\Tappable;
+use Stringable;
 use Traversable;
 
 /**
  * @mixin \Illuminate\Support\Collection
  */
-abstract class AbstractPaginator implements Htmlable
+abstract class AbstractPaginator implements Htmlable, Stringable
 {
     use ForwardsCalls, Tappable;
 
@@ -319,7 +320,7 @@ abstract class AbstractPaginator implements Htmlable
     /**
      * Get the number of the first item in the slice.
      *
-     * @return int
+     * @return int|null
      */
     public function firstItem()
     {
@@ -329,7 +330,7 @@ abstract class AbstractPaginator implements Htmlable
     /**
      * Get the number of the last item in the slice.
      *
-     * @return int
+     * @return int|null
      */
     public function lastItem()
     {

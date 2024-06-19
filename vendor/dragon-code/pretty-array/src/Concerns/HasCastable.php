@@ -6,9 +6,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @author Andrey Helldar <helldar@ai-rus.com>
+ * @author Andrey Helldar <helldar@dragon-code.pro>
  *
- * @copyright 2021 Andrey Helldar
+ * @copyright 2023 Andrey Helldar
  *
  * @license MIT
  *
@@ -17,23 +17,25 @@
 
 namespace DragonCode\PrettyArray\Concerns;
 
+use DragonCode\Support\Facades\Helpers\Boolean;
+
 trait HasCastable
 {
     /**
      * Castable value.
      *
-     * @param mixed $value
+     * @param mixed|null $value
      *
-     * @return mixed
+     * @return string|int|float
      */
-    protected function castValue($value = null)
+    protected function castValue(mixed $value = null): string|int|float
     {
         if (is_numeric($value)) {
             return $value;
         }
 
         if (is_bool($value)) {
-            return $value ? 'true' : 'false';
+            return Boolean::toString($value);
         }
 
         if (is_null($value)) {

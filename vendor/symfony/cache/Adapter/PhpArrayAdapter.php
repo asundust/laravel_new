@@ -34,7 +34,6 @@ class PhpArrayAdapter implements AdapterInterface, CacheInterface, PruneableInte
     use ContractsTrait;
     use ProxyTrait;
 
-    private string $file;
     private array $keys;
     private array $values;
 
@@ -45,9 +44,10 @@ class PhpArrayAdapter implements AdapterInterface, CacheInterface, PruneableInte
      * @param string           $file         The PHP file were values are cached
      * @param AdapterInterface $fallbackPool A pool to fallback on when an item is not hit
      */
-    public function __construct(string $file, AdapterInterface $fallbackPool)
-    {
-        $this->file = $file;
+    public function __construct(
+        private string $file,
+        AdapterInterface $fallbackPool,
+    ) {
         $this->pool = $fallbackPool;
         self::$createCacheItem ??= \Closure::bind(
             static function ($key, $value, $isHit) {
@@ -78,7 +78,7 @@ class PhpArrayAdapter implements AdapterInterface, CacheInterface, PruneableInte
         return new static($file, $fallbackPool);
     }
 
-    public function get(string $key, callable $callback, float $beta = null, array &$metadata = null): mixed
+    public function get(string $key, callable $callback, ?float $beta = null, ?array &$metadata = null): mixed
     {
         if (!isset($this->values)) {
             $this->initialize();
@@ -309,7 +309,7 @@ EOF;
                 $value = str_replace("\n", "\n    ", $value);
                 $value = "static function () {\n    return {$value};\n}";
             }
-            $hash = hash('md5', $value);
+            $hash = hash('xxh128', $value);
 
             if (null === $id = $dumpedMap[$hash] ?? null) {
                 $id = $dumpedMap[$hash] = \count($dumpedMap);
@@ -338,7 +338,7 @@ EOF;
     /**
      * Load the cache file.
      */
-    private function initialize()
+    private function initialize(): void
     {
         if (isset(self::$valuesCache[$this->file])) {
             $values = self::$valuesCache[$this->file];

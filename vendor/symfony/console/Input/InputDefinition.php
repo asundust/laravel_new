@@ -47,7 +47,7 @@ class InputDefinition
     /**
      * Sets the definition of the input.
      */
-    public function setDefinition(array $definition)
+    public function setDefinition(array $definition): void
     {
         $arguments = [];
         $options = [];
@@ -68,7 +68,7 @@ class InputDefinition
      *
      * @param InputArgument[] $arguments An array of InputArgument objects
      */
-    public function setArguments(array $arguments = [])
+    public function setArguments(array $arguments = []): void
     {
         $this->arguments = [];
         $this->requiredCount = 0;
@@ -82,7 +82,7 @@ class InputDefinition
      *
      * @param InputArgument[] $arguments An array of InputArgument objects
      */
-    public function addArguments(?array $arguments = [])
+    public function addArguments(?array $arguments = []): void
     {
         if (null !== $arguments) {
             foreach ($arguments as $argument) {
@@ -94,7 +94,7 @@ class InputDefinition
     /**
      * @throws LogicException When incorrect argument is given
      */
-    public function addArgument(InputArgument $argument)
+    public function addArgument(InputArgument $argument): void
     {
         if (isset($this->arguments[$argument->getName()])) {
             throw new LogicException(sprintf('An argument with name "%s" already exists.', $argument->getName()));
@@ -191,7 +191,7 @@ class InputDefinition
      *
      * @param InputOption[] $options An array of InputOption objects
      */
-    public function setOptions(array $options = [])
+    public function setOptions(array $options = []): void
     {
         $this->options = [];
         $this->shortcuts = [];
@@ -204,7 +204,7 @@ class InputDefinition
      *
      * @param InputOption[] $options An array of InputOption objects
      */
-    public function addOptions(array $options = [])
+    public function addOptions(array $options = []): void
     {
         foreach ($options as $option) {
             $this->addOption($option);
@@ -214,7 +214,7 @@ class InputDefinition
     /**
      * @throws LogicException When option given already exist
      */
-    public function addOption(InputOption $option)
+    public function addOption(InputOption $option): void
     {
         if (isset($this->options[$option->getName()]) && !$option->equals($this->options[$option->getName()])) {
             throw new LogicException(sprintf('An option named "%s" already exists.', $option->getName()));

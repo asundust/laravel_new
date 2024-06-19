@@ -1,16 +1,16 @@
 <?php
 
 /**
- * This file is part of the "Laravel-Lang/publisher" project.
+ * This file is part of the "laravel-lang/publisher" project.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2022 Andrey Helldar
+ * @copyright 2024 Laravel Lang Team
  * @license MIT
  *
- * @see https://github.com/Laravel-Lang/publisher
+ * @see https://laravel-lang.com
  */
 
 declare(strict_types=1);
@@ -35,7 +35,7 @@ abstract class Provider extends BaseServiceProvider
 
     protected array $plugins;
 
-    public function register()
+    public function register(): void
     {
         $this->loadConfig();
 
@@ -58,7 +58,11 @@ abstract class Provider extends BaseServiceProvider
 
     protected function registerPackageName(): void
     {
-        $vendor = Str::of($this->basePath())->after((string) realpath(base_path('vendor')))->ltrim('\\/')->replace('\\', '/')->toString();
+        $vendor = Str::of($this->basePath())
+            ->after((string) realpath(base_path('vendor')))
+            ->ltrim('\\/')
+            ->replace('\\', '/')
+            ->toString();
 
         if ($name = $this->package_name ?: $vendor) {
             if (! is_dir($name) && ! is_dir(realpath('/' . $name) ?: '')) {
@@ -70,7 +74,13 @@ abstract class Provider extends BaseServiceProvider
     protected function plugins(): array
     {
         return Arr::of($this->plugins)
-            ->tap(static fn (string $plugin) => Instance::of($plugin, Plugin::class) ? true : throw new UnknownPluginInstanceException($plugin))
+            ->tap(static function (string $plugin) {
+                if (Instance::of($plugin, Plugin::class)) {
+                    return true;
+                }
+
+                throw new UnknownPluginInstanceException($plugin);
+            })
             ->unique()
             ->sort()
             ->values()

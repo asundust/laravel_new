@@ -66,8 +66,17 @@ class Kernel implements KernelContract
      * The application's route middleware.
      *
      * @var array<string, class-string|string>
+     *
+     * @deprecated
      */
     protected $routeMiddleware = [];
+
+    /**
+     * The application's middleware aliases.
+     *
+     * @var array<string, class-string|string>
+     */
+    protected $middlewareAliases = [];
 
     /**
      * All of the registered request duration handlers.
@@ -93,6 +102,7 @@ class Kernel implements KernelContract
     protected $middlewarePriority = [
         \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
         \Illuminate\Cookie\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
         \Illuminate\Session\Middleware\StartSession::class,
         \Illuminate\View\Middleware\ShareErrorsFromSession::class,
         \Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests::class,
@@ -203,6 +213,12 @@ class Kernel implements KernelContract
         $this->terminateMiddleware($request, $response);
 
         $this->app->terminate();
+
+        if ($this->requestStartedAt === null) {
+            return;
+        }
+
+        $this->requestStartedAt->setTimezone($this->app['config']->get('app.timezone') ?? 'UTC');
 
         foreach ($this->requestLifecycleDurationHandlers as ['threshold' => $threshold, 'handler' => $handler]) {
             $end ??= Carbon::now();
@@ -445,7 +461,7 @@ class Kernel implements KernelContract
             $this->router->middlewareGroup($key, $middleware);
         }
 
-        foreach ($this->routeMiddleware as $key => $middleware) {
+        foreach (array_merge($this->routeMiddleware, $this->middlewareAliases) as $key => $middleware) {
             $this->router->aliasMiddleware($key, $middleware);
         }
     }
@@ -494,6 +510,31 @@ class Kernel implements KernelContract
     }
 
     /**
+     * Get the application's global middleware.
+     *
+     * @return array
+     */
+    public function getGlobalMiddleware()
+    {
+        return $this->middleware;
+    }
+
+    /**
+     * Set the application's global middleware.
+     *
+     * @param  array  $middleware
+     * @return $this
+     */
+    public function setGlobalMiddleware(array $middleware)
+    {
+        $this->middleware = $middleware;
+
+        $this->syncMiddlewareToRouter();
+
+        return $this;
+    }
+
+    /**
      * Get the application's route middleware groups.
      *
      * @return array
@@ -504,13 +545,70 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Get the application's route middleware.
+     * Set the application's middleware groups.
+     *
+     * @param  array  $groups
+     * @return $this
+     */
+    public function setMiddlewareGroups(array $groups)
+    {
+        $this->middlewareGroups = $groups;
+
+        $this->syncMiddlewareToRouter();
+
+        return $this;
+    }
+
+    /**
+     * Get the application's route middleware aliases.
      *
      * @return array
+     *
+     * @deprecated
      */
     public function getRouteMiddleware()
     {
-        return $this->routeMiddleware;
+        return $this->getMiddlewareAliases();
+    }
+
+    /**
+     * Get the application's route middleware aliases.
+     *
+     * @return array
+     */
+    public function getMiddlewareAliases()
+    {
+        return array_merge($this->routeMiddleware, $this->middlewareAliases);
+    }
+
+    /**
+     * Set the application's route middleware aliases.
+     *
+     * @param  array  $aliases
+     * @return $this
+     */
+    public function setMiddlewareAliases(array $aliases)
+    {
+        $this->middlewareAliases = $aliases;
+
+        $this->syncMiddlewareToRouter();
+
+        return $this;
+    }
+
+    /**
+     * Set the application's middleware priority.
+     *
+     * @param  array  $priority
+     * @return $this
+     */
+    public function setMiddlewarePriority(array $priority)
+    {
+        $this->middlewarePriority = $priority;
+
+        $this->syncMiddlewareToRouter();
+
+        return $this;
     }
 
     /**

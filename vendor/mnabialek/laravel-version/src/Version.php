@@ -43,7 +43,7 @@ class Version
 
     /**
      * Get original application version string.
-     * 
+     *
      * @return string
      */
     public function full()

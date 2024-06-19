@@ -1,39 +1,31 @@
 # Laravel Lang: HTTP Statuses
 
-![laravel lang http statuses](https://preview.dragon-code.pro/laravel-lang/http-statuses.svg?brand=laravel&invert=1)
+![laravel lang http statuses](https://preview.dragon-code.pro/laravel-lang/http-statuses.svg?brand=laravel&mode=dark)
 
 [![Stable Version][badge_stable]][link_packagist]
 [![Unstable Version][badge_unstable]][link_packagist]
 [![Total Downloads][badge_downloads]][link_packagist]
 [![License][badge_license]][link_license]
 
+## Documentation
 
-## Installation
+See the [documentation](https://laravel-lang.com/packages-http-statuses.html) for detailed installation.
 
-To get the latest version of `Laravel Lang: HTTP Statuses` library, simply require the project using [Composer](https://getcomposer.org):
+## Communication
 
-```
-$ composer require laravel-lang/http-statuses --dev
-```
+We also have official [chats](https://t.me/addlist/l0XGtvEIBiljMTMy) in Telegram.
 
-Instead, you may of course manually update your `require-dev` block and run `composer update` if you so choose:
+## Contributing
 
-```json
-{
-    "require-dev": {
-        "laravel-lang/http-statuses": "^3.0"
-    }
-}
-```
+Please see [CONTRIBUTING](https://laravel-lang.com/contributions.html) for details.
 
-## Using
+## Support Us
 
-To install files from this repository into your project, you need to install the [laravel-lang/publisher](https://github.com/Laravel-Lang/publisher)
-version `^14.0` and above.
+❤️ Laravel Lang? Please consider supporting our collective on [Boosty](https://boosty.to/laravel-lang).
 
-Yes, that's all 😊
+## License
 
-Now the package is connected to your application and you can [manage localizations](https://laravel-lang.github.io/publisher/using).
+This package is licensed under the [MIT License](https://laravel-lang.com/license.html).
 
 
 [badge_stable]:     https://img.shields.io/github/v/release/laravel-lang/http-statuses?label=stable&style=flat-square

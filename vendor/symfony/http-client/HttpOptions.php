@@ -66,6 +66,16 @@ class HttpOptions
     /**
      * @return $this
      */
+    public function setHeader(string $key, string $value): static
+    {
+        $this->options['headers'][$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
     public function setHeaders(iterable $headers): static
     {
         $this->options['headers'] = $headers;
@@ -131,6 +141,16 @@ class HttpOptions
     public function setBaseUri(string $uri): static
     {
         $this->options['base_uri'] = $uri;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setVars(array $vars): static
+    {
+        $this->options['vars'] = $vars;
 
         return $this;
     }

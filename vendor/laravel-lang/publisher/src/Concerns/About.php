@@ -1,16 +1,16 @@
 <?php
 
 /**
- * This file is part of the "Laravel-Lang/publisher" project.
+ * This file is part of the "laravel-lang/publisher" project.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2022 Andrey Helldar
+ * @copyright 2024 Laravel Lang Team
  * @license MIT
  *
- * @see https://github.com/Laravel-Lang/publisher
+ * @see https://laravel-lang.com
  */
 
 declare(strict_types=1);
@@ -20,21 +20,13 @@ namespace LaravelLang\Publisher\Concerns;
 use Composer\InstalledVersions;
 use DragonCode\Support\Facades\Helpers\Arr;
 use Illuminate\Foundation\Console\AboutCommand;
-use LaravelLang\Publisher\Facades\Helpers\Locales;
-use LaravelLang\Publisher\Helpers\Config;
+use LaravelLang\Config\Facades\Config;
 
 trait About
 {
     protected function registerAbout(): void
     {
-        if (! class_exists(AboutCommand::class)) {
-            return;
-        }
-
         $this->pushInformation(fn () => [
-            'Installed'         => $this->implodeLocales(Locales::installed()),
-            'Protected Locales' => $this->implodeLocales(Locales::protects()),
-
             'Publisher Version' => $this->getPackageVersion('laravel-lang/publisher'),
         ]);
 
@@ -43,12 +35,12 @@ trait About
 
     protected function pushInformation(callable $data): void
     {
-        AboutCommand::add('Localization', $data);
+        AboutCommand::add('Locales', $data);
     }
 
     protected function getPackages(): array
     {
-        return Arr::of(config(Config::PRIVATE_KEY . '.packages'))
+        return Arr::of(Config::hidden()->packages->all())
             ->renameKeys(static fn (mixed $key, array $values) => $values['class'])
             ->map(fn (array $values) => $this->getPackageVersion($values['name']))
             ->toArray();

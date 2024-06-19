@@ -1,16 +1,16 @@
 <?php
 
 /**
- * This file is part of the "Laravel-Lang/publisher" project.
+ * This file is part of the "laravel-lang/publisher" project.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2022 Andrey Helldar
+ * @copyright 2024 Laravel Lang Team
  * @license MIT
  *
- * @see https://github.com/Laravel-Lang/publisher
+ * @see https://laravel-lang.com
  */
 
 declare(strict_types=1);
@@ -30,7 +30,7 @@ class Reset extends Base
 
     protected Processor|string $processor = ResetProcessor::class;
 
-    public function handle()
+    public function handle(): void
     {
         if ($this->confirm($this->question)) {
             parent::handle();

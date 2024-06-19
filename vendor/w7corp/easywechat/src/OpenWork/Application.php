@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EasyWeChat\OpenWork;
 
-use function array_merge;
 use EasyWeChat\Kernel\Contracts\AccessToken as AccessTokenInterface;
 use EasyWeChat\Kernel\Contracts\Server as ServerInterface;
 use EasyWeChat\Kernel\Exceptions\HttpException;
@@ -26,13 +25,15 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
+use function array_merge;
+
 class Application implements ApplicationInterface
 {
     use InteractWithCache;
+    use InteractWithClient;
     use InteractWithConfig;
     use InteractWithHttpClient;
     use InteractWithServerRequest;
-    use InteractWithClient;
 
     protected ?ServerInterface $server = null;
 

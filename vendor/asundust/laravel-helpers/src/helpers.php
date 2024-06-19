@@ -71,20 +71,19 @@ if (!function_exists('mda')) {
     }
 }
 
-if (!function_exists('number_format')) {
+if (!function_exists('num_format')) {
     /**
-     * 数字格式化.
+     * 数值格式化.
      *
-     * @param string|int $number  数字
+     * @param string|int|float|null $num  数值
      * @param int        $decimal 保留小数位数
      */
-    function number_format($number, $decimal = 2)
+    function num_format($num, $decimal = 2)
     {
-        if (null == $number || '' == $number) {
-            return '0.00';
+        if ($num === null || $num === '') {
+            $num = 0;
         }
-
-        return sprintf('%01.'.$decimal.'f', $number);
+        return number_format((float)$num, $decimal, '.', '');
     }
 }
 
@@ -100,7 +99,7 @@ if (!function_exists('pluck_to_array')) {
      */
     function pluck_to_array($array, $value = 'value', $key = 'id')
     {
-        if (is_object($array) && method_exists($array, 'toArray')) {
+        if ((is_object($array) || is_string($array)) && method_exists($array, 'toArray')) {
             $array = $array->toArray();
         }
         $data = [];
@@ -131,9 +130,9 @@ if (!function_exists('log_i')) {
             $path = $name;
         }
         config([
-            'logging.channels.'.$path.'_'.$name => [
+            'logging.channels.' . $path . '_' . $name => [
                 'driver' => 'daily',
-                'path' => storage_path('logs/'.$path.'/'.$name.'.log'),
+                'path' => storage_path('logs/' . $path . '/' . $name . '.log'),
                 'level' => 'debug',
                 'days' => $max,
             ],
@@ -147,10 +146,10 @@ if (!function_exists('log_i')) {
             }
         }
         if (!is_array($message)) {
-            logger()->channel($path.'_'.$name)->info($type.PHP_EOL.$message);
+            logger()->channel($path . '_' . $name)->info($type . PHP_EOL . $message);
         } else {
-            logger()->channel($path.'_'.$name)->info($type);
-            logger()->channel($path.'_'.$name)->info($message);
+            logger()->channel($path . '_' . $name)->info($type);
+            logger()->channel($path . '_' . $name)->info($message);
         }
     }
 }
@@ -167,18 +166,20 @@ if (!function_exists('log_s')) {
      */
     function log_s($message, $path = '', $name = 'log', $appendTime = false)
     {
-        if (method_exists($message, 'toArray')) {
+        if ((is_object($message) || is_string($message)) && method_exists($message, 'toArray')) {
             $message = var_export($message->toArray(), true);
+        } elseif (is_array($message)) {
+            $message = var_export($message, true);
         }
         if ($path) {
-            $path = trim($path, '/').'/';
-            create_dir(storage_path('logs/'.$path));
+            $path = trim($path, '/') . '/';
+            create_dir(storage_path('logs/' . $path));
         }
-        $handle = fopen(storage_path('logs/'.$path.$name.'-'.date('Y-m-d').'.log'), 'a');
+        $handle = fopen(storage_path('logs/' . $path . $name . '-' . date('Y-m-d') . '.log'), 'a');
         if ($appendTime) {
-            $message = '['.date('Y-m-d H:i:s').']'.$message;
+            $message = '[' . date('Y-m-d H:i:s') . ']' . $message;
         }
-        fwrite($handle, $message."\n");
+        fwrite($handle, $message . "\n");
         fclose($handle);
     }
 }
@@ -213,7 +214,7 @@ if (!function_exists('console_line')) {
             ];
             $code = $types[$type] ?? '37';
             // 30黑色，31红色，32绿色，33黄色，34蓝色，35洋红，36青色，37白色，
-            echo chr(27).'['.$code.'m'."$text".chr(27).'[0m'.PHP_EOL;
+            echo chr(27) . '[' . $code . 'm' . "$text" . chr(27) . '[0m' . PHP_EOL;
         }
     }
 }
@@ -268,5 +269,69 @@ if (!function_exists('get_package_version')) {
         } catch (\OutOfBoundsException $exception) {
             return false;
         }
+    }
+}
+
+if (!function_exists('new_request')) {
+    /**
+     * 新建一个请求对象.
+     *
+     * @param array $params
+     * @return \GuzzleHttp\Client
+     */
+    function new_request(array $params = [])
+    {
+        $config = array_merge([
+            'timeout' => 10,
+            'verify' => false,
+            'http_errors' => false,
+        ], $params);
+        return new \GuzzleHttp\Client($config);
+    }
+}
+
+if (!function_exists('api_success')) {
+    /**
+     * Api成功返回
+     *
+     * @param mixed $message
+     * @param array $data
+     * @param int $code
+     * @return \Illuminate\Http\JsonResponse
+     */
+    function api_success(mixed $message, array $data = [], int $code = 0): \Illuminate\Http\JsonResponse
+    {
+        if (!is_string($message)) {
+            $data = $message;
+            $message = '';
+        }
+        return response()->json([
+            'code' => $code,
+            'message' => $message,
+            'data' => $data,
+        ]);
+    }
+}
+
+if (!function_exists('api_error')) {
+    /**
+     * Api错误返回
+     *
+     * @param mixed $message
+     * @param array $data
+     * @param int $code
+     * @return void
+     */
+    function api_error(mixed $message, array $data = [], int $code = 1): void
+    {
+        if (!is_string($message)) {
+            $data = $message;
+            $message = '操作失败';
+        }
+        response()->json([
+            'code' => $code,
+            'message' => $message,
+            'data' => $data,
+        ])->throwResponse();
     }
 }

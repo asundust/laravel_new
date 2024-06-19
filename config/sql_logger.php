@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'general' => [
         /*
          * Directory where log files will be saved
@@ -21,7 +22,7 @@ return [
         /*
          * Extension for log files
          */
-        'extension' => env('SQL_LOGGER_LOG_EXTENSION', '.sql'),
+        'extension' => env('SQL_LOGGER_LOG_EXTENSION', '.log'),
     ],
 
     'formatting' => [
@@ -68,7 +69,7 @@ return [
          * Log file name without extension - elements between [ and ] characters will be parsed
          * according to format used by http://php.net/manual/en/function.date.php
          */
-        'file_name' => env('SQL_LOGGER_ALL_QUERIES_FILE_NAME', '[Y-m-d]-log'),
+        'file_name' => env('SQL_LOGGER_ALL_QUERIES_FILE_NAME', '[Y-m-d]'),
     ],
 
     'slow_queries' => [
@@ -94,6 +95,6 @@ return [
          * Slow log file name without extension - elements between [ and ] characters will be parsed
          * according to format used by http://php.net/manual/en/function.date.php
          */
-        'file_name' => env('SQL_LOGGER_SLOW_QUERIES_FILE_NAME', '[Y-m-d]-slow-log'),
+        'file_name' => env('SQL_LOGGER_SLOW_QUERIES_FILE_NAME', '[Y-m-d]-slow'),
     ],
 ];

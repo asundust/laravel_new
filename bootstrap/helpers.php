@@ -1,40 +1,9 @@
 <?php
 
-if (!function_exists('cache_config')) {
-    /**
-     * 获取Admin Config的缓存键的值
-     *
-     * @param $key
-     * @param $default
-     */
-    function cache_config($key, $default = null): mixed
-    {
-        return \Illuminate\Support\Facades\Cache::get(\App\Models\Admin\AdminConfig::CACHE_KEY_PREFIX . $key, $default);
-    }
-}
-
-if (!function_exists('admin_switch_arr')) {
-    /**
-     * Laravel-Admin系统的switch选项.
-     *
-     * @param $arr
-     */
-    function admin_switch_arr($arr, bool $isOpposite = true): array
-    {
-        $keys = array_keys($arr);
-        $key1 = $isOpposite ? 1 : 0;
-        $key2 = $isOpposite ? 0 : 1;
-
-        return [
-            'on' => ['value' => $keys[$key1], 'text' => $arr[$keys[$key1]], 'color' => 'success'],
-            'off' => ['value' => $keys[$key2], 'text' => $arr[$keys[$key2]], 'color' => 'danger'],
-        ];
-    }
-}
-
 if (!function_exists('is_wechat')) {
     /**
-     * 判断是否是微信访问.
+     * 是否微信
+     * @return bool
      */
     function is_wechat(): bool
     {
@@ -44,12 +13,63 @@ if (!function_exists('is_wechat')) {
 
 if (!function_exists('is_mobile')) {
     /**
-     * 是否手机.
+     * 是否手机
+     * @return bool
      */
     function is_mobile(): bool
     {
         $agent = new Jenssegers\Agent\Agent();
 
         return $agent->isMobile();
+    }
+}
+
+if (!function_exists('url_to_uri')) {
+    /**
+     * 转成成URI
+     *
+     * @param $url
+     * @param string $suffix
+     * @return string
+     */
+    function url_to_uri($url, string $suffix = '!'): string
+    {
+        if (!$url) {
+            return '';
+        }
+        $arr = parse_url($url);
+        if (isset($arr['scheme']) && isset($arr['host'])) {
+            $url = str_replace($arr['scheme'] . '://' . $arr['host'], '', $url);
+            $url = preg_replace("/$suffix.*/", '', $url);
+        }
+        return trim($url, '/');
+    }
+}
+
+if (!function_exists('uri_to_image_url')) {
+    /**
+     * 还原URL
+     *
+     * @param $uri
+     * @return string
+     */
+    function uri_to_url($uri): string
+    {
+        if (!$uri) {
+            return '';
+        }
+        return \Illuminate\Support\Facades\Storage::url($uri);
+    }
+}
+
+if (!function_exists('dev_code')) {
+    /**
+     * 是否开发模式
+     *
+     * @return bool
+     */
+    function is_dev_mode(): bool
+    {
+        return request()->input('dev_mode_code') === config('app.dev_mode_code');
     }
 }

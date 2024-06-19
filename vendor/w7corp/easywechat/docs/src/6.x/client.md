@@ -13,6 +13,7 @@ $response = $api->post('/cgi-bin/user/info/updateremark', [
     ]);
 
 // or
+// 如果参数中存在query之类的关键字建议使用上面的方法，不建议以下调用方式
 $response = $api->postJson('/cgi-bin/user/info/updateremark', [
     "openid" => "oDF3iY9ffA-hqb2vVvbr7qxf6A0Q",
     "remark" => "pangzi"
@@ -24,10 +25,17 @@ $response = $api->postJson('/cgi-bin/user/info/updateremark', [
 ```php
 get(string $uri, array $options = []): Symfony\Contracts\HttpClient\ResponseInterface
 post(string $uri, array $options = []): Symfony\Contracts\HttpClient\ResponseInterface
-postJson(string $url, array $options = []): Symfony\Contracts\HttpClient\ResponseInterface
 patch(string $uri, array $options = []): Symfony\Contracts\HttpClient\ResponseInterface
 put(string $uri, array $options = []): Symfony\Contracts\HttpClient\ResponseInterface
 delete(string $uri, array $options = []): Symfony\Contracts\HttpClient\ResponseInterface
+```
+
+同时还内置了一些便捷方法：
+
+```php
+postJson(string $url, array $data = [], array $options = []): Symfony\Contracts\HttpClient\ResponseInterface
+patchJson(string $url, array $data = [], array $options = []): Symfony\Contracts\HttpClient\ResponseInterface
+postXml(string $url, array $data = [], array $options = []): Symfony\Contracts\HttpClient\ResponseInterface
 ```
 
 `$options` 为请求参数，可以指定 `query`/`body`/`json`/`xml`/`headers` 等等，具体请参考：[HttpClientInterface::OPTIONS_DEFAULTS](https://github.com/symfony/symfony/blob/6.1/src/Symfony/Contracts/HttpClient/HttpClientInterface.php)
@@ -150,8 +158,26 @@ $media = $client->withFileContents($contents, 'media', 'filename.png')->post('cg
 
 ## 自定义 access_token
 
+自定义 Access Token 需要实现接口 `EasyWeChat\Kernel\Contracts\AccessToken`：
+
 ```php
-$client->withAccessToken('access_token');
+class MyAccessToken implements EasyWeChat\Kernel\Contracts\AccessToken
+{
+    public function getToken(): string
+    {
+        // 你的逻辑
+        return 'your token';
+    }
+
+    public function toQuery(): array
+    {
+        return ['access_token' => $this->getToken()];
+    }
+}
+```
+
+```php
+$client->withAccessToken(new MyAccessToken());
 $client->get('xxxx');
 $client->post('xxxx');
 //...
@@ -437,7 +463,7 @@ $responses['users']->toArray();
         'retry' => true, // 使用默认配置
         // 'retry' => [
         //     // 仅以下状态码重试
-        //     'http_codes' => [429, 500]
+        //     'status_codes' => [429, 500]
         //     'max_retries' => 3
         //     // 请求间隔 (毫秒)
         //     'delay' => 1000,

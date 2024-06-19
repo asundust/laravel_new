@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace EasyWeChat\Kernel\Support;
 
+use Composer\InstalledVersions;
+
 use function array_map;
 use function array_unshift;
 use function class_exists;
-use Composer\InstalledVersions;
 use function curl_version;
 use function defined;
 use function explode;
@@ -19,7 +20,6 @@ class UserAgent
 {
     /**
      * @param  array<string>  $appends
-     * @return string
      */
     public static function create(array $appends = []): string
     {

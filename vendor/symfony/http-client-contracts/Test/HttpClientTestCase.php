@@ -28,6 +28,12 @@ abstract class HttpClientTestCase extends TestCase
         TestHttpServer::start();
     }
 
+    public static function tearDownAfterClass(): void
+    {
+        TestHttpServer::stop(8067);
+        TestHttpServer::stop(8077);
+    }
+
     abstract protected function getHttpClient(string $testCase): HttpClientInterface;
 
     public function testGetRequest()
@@ -135,7 +141,7 @@ abstract class HttpClientTestCase extends TestCase
 
         $this->assertSame($firstContent, $secondContent);
 
-        $response = $client->request('GET', 'http://localhost:8057', ['buffer' => function () { return false; }]);
+        $response = $client->request('GET', 'http://localhost:8057', ['buffer' => fn () => false]);
         $response->getContent();
 
         $this->expectException(TransportExceptionInterface::class);
@@ -969,6 +975,14 @@ abstract class HttpClientTestCase extends TestCase
         } finally {
             unset($_SERVER['http_proxy']);
         }
+
+        $response = $client->request('GET', 'http://localhost:8057/301/proxy', [
+            'proxy' => 'http://localhost:8057',
+        ]);
+
+        $body = $response->toArray();
+        $this->assertSame('localhost:8057', $body['HTTP_HOST']);
+        $this->assertMatchesRegularExpression('#^http://(localhost|127\.0\.0\.1):8057/$#', $body['REQUEST_URI']);
     }
 
     public function testNoProxy()

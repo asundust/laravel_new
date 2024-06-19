@@ -8,8 +8,9 @@ A collection of enum helpers for PHP.
 - [`Options`](#options)
 - [`From`](#from)
 - [`Metadata`](#metadata)
+- [`Comparable`](#comparable)
 
-You can read more about the idea on [Twitter](https://twitter.com/archtechx/status/1495158228757270528). I originally wanted to include the `InvokableCases` helper in [`archtechx/helpers`](https://github.com/archtechx/helpers), but it makes more sense to make it a separate dependency and use it *inside* the other package.
+You can read more about the original idea on [Twitter](https://twitter.com/archtechx/status/1495158228757270528).
 
 ## Installation
 
@@ -186,6 +187,29 @@ enum Role
 ```php
 TaskStatus::options(); // ['INCOMPLETE' => 0, 'COMPLETED' => 1, 'CANCELED' => 2]
 Role::options(); // ['ADMINISTRATOR', 'SUBSCRIBER', 'GUEST']
+```
+
+#### stringOptions()
+
+The trait also adds the `stringOptions()` method that can be used for generating convenient string representations of your enum options:
+```php
+// First argument is the callback, second argument is glue
+// returns "INCOMPLETE => 0, COMPLETED => 1, CANCELED => 2"
+TaskStatus::stringOptions(fn ($name, $value) => "$name => $value", ', ');
+```
+For pure enums (non-backed), the name is used in place of `$value` (meaning that both `$name` and `$value` are the same).
+
+Both arguments for this method are optional, the glue defaults to `\n` and the callback defaults to generating HTML `<option>` tags:
+```php
+// <option value="0">Incomplete</option>
+// <option value="1">Completed</option>
+// <option value="2">Canceled</option>
+TaskStatus::stringOptions(); // backed enum
+
+// <option value="ADMINISTRATOR">Administrator</option>
+// <option value="Subscriber">Subscriber</option>
+// <option value="GUEST">Guest</option>
+Role::stringOptions(); // pure enum
 ```
 
 ### From
@@ -365,6 +389,65 @@ enum TaskStatus: int
 ```
 
 And if you're using the same meta property in multiple enums, you can create a dedicated trait that includes this `@method` annotation.
+
+### Comparable
+
+This trait lets you compare enums using `is()`, `isNot()`, `in()` and `notIn()`.
+
+#### Apply the trait on your enum
+```php
+use ArchTech\Enums\Comparable;
+
+enum TaskStatus: int
+{
+    use Comparable;
+
+    case INCOMPLETE = 0;
+    case COMPLETED = 1;
+    case CANCELED = 2;
+}
+
+enum Role
+{
+    use Comparable;
+
+    case ADMINISTRATOR;
+    case SUBSCRIBER;
+    case GUEST;
+}
+```
+
+#### Use the `is()` method
+```php
+TaskStatus::INCOMPLETE->is(TaskStatus::INCOMPLETE); // true
+TaskStatus::INCOMPLETE->is(TaskStatus::COMPLETED); // false
+Role::ADMINISTRATOR->is(Role::ADMINISTRATOR); // true
+Role::ADMINISTRATOR->is(Role::NOBODY); // false
+```
+
+#### Use the `isNot()` method
+```php
+TaskStatus::INCOMPLETE->isNot(TaskStatus::INCOMPLETE); // false
+TaskStatus::INCOMPLETE->isNot(TaskStatus::COMPLETED); // true
+Role::ADMINISTRATOR->isNot(Role::ADMINISTRATOR); // false
+Role::ADMINISTRATOR->isNot(Role::NOBODY); // true
+```
+
+#### Use the `in()` method
+```php
+TaskStatus::INCOMPLETE->in([TaskStatus::INCOMPLETE, TaskStatus::COMPLETED]); // true
+TaskStatus::INCOMPLETE->in([TaskStatus::COMPLETED, TaskStatus::CANCELED]); // false
+Role::ADMINISTRATOR->in([Role::ADMINISTRATOR, Role::GUEST]); // true
+Role::ADMINISTRATOR->in([Role::SUBSCRIBER, Role::GUEST]); // false
+```
+
+#### Use the `notIn()` method
+```php
+TaskStatus::INCOMPLETE->notIn([TaskStatus::INCOMPLETE, TaskStatus::COMPLETED]); // false
+TaskStatus::INCOMPLETE->notIn([TaskStatus::COMPLETED, TaskStatus::CANCELED]); // true
+Role::ADMINISTRATOR->notIn([Role::ADMINISTRATOR, Role::GUEST]); // false
+Role::ADMINISTRATOR->notIn([Role::SUBSCRIBER, Role::GUEST]); // true
+```
 
 ## PHPStan
 

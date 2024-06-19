@@ -399,12 +399,50 @@ return [
 ];
 ```
 
+#### As JSON
+
+```php
+use DragonCode\PrettyArray\Services\File;
+use DragonCode\PrettyArray\Services\Formatter;
+
+$service = Formatter::make();
+
+$service->asJson();
+
+$formatted = $service->raw($array);
+
+File::make($formatted)
+    ->store('foo.json');
+```
+
+Result in stored file `foo.json`:
+
+```json
+{
+    "foo": 1,
+    "bar": 2,
+    "baz": 3,
+    "qwerty": "qaz",
+    "baq": {
+        "0": "qwe",
+        "1": "rty",
+        "asd": "zxc"
+    },
+    "asdfgh": {
+        "foobarbaz": "qwe",
+        "2": "rty",
+        "qawsed": "zxc"
+    },
+    "2": "'iop'"
+}
+```
+
 ## License
 
 This package is licensed under the [MIT License](LICENSE).
 
 
-[badge_build]:          https://img.shields.io/github/workflow/status/TheDragonCode/pretty-array/phpunit?style=flat-square
+[badge_build]:          https://img.shields.io/github/actions/workflow/status/TheDragonCode/pretty-array/phpunit.yml?style=flat-square
 
 [badge_downloads]:      https://img.shields.io/packagist/dt/dragon-code/pretty-array.svg?style=flat-square
 

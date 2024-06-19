@@ -6,9 +6,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @author Andrey Helldar <helldar@ai-rus.com>
+ * @author Andrey Helldar <helldar@dragon-code.pro>
  *
- * @copyright 2022 Andrey Helldar
+ * @copyright 2024 Andrey Helldar
  *
  * @license MIT
  *
@@ -37,8 +37,6 @@ trait Dumpable
 
     /**
      * Outputs the contents of a variable, terminating the application.
-     *
-     * @return void
      */
     #[NoReturn]
     public function dd(): void

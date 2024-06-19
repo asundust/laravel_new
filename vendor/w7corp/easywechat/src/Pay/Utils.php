@@ -2,14 +2,15 @@
 
 namespace EasyWeChat\Pay;
 
-use function base64_encode;
-use function call_user_func_array;
 use EasyWeChat\Kernel\Exceptions\InvalidConfigException;
 use EasyWeChat\Kernel\Support\Str;
 use EasyWeChat\Pay\Contracts\Merchant as MerchantInterface;
 use Exception;
-use function http_build_query;
 use JetBrains\PhpStorm\ArrayShape;
+
+use function base64_encode;
+use function call_user_func_array;
+use function http_build_query;
 use function openssl_sign;
 use function strtoupper;
 use function time;
@@ -163,7 +164,7 @@ class Utils
             throw new InvalidConfigException('Missing v2 secret key.');
         }
 
-        if ('HMAC-SHA256' === $params['signType']) {
+        if ($params['signType'] === 'HMAC-SHA256') {
             $method = function ($str) use ($secretKey) {
                 return hash_hmac('sha256', $str, $secretKey);
             };

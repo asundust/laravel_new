@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace EasyWeChat\OfficialAccount;
 
-use function array_merge;
-use function call_user_func;
 use EasyWeChat\Kernel\Contracts\AccessToken as AccessTokenInterface;
+use EasyWeChat\Kernel\Contracts\JsApiTicket as JsApiTicketInterface;
 use EasyWeChat\Kernel\Contracts\RefreshableAccessToken as RefreshableAccessTokenInterface;
+use EasyWeChat\Kernel\Contracts\RefreshableJsApiTicket as RefreshableJsApiTicketInterface;
 use EasyWeChat\Kernel\Contracts\Server as ServerInterface;
 use EasyWeChat\Kernel\Encryptor;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
@@ -27,18 +27,21 @@ use JetBrains\PhpStorm\Pure;
 use Overtrue\Socialite\Contracts\ProviderInterface as SocialiteProviderInterface;
 use Overtrue\Socialite\Providers\WeChat;
 use Psr\Log\LoggerAwareTrait;
-use function sprintf;
-use function str_contains;
 use Symfony\Component\HttpClient\Response\AsyncContext;
 use Symfony\Component\HttpClient\RetryableHttpClient;
 
+use function array_merge;
+use function call_user_func;
+use function sprintf;
+use function str_contains;
+
 class Application implements ApplicationInterface
 {
-    use InteractWithConfig;
     use InteractWithCache;
-    use InteractWithServerRequest;
-    use InteractWithHttpClient;
     use InteractWithClient;
+    use InteractWithConfig;
+    use InteractWithHttpClient;
+    use InteractWithServerRequest;
     use LoggerAwareTrait;
 
     protected ?Encryptor $encryptor = null;
@@ -49,7 +52,7 @@ class Application implements ApplicationInterface
 
     protected AccessTokenInterface|RefreshableAccessTokenInterface|null $accessToken = null;
 
-    protected ?JsApiTicket $ticket = null;
+    protected ?JsApiTicketInterface $ticket = null;
 
     protected ?\Closure $oauthFactory = null;
 
@@ -137,6 +140,7 @@ class Application implements ApplicationInterface
                 secret: $this->getAccount()->getSecret(),
                 cache: $this->getCache(),
                 httpClient: $this->getHttpClient(),
+                stable: $this->config->get('use_stable_access_token', false),
             );
         }
 
@@ -184,7 +188,7 @@ class Application implements ApplicationInterface
         return $provider;
     }
 
-    public function getTicket(): JsApiTicket
+    public function getTicket(): JsApiTicketInterface|RefreshableJsApiTicketInterface
     {
         if (! $this->ticket) {
             $this->ticket = new JsApiTicket(
@@ -192,13 +196,14 @@ class Application implements ApplicationInterface
                 secret: $this->getAccount()->getSecret(),
                 cache: $this->getCache(),
                 httpClient: $this->getClient(),
+                stable: $this->config->get('use_stable_access_token', false),
             );
         }
 
         return $this->ticket;
     }
 
-    public function setTicket(JsApiTicket $ticket): static
+    public function setTicket(JsApiTicketInterface|RefreshableJsApiTicketInterface $ticket): static
     {
         $this->ticket = $ticket;
 

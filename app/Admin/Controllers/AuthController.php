@@ -2,8 +2,8 @@
 
 namespace App\Admin\Controllers;
 
-use Encore\Admin\Controllers\AuthController as BaseAuthController;
+use Slowlyo\OwlAdmin\Controllers\AuthController as AdminAuthController;
 
-class AuthController extends BaseAuthController
+class AuthController extends AdminAuthController
 {
 }

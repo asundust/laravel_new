@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EasyWeChat\MiniApp;
 
-use function array_merge;
 use EasyWeChat\Kernel\Contracts\AccessToken as AccessTokenInterface;
 use EasyWeChat\Kernel\Contracts\Server as ServerInterface;
 use EasyWeChat\Kernel\Encryptor;
@@ -20,23 +19,25 @@ use EasyWeChat\Kernel\Traits\InteractWithHttpClient;
 use EasyWeChat\Kernel\Traits\InteractWithServerRequest;
 use EasyWeChat\MiniApp\Contracts\Account as AccountInterface;
 use EasyWeChat\MiniApp\Contracts\Application as ApplicationInterface;
-use function is_null;
 use JetBrains\PhpStorm\Pure;
 use Psr\Log\LoggerAwareTrait;
-use function str_contains;
 use Symfony\Component\HttpClient\Response\AsyncContext;
 use Symfony\Component\HttpClient\RetryableHttpClient;
+
+use function array_merge;
+use function is_null;
+use function str_contains;
 
 /**
  * @psalm-suppress PropertyNotSetInConstructor
  */
 class Application implements ApplicationInterface
 {
-    use InteractWithConfig;
     use InteractWithCache;
-    use InteractWithServerRequest;
-    use InteractWithHttpClient;
     use InteractWithClient;
+    use InteractWithConfig;
+    use InteractWithHttpClient;
+    use InteractWithServerRequest;
     use LoggerAwareTrait;
 
     protected ?Encryptor $encryptor = null;
@@ -131,6 +132,7 @@ class Application implements ApplicationInterface
                 secret: $this->getAccount()->getSecret(),
                 cache: $this->getCache(),
                 httpClient: $this->getHttpClient(),
+                stable: $this->config->get('use_stable_access_token', false)
             );
         }
 

@@ -15,20 +15,21 @@ use EasyWeChat\Kernel\ServerResponse;
 use EasyWeChat\Kernel\Traits\DecryptXmlMessage;
 use EasyWeChat\Kernel\Traits\InteractWithHandlers;
 use EasyWeChat\Kernel\Traits\RespondXmlMessage;
-use function func_get_args;
 use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+use function func_get_args;
+
 class Server implements ServerInterface
 {
+    use DecryptXmlMessage;
     use InteractWithHandlers;
     use RespondXmlMessage;
-    use DecryptXmlMessage;
 
     protected ServerRequestInterface $request;
 
-    protected Closure|null $defaultSuiteTicketHandler = null;
+    protected ?Closure $defaultSuiteTicketHandler = null;
 
     /**
      * @throws \Throwable

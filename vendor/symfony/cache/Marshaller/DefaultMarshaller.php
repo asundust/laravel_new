@@ -23,7 +23,7 @@ class DefaultMarshaller implements MarshallerInterface
     private bool $useIgbinarySerialize = true;
     private bool $throwOnSerializationFailure = false;
 
-    public function __construct(bool $useIgbinarySerialize = null, bool $throwOnSerializationFailure = false)
+    public function __construct(?bool $useIgbinarySerialize = null, bool $throwOnSerializationFailure = false)
     {
         if (null === $useIgbinarySerialize) {
             $useIgbinarySerialize = \extension_loaded('igbinary') && version_compare('3.1.6', phpversion('igbinary'), '<=');
@@ -91,7 +91,7 @@ class DefaultMarshaller implements MarshallerInterface
     /**
      * @internal
      */
-    public static function handleUnserializeCallback(string $class)
+    public static function handleUnserializeCallback(string $class): never
     {
         throw new \DomainException('Class not found: '.$class);
     }

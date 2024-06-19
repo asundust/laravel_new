@@ -1,0 +1,39 @@
+{
+    "name": "slowlyo/owl-dict",
+    "alias": "数据字典",
+    "description": "OwlAdmin 数据字典扩展",
+    "type": "library",
+    "keywords": [
+        "owl-admin",
+        "extension",
+        "dict"
+    ],
+    "homepage": "https://gitee.com/slowlyo/owl-dict",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "slowlyo",
+            "email": "slowlyo_email@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.0",
+        "slowlyo/owl-admin": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Slowlyo\\OwlDict\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "extra": {
+        "owl-admin": "Slowlyo\\OwlDict\\OwlDictServiceProvider",
+        "laravel": {
+            "providers": [
+                "Slowlyo\\OwlDict\\OwlDictServiceProvider"
+            ]
+        }
+    }
+}

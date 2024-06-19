@@ -37,7 +37,7 @@ class ResponseCacheStrategy implements ResponseCacheStrategyInterface
     private int $embeddedResponses = 0;
     private bool $isNotCacheableResponseEmbedded = false;
     private int $age = 0;
-    private \DateTimeInterface|null|false $lastModified = null;
+    private \DateTimeInterface|false|null $lastModified = null;
     private array $flagDirectives = [
         'no-cache' => null,
         'no-store' => null,
@@ -54,7 +54,7 @@ class ResponseCacheStrategy implements ResponseCacheStrategyInterface
         'expires' => null,
     ];
 
-    public function add(Response $response)
+    public function add(Response $response): void
     {
         ++$this->embeddedResponses;
 
@@ -95,7 +95,7 @@ class ResponseCacheStrategy implements ResponseCacheStrategyInterface
         }
     }
 
-    public function update(Response $response)
+    public function update(Response $response): void
     {
         // if we have no embedded Response, do nothing
         if (0 === $this->embeddedResponses) {
@@ -148,7 +148,7 @@ class ResponseCacheStrategy implements ResponseCacheStrategyInterface
 
         if (is_numeric($this->ageDirectives['expires'])) {
             $date = clone $response->getDate();
-            $date->modify('+'.($this->ageDirectives['expires'] + $this->age).' seconds');
+            $date = $date->modify('+'.($this->ageDirectives['expires'] + $this->age).' seconds');
             $response->setExpires($date);
         }
     }
@@ -209,7 +209,7 @@ class ResponseCacheStrategy implements ResponseCacheStrategyInterface
      * as cacheable in a public (shared) cache, but did not provide an explicit lifetime that would serve
      * as an upper bound. In this case, we can proceed and possibly keep the directive on the final response.
      */
-    private function storeRelativeAgeDirective(string $directive, ?int $value, int $age, bool $isHeuristicallyCacheable)
+    private function storeRelativeAgeDirective(string $directive, ?int $value, int $age, bool $isHeuristicallyCacheable): void
     {
         if (null === $value) {
             if ($isHeuristicallyCacheable) {

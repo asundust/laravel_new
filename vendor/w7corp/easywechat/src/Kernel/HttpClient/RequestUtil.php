@@ -3,22 +3,24 @@
 namespace EasyWeChat\Kernel\HttpClient;
 
 use const ARRAY_FILTER_USE_KEY;
-use function array_key_exists;
-use EasyWeChat\Kernel\Support\UserAgent;
-use EasyWeChat\Kernel\Support\Xml;
-use function in_array;
-use InvalidArgumentException;
-use function is_array;
-use function is_string;
-use JetBrains\PhpStorm\ArrayShape;
-use function json_encode;
 use const JSON_FORCE_OBJECT;
 use const JSON_UNESCAPED_UNICODE;
+
+use EasyWeChat\Kernel\Support\UserAgent;
+use EasyWeChat\Kernel\Support\Xml;
+use InvalidArgumentException;
+use JetBrains\PhpStorm\ArrayShape;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\HttpClient\Retry\GenericRetryStrategy;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+
+use function array_key_exists;
+use function in_array;
+use function is_array;
+use function is_string;
+use function json_encode;
 
 class RequestUtil
 {
@@ -80,10 +82,15 @@ class RequestUtil
             return $options;
         }
 
+        $contentType = $options['headers']['Content-Type'] ?? $options['headers']['content-type'] ?? null;
         $name = in_array($method, ['GET', 'HEAD', 'DELETE']) ? 'query' : 'body';
 
-        if (($options['headers']['Content-Type'] ?? $options['headers']['content-type'] ?? null) === 'application/json') {
+        if ($contentType === 'application/json') {
             $name = 'json';
+        }
+
+        if ($contentType === 'text/xml') {
+            $name = 'xml';
         }
 
         foreach ($options as $key => $value) {
@@ -102,6 +109,8 @@ class RequestUtil
      */
     public static function formatBody(array $options): array
     {
+        $contentType = $options['headers']['Content-Type'] ?? $options['headers']['content-type'] ?? null;
+
         if (isset($options['xml'])) {
             if (is_array($options['xml'])) {
                 $options['xml'] = Xml::build($options['xml']);
@@ -111,8 +120,7 @@ class RequestUtil
                 throw new InvalidArgumentException('The type of `xml` must be string or array.');
             }
 
-            /** @phpstan-ignore-next-line */
-            if (! isset($options['headers']['Content-Type']) && ! isset($options['headers']['content-type'])) {
+            if (! $contentType) {
                 /** @phpstan-ignore-next-line */
                 $options['headers']['Content-Type'] = [$options['headers'][] = 'Content-Type: text/xml'];
             }
@@ -134,8 +142,7 @@ class RequestUtil
                 throw new InvalidArgumentException('The type of `json` must be string or array.');
             }
 
-            /** @phpstan-ignore-next-line */
-            if (! isset($options['headers']['Content-Type']) && ! isset($options['headers']['content-type'])) {
+            if (! $contentType) {
                 /** @phpstan-ignore-next-line */
                 $options['headers']['Content-Type'] = [$options['headers'][] = 'Content-Type: application/json'];
             }

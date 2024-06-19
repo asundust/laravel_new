@@ -1,0 +1,33 @@
+{
+    "name": "slowlyo/laravel-support",
+    "description": "php/laravel部分代码封装",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Slowlyo",
+            "email": "slowlyo_email@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4.0",
+        "laravel/framework": ">=8",
+        "ext-json": "*",
+        "ext-bcmath": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Slowlyo\\Support\\": "src/"
+        },
+        "files": [
+            "./src/functions.php"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Slowlyo\\Support\\SupportServiceProvider"
+            ]
+        }
+    }
+}

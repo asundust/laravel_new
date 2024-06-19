@@ -2,14 +2,16 @@
 
 namespace EasyWeChat\Kernel\Support;
 
-use function base64_decode;
-use function base64_encode;
+use const OPENSSL_RAW_DATA;
+
 use EasyWeChat\Kernel\Contracts\Aes;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
+
+use function base64_decode;
+use function base64_encode;
 use function openssl_decrypt;
 use function openssl_encrypt;
 use function openssl_error_string;
-use const OPENSSL_RAW_DATA;
 
 class AesGcm implements Aes
 {
@@ -18,7 +20,7 @@ class AesGcm implements Aes
     /**
      * @throws InvalidArgumentException
      */
-    public static function encrypt(string $plaintext, string $key, string $iv = null, string $aad = ''): string
+    public static function encrypt(string $plaintext, string $key, ?string $iv = null, string $aad = ''): string
     {
         $ciphertext = openssl_encrypt(
             $plaintext,
@@ -31,7 +33,7 @@ class AesGcm implements Aes
             self::BLOCK_SIZE
         );
 
-        if (false === $ciphertext) {
+        if ($ciphertext === false) {
             throw new InvalidArgumentException(openssl_error_string() ?: 'Encrypt failed');
         }
 
@@ -41,7 +43,7 @@ class AesGcm implements Aes
     /**
      * @throws InvalidArgumentException
      */
-    public static function decrypt(string $ciphertext, string $key, string $iv = null, string $aad = ''): string
+    public static function decrypt(string $ciphertext, string $key, ?string $iv = null, string $aad = ''): string
     {
         $ciphertext = base64_decode($ciphertext);
 
@@ -51,7 +53,7 @@ class AesGcm implements Aes
 
         $plaintext = openssl_decrypt($ciphertext, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, (string) $iv, $tag, $aad);
 
-        if (false === $plaintext) {
+        if ($plaintext === false) {
             throw new InvalidArgumentException(openssl_error_string() ?: 'Decrypt failed');
         }
 

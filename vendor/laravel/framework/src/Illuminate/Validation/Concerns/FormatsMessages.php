@@ -5,6 +5,7 @@ namespace Illuminate\Validation\Concerns;
 use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 trait FormatsMessages
@@ -38,9 +39,9 @@ trait FormatsMessages
         $customKey = "validation.custom.{$attribute}.{$lowerRule}";
 
         $customMessage = $this->getCustomMessageFromTranslator(
-                in_array($rule, $this->sizeRules)
-                    ? [$customKey.".{$this->getAttributeType($attribute)}", $customKey]
-                    : $customKey
+            in_array($rule, $this->sizeRules)
+                ? [$customKey.".{$this->getAttributeType($attribute)}", $customKey]
+                : $customKey
         );
 
         // First we check for a custom defined validation message for the attribute
@@ -218,15 +219,13 @@ trait FormatsMessages
         // We assume that the attributes present in the file array are files so that
         // means that if the attribute does not have a numeric rule and the files
         // list doesn't have it we'll just consider it a string by elimination.
-        if ($this->hasRule($attribute, $this->numericRules)) {
-            return 'numeric';
-        } elseif ($this->hasRule($attribute, ['Array'])) {
-            return 'array';
-        } elseif ($this->getValue($attribute) instanceof UploadedFile) {
-            return 'file';
-        }
-
-        return 'string';
+        return match (true) {
+            $this->hasRule($attribute, $this->numericRules) => 'numeric',
+            $this->hasRule($attribute, ['Array']) => 'array',
+            $this->getValue($attribute) instanceof UploadedFile,
+            $this->getValue($attribute) instanceof File => 'file',
+            default => 'string',
+        };
     }
 
     /**
@@ -362,7 +361,7 @@ trait FormatsMessages
      * @param  \Closure|null  $modifier
      * @return string
      */
-    protected function replaceIndexOrPositionPlaceholder($message, $attribute, $placeholder, Closure $modifier = null)
+    protected function replaceIndexOrPositionPlaceholder($message, $attribute, $placeholder, ?Closure $modifier = null)
     {
         $segments = explode('.', $attribute);
 
@@ -440,6 +439,10 @@ trait FormatsMessages
     {
         if (isset($this->customValues[$attribute][$value])) {
             return $this->customValues[$attribute][$value];
+        }
+
+        if (is_array($value)) {
+            return 'array';
         }
 
         $key = "validation.values.{$attribute}.{$value}";

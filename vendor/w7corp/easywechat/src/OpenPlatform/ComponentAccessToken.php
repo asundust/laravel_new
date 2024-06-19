@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace EasyWeChat\OpenPlatform;
 
-use function abs;
 use EasyWeChat\Kernel\Contracts\RefreshableAccessToken as RefreshableAccessTokenInterface;
 use EasyWeChat\Kernel\Exceptions\HttpException;
 use EasyWeChat\OpenPlatform\Contracts\VerifyTicket as VerifyTicketInterface;
-use function intval;
 use JetBrains\PhpStorm\ArrayShape;
-use function json_encode;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Psr16Cache;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+
+use function abs;
+use function intval;
+use function json_encode;
 
 class ComponentAccessToken implements RefreshableAccessTokenInterface
 {

@@ -52,6 +52,31 @@ $server->handleRefunded(function (Message $message, \Closure $next) {
 return $server->serve();
 ```
 
+🚨 注意：经网友发现官方仍存在[使用 v2 模式的退款推送](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_16&index=10)，所以如果你的退款逻辑有异常，请参考以下方式实现（需要配置 v2 API key）：
+
+> 网友反馈的问题：https://github.com/w7corp/easywechat/issues/2737
+> 目前已知的情况是：微信商户平台填写的 API 回调地址，然后在商户平台手动处理退款的。
+
+```php
+// 建议使用单独的路由处理退款！
+$server = $app->getServer();
+
+// 推送消息，已解密
+// 结构参考：https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_16&index=10
+$message = $server->getReqeustMessage();
+
+// 你的逻辑...
+
+// 返回 SUCCESS 或者 FAIL 等其他状态
+return new \Nyholm\Psr7\Response(
+        200, [],
+      \EasyWeChat\Kernel\Support\Xml::build([
+        'return_code' => 'SUCCESS',
+        'return_msg' => 'OK'
+      ])
+);
+```
+
 ## 其它事件处理
 
 以上便捷方法都只处理了**成功状态**，其它状态，可以通过自定义事件处理中间件的形式处理：

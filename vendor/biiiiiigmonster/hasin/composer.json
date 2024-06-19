@@ -1,0 +1,50 @@
+{
+    "name": "biiiiiigmonster/hasin",
+    "description": "Laravel framework relation has in implement",
+    "type": "library",
+    "keywords": ["laravel", "orm", "relation", "whereHas"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "YunFeng Lu",
+            "email": "603707288@qq.com"
+        }
+    ],
+    "require": {
+        "laravel/framework": "^11"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.1",
+        "orchestra/testbench": "^9.0",
+        "pestphp/pest": "^2.0",
+        "pestphp/pest-plugin-laravel": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "BiiiiiigMonster\\Hasin\\": "src",
+            "BiiiiiigMonster\\Hasin\\Database\\Factories\\": "database/factories"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "BiiiiiigMonster\\Hasin\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "BiiiiiigMonster\\Hasin\\HasinServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

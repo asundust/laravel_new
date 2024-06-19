@@ -11,7 +11,7 @@ $config = [
     'app_id' => 'wx3cf0f39249eb0exx',
     'secret' => 'f1c242f4f28f735d4687abb469072axx',
     'token' => 'easywechat',
-    'aes_key' => '......'
+    'aes_key' => '......',
 
     /**
      * 接口请求相关配置，超时时间等，具体可用参数请参考：
@@ -25,7 +25,7 @@ $config = [
         'retry' => true, // 使用默认重试配置
         //  'retry' => [
         //      // 仅以下状态码重试
-        //      'http_codes' => [429, 500]
+        //      'status_codes' => [429, 500]
         //       // 最大重试次数
         //      'max_retries' => 3,
         //      // 请求间隔 (毫秒)

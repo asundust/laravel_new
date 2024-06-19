@@ -3,6 +3,7 @@
 namespace EasyWeChat\Kernel\Support;
 
 use EasyWeChat\Kernel\Exceptions\InvalidConfigException;
+
 use function file_exists;
 use function file_get_contents;
 use function openssl_x509_parse;
@@ -25,7 +26,7 @@ class PublicKey
     {
         $info = openssl_x509_parse($this->certificate);
 
-        if (false === $info || ! isset($info['serialNumberHex'])) {
+        if ($info === false || ! isset($info['serialNumberHex'])) {
             throw new InvalidConfigException('Read the $certificate failed, please check it whether or nor correct');
         }
 

@@ -1,17 +1,15 @@
 <?php
 
-use App\Admin\Controllers\ConfigController;
-use App\Admin\Controllers\HomeController;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Route;
 
-Admin::routes();
+Route::get('/admin', fn () => Slowlyo\OwlAdmin\Admin::view());
 
 Route::group([
+    'domain' => config('admin.route.domain'),
     'prefix' => config('admin.route.prefix'),
-    'namespace' => config('admin.route.namespace'),
     'middleware' => config('admin.route.middleware'),
-    'as' => config('admin.route.prefix') . '.',
 ], function (Router $router) {
-    $router->get('/', [HomeController::class, 'index'])->name('admin.home');
-    $router->get('config/refresh', [ConfigController::class, 'refresh'])->name('admin.config.refresh'); // 刷新配置缓存
+    $router->resource('dashboard', App\Admin\Controllers\HomeController::class);
+    $router->resource('system/settings', App\Admin\Controllers\SettingController::class);
 });

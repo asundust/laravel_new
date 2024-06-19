@@ -25,17 +25,6 @@ class DumpCommand extends Command
                 {--prune : Delete all existing migration files}';
 
     /**
-     * The name of the console command.
-     *
-     * This name is used to identify the command during lazy loading.
-     *
-     * @var string|null
-     *
-     * @deprecated
-     */
-    protected static $defaultName = 'schema:dump';
-
-    /**
      * The console command description.
      *
      * @var string
@@ -47,7 +36,7 @@ class DumpCommand extends Command
      *
      * @param  \Illuminate\Database\ConnectionResolverInterface  $connections
      * @param  \Illuminate\Contracts\Events\Dispatcher  $dispatcher
-     * @return int
+     * @return void
      */
     public function handle(ConnectionResolverInterface $connections, Dispatcher $dispatcher)
     {
@@ -80,8 +69,12 @@ class DumpCommand extends Command
      */
     protected function schemaState(Connection $connection)
     {
+        $migrations = Config::get('database.migrations', 'migrations');
+
+        $migrationTable = is_array($migrations) ? ($migrations['table'] ?? 'migrations') : $migrations;
+
         return $connection->getSchemaState()
-                ->withMigrationTable($connection->getTablePrefix().Config::get('database.migrations', 'migrations'))
+                ->withMigrationTable($connection->getTablePrefix().$migrationTable)
                 ->handleOutputUsing(function ($type, $buffer) {
                     $this->output->write($buffer);
                 });

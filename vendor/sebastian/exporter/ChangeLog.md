@@ -2,6 +2,64 @@
 
 All notable changes are documented in this file using the [Keep a CHANGELOG](https://keepachangelog.com/) principles.
 
+## [6.0.3] - 2024-06-17
+
+### Fixed
+
+* Fixed code coverage metadata
+
+## [6.0.2] - 2024-06-17 [YANKED]
+
+### Changed
+
+* [#58](https://github.com/sebastianbergmann/exporter/pull/58): Remove unnecessary `sprintf()` in hot path
+
+## [6.0.1] - 2024-03-02
+
+### Changed
+
+* Do not use implicitly nullable parameters
+
+## [6.0.0] - 2024-02-02
+
+### Removed
+
+* This component is no longer supported on PHP 8.1
+
+## [5.1.2] - 2024-03-02
+
+### Changed
+
+* Do not use implicitly nullable parameters
+
+## [5.1.1] - 2023-09-24
+
+### Changed
+
+* [#52](https://github.com/sebastianbergmann/exporter/pull/52): Optimize export of large arrays and object graphs
+
+## [5.1.0] - 2023-09-18
+
+### Changed
+
+* [#51](https://github.com/sebastianbergmann/exporter/pull/51): Export arrays using short array syntax
+
+## [5.0.1] - 2023-09-08
+
+### Fixed
+
+* [#49](https://github.com/sebastianbergmann/exporter/issues/49): `Exporter::toArray()` changes `SplObjectStorage` index
+
+## [5.0.0] - 2023-02-03
+
+### Changed
+
+* [#42](https://github.com/sebastianbergmann/exporter/pull/42): Improve export of enumerations
+
+### Removed
+
+* This component is no longer supported on PHP 7.3, PHP 7.4 and PHP 8.0
+
 ## [4.0.5] - 2022-09-14
 
 ### Fixed
@@ -66,6 +124,15 @@ All notable changes are documented in this file using the [Keep a CHANGELOG](htt
 
 * Remove HHVM-specific code that is no longer needed
 
+[6.0.3]: https://github.com/sebastianbergmann/exporter/compare/fe0dca49a60d34440e2f086951952dd13aa9a5d2...6.0.3
+[6.0.2]: https://github.com/sebastianbergmann/exporter/compare/6.0.1...fe0dca49a60d34440e2f086951952dd13aa9a5d2
+[6.0.1]: https://github.com/sebastianbergmann/exporter/compare/6.0.0...6.0.1
+[6.0.0]: https://github.com/sebastianbergmann/exporter/compare/5.1...6.0.0
+[5.1.2]: https://github.com/sebastianbergmann/exporter/compare/5.1.1...5.1.2
+[5.1.1]: https://github.com/sebastianbergmann/exporter/compare/5.1.0...5.1.1
+[5.1.0]: https://github.com/sebastianbergmann/exporter/compare/5.0.1...5.1.0
+[5.0.1]: https://github.com/sebastianbergmann/exporter/compare/5.0.0...5.0.1
+[5.0.0]: https://github.com/sebastianbergmann/exporter/compare/4.0.5...5.0.0
 [4.0.5]: https://github.com/sebastianbergmann/exporter/compare/4.0.4...4.0.5
 [4.0.4]: https://github.com/sebastianbergmann/exporter/compare/4.0.3...4.0.4
 [4.0.3]: https://github.com/sebastianbergmann/exporter/compare/4.0.2...4.0.3

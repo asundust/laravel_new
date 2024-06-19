@@ -89,6 +89,17 @@ class HashManager extends Manager implements Hasher
     }
 
     /**
+     * Determine if a given string is already hashed.
+     *
+     * @param  string  $value
+     * @return bool
+     */
+    public function isHashed($value)
+    {
+        return $this->driver()->info($value)['algo'] !== null;
+    }
+
+    /**
      * Get the default driver name.
      *
      * @return string

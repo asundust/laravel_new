@@ -6,126 +6,122 @@ namespace Yansongda\Pay\Provider;
 
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Yansongda\Pay\Event;
+use Yansongda\Artful\Artful;
+use Yansongda\Artful\Event;
+use Yansongda\Artful\Exception\ContainerException;
+use Yansongda\Artful\Exception\InvalidParamsException;
+use Yansongda\Artful\Exception\ServiceNotFoundException;
+use Yansongda\Artful\Plugin\AddPayloadBodyPlugin;
+use Yansongda\Artful\Plugin\ParserPlugin;
+use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Contract\ProviderInterface;
+use Yansongda\Pay\Event\CallbackReceived;
+use Yansongda\Pay\Event\MethodCalled;
 use Yansongda\Pay\Exception\Exception;
-use Yansongda\Pay\Exception\InvalidParamsException;
 use Yansongda\Pay\Pay;
-use Yansongda\Pay\Plugin\ParserPlugin;
-use Yansongda\Pay\Plugin\Unipay\CallbackPlugin;
-use Yansongda\Pay\Plugin\Unipay\LaunchPlugin;
-use Yansongda\Pay\Plugin\Unipay\PreparePlugin;
-use Yansongda\Pay\Plugin\Unipay\RadarSignPlugin;
+use Yansongda\Pay\Plugin\Unipay\AddRadarPlugin;
+use Yansongda\Pay\Plugin\Unipay\Open\AddPayloadSignaturePlugin;
+use Yansongda\Pay\Plugin\Unipay\Open\CallbackPlugin;
+use Yansongda\Pay\Plugin\Unipay\Open\StartPlugin;
+use Yansongda\Pay\Plugin\Unipay\Open\VerifySignaturePlugin;
 use Yansongda\Supports\Collection;
 use Yansongda\Supports\Str;
 
 /**
- * @method ResponseInterface web(array $order) 电脑支付
+ * @method ResponseInterface|Rocket web(array $order)  电脑支付
+ * @method ResponseInterface|Rocket h5(array $order)   H5支付
+ * @method Collection|Rocket        pos(array $order)  刷卡支付（付款码，被扫码）
+ * @method Collection|Rocket        scan(array $order) 扫码支付（摄像头，主动扫）
  */
-class Unipay extends AbstractProvider
+class Unipay implements ProviderInterface
 {
     public const URL = [
         Pay::MODE_NORMAL => 'https://gateway.95516.com/',
         Pay::MODE_SANDBOX => 'https://gateway.test.95516.com/',
-        Pay::MODE_SERVICE => 'https://gateway.95516.com',
+        Pay::MODE_SERVICE => 'https://gateway.95516.com/',
     ];
 
     /**
-     * @return \Psr\Http\Message\MessageInterface|\Yansongda\Supports\Collection|array|null
-     *
-     * @throws \Yansongda\Pay\Exception\ContainerException
-     * @throws \Yansongda\Pay\Exception\InvalidParamsException
-     * @throws \Yansongda\Pay\Exception\ServiceNotFoundException
+     * @throws ContainerException
+     * @throws InvalidParamsException
+     * @throws ServiceNotFoundException
      */
-    public function __call(string $shortcut, array $params)
+    public function __call(string $shortcut, array $params): null|Collection|MessageInterface|Rocket
     {
-        $plugin = '\\Yansongda\\Pay\\Plugin\\Unipay\\Shortcut\\'.
-            Str::studly($shortcut).'Shortcut';
+        $plugin = '\Yansongda\Pay\Shortcut\Unipay\\'.Str::studly($shortcut).'Shortcut';
 
-        return $this->call($plugin, ...$params);
+        return Artful::shortcut($plugin, ...$params);
     }
 
     /**
-     * @param string|array $order
-     *
-     * @return array|\Yansongda\Supports\Collection
-     *
-     * @throws \Yansongda\Pay\Exception\ContainerException
-     * @throws \Yansongda\Pay\Exception\InvalidParamsException
-     * @throws \Yansongda\Pay\Exception\ServiceNotFoundException
+     * @throws ContainerException
+     * @throws InvalidParamsException
      */
-    public function find($order)
+    public function pay(array $plugins, array $params): null|Collection|MessageInterface|Rocket
     {
-        if (!is_array($order)) {
-            throw new InvalidParamsException(Exception::UNIPAY_FIND_STRING_NOT_SUPPORTED);
-        }
+        return Artful::artful($plugins, $params);
+    }
 
-        Event::dispatch(new Event\MethodCalled('unipay', __METHOD__, $order, null));
+    /**
+     * @throws ContainerException
+     * @throws InvalidParamsException
+     * @throws ServiceNotFoundException
+     */
+    public function query(array $order): Collection|Rocket
+    {
+        Event::dispatch(new MethodCalled('unipay', __METHOD__, $order, null));
 
         return $this->__call('query', [$order]);
     }
 
     /**
-     * @param string|array $order
-     *
-     * @return array|\Yansongda\Supports\Collection
-     *
-     * @throws \Yansongda\Pay\Exception\ContainerException
-     * @throws \Yansongda\Pay\Exception\InvalidParamsException
-     * @throws \Yansongda\Pay\Exception\ServiceNotFoundException
+     * @throws ContainerException
+     * @throws InvalidParamsException
+     * @throws ServiceNotFoundException
      */
-    public function cancel($order)
+    public function cancel(array $order): Collection|Rocket
     {
-        if (!is_array($order)) {
-            throw new InvalidParamsException(Exception::UNIPAY_CANCEL_STRING_NOT_SUPPORTED);
-        }
-
-        Event::dispatch(new Event\MethodCalled('unipay', __METHOD__, $order, null));
+        Event::dispatch(new MethodCalled('unipay', __METHOD__, $order, null));
 
         return $this->__call('cancel', [$order]);
     }
 
     /**
-     * @param string|array $order
-     *
-     * @return array|\Yansongda\Supports\Collection
-     *
-     * @throws \Yansongda\Pay\Exception\InvalidParamsException
+     * @throws InvalidParamsException
      */
-    public function close($order)
+    public function close(array $order): Collection|Rocket
     {
-        throw new InvalidParamsException(Exception::METHOD_NOT_SUPPORTED, 'Unipay does not support close api');
+        throw new InvalidParamsException(Exception::PARAMS_METHOD_NOT_SUPPORTED, '参数异常: 银联不支持 close API');
     }
 
     /**
-     * @return array|\Yansongda\Supports\Collection
-     *
-     * @throws \Yansongda\Pay\Exception\ContainerException
-     * @throws \Yansongda\Pay\Exception\InvalidParamsException
-     * @throws \Yansongda\Pay\Exception\ServiceNotFoundException
+     * @throws ContainerException
+     * @throws InvalidParamsException
+     * @throws ServiceNotFoundException
      */
-    public function refund(array $order)
+    public function refund(array $order): Collection|Rocket
     {
-        Event::dispatch(new Event\MethodCalled('unipay', __METHOD__, $order, null));
+        Event::dispatch(new MethodCalled('unipay', __METHOD__, $order, null));
 
         return $this->__call('refund', [$order]);
     }
 
     /**
-     * @param array|\Psr\Http\Message\ServerRequestInterface|null $contents
-     *
-     * @throws \Yansongda\Pay\Exception\ContainerException
-     * @throws \Yansongda\Pay\Exception\InvalidParamsException
+     * @throws ContainerException
+     * @throws InvalidParamsException
      */
-    public function callback($contents = null, ?array $params = null): Collection
+    public function callback(null|array|ServerRequestInterface $contents = null, ?array $params = null): Collection|Rocket
     {
         $request = $this->getCallbackParams($contents);
 
-        Event::dispatch(new Event\CallbackReceived('unipay', $request->all(), $params, null));
+        Event::dispatch(new CallbackReceived('unipay', $request->all(), $params, null));
 
         return $this->pay(
-            [CallbackPlugin::class], $request->merge($params)->all()
+            [CallbackPlugin::class],
+            $request->merge($params)->all()
         );
     }
 
@@ -137,17 +133,13 @@ class Unipay extends AbstractProvider
     public function mergeCommonPlugins(array $plugins): array
     {
         return array_merge(
-            [PreparePlugin::class],
+            [StartPlugin::class],
             $plugins,
-            [RadarSignPlugin::class],
-            [LaunchPlugin::class, ParserPlugin::class],
+            [AddPayloadSignaturePlugin::class, AddPayloadBodyPlugin::class, AddRadarPlugin::class, VerifySignaturePlugin::class, ParserPlugin::class],
         );
     }
 
-    /**
-     * @param array|ServerRequestInterface|null $contents
-     */
-    protected function getCallbackParams($contents = null): Collection
+    protected function getCallbackParams(null|array|ServerRequestInterface $contents = null): Collection
     {
         if (is_array($contents)) {
             return Collection::wrap($contents);
