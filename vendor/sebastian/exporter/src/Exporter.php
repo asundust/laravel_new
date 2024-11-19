@@ -9,6 +9,7 @@
  */
 namespace SebastianBergmann\Exporter;
 
+use const COUNT_RECURSIVE;
 use function bin2hex;
 use function count;
 use function get_resource_type;
@@ -29,8 +30,10 @@ use function spl_object_id;
 use function sprintf;
 use function str_repeat;
 use function str_replace;
+use function strtr;
 use function var_export;
 use BackedEnum;
+use Google\Protobuf\Internal\Message;
 use ReflectionObject;
 use SebastianBergmann\RecursionContext\Context as RecursionContext;
 use SplObjectStorage;
@@ -38,6 +41,19 @@ use UnitEnum;
 
 final readonly class Exporter
 {
+    /**
+     * @var non-negative-int
+     */
+    private int $shortenArraysLongerThan;
+
+    /**
+     * @param non-negative-int $shortenArraysLongerThan
+     */
+    public function __construct(int $shortenArraysLongerThan = 0)
+    {
+        $this->shortenArraysLongerThan = $shortenArraysLongerThan;
+    }
+
     /**
      * Exports a value as a string.
      *
@@ -56,32 +72,26 @@ final readonly class Exporter
         return $this->recursiveExport($value, $indentation);
     }
 
+    /**
+     * @param array<mixed> $data
+     */
     public function shortenedRecursiveExport(array &$data, ?RecursionContext $processed = null): string
     {
-        $result = [];
-
         if (!$processed) {
             $processed = new RecursionContext;
         }
 
-        $array = $data;
+        $overallCount = @count($data, COUNT_RECURSIVE);
+        $counter      = 0;
 
-        /* @noinspection UnusedFunctionResultInspection */
-        $processed->add($data);
+        $export = $this->shortenedCountedRecursiveExport($data, $processed, $counter);
 
-        foreach ($array as $key => $value) {
-            if (is_array($value)) {
-                if ($processed->contains($data[$key]) !== false) {
-                    $result[] = '*RECURSION*';
-                } else {
-                    $result[] = '[' . $this->shortenedRecursiveExport($data[$key], $processed) . ']';
-                }
-            } else {
-                $result[] = $this->shortenedExport($value);
-            }
+        if ($this->shortenArraysLongerThan > 0 &&
+            $overallCount > $this->shortenArraysLongerThan) {
+            $export .= sprintf(', ...%d more elements', $overallCount - $this->shortenArraysLongerThan);
         }
 
-        return implode(', ', $result);
+        return $export;
     }
 
     /**
@@ -96,7 +106,7 @@ final readonly class Exporter
     public function shortenedExport(mixed $value): string
     {
         if (is_string($value)) {
-            $string = str_replace("\n", '', $this->export($value));
+            $string = str_replace("\n", '', $this->exportString($value));
 
             if (mb_strlen($string) > 40) {
                 return mb_substr($string, 0, 30) . '...' . mb_substr($string, -7);
@@ -123,12 +133,10 @@ final readonly class Exporter
         }
 
         if (is_object($value)) {
-            $numberOfProperties = count((new ReflectionObject($value))->getProperties());
-
             return sprintf(
                 '%s Object (%s)',
                 $value::class,
-                $numberOfProperties > 0 ? '...' : '',
+                $this->countProperties($value) > 0 ? '...' : '',
             );
         }
 
@@ -145,6 +153,8 @@ final readonly class Exporter
     /**
      * Converts an object to an array containing all of its private, protected
      * and public properties.
+     *
+     * @return array<mixed>
      */
     public function toArray(mixed $value): array
     {
@@ -195,6 +205,53 @@ final readonly class Exporter
         return $array;
     }
 
+    public function countProperties(object $value): int
+    {
+        if ($this->canBeReflected($value)) {
+            $numberOfProperties = count((new ReflectionObject($value))->getProperties());
+        } else {
+            // @codeCoverageIgnoreStart
+            $numberOfProperties = count($this->toArray($value));
+            // @codeCoverageIgnoreEnd
+        }
+
+        return $numberOfProperties;
+    }
+
+    /**
+     * @param array<mixed> $data
+     */
+    private function shortenedCountedRecursiveExport(array &$data, RecursionContext $processed, int &$counter): string
+    {
+        $result = [];
+
+        $array = $data;
+
+        /* @noinspection UnusedFunctionResultInspection */
+        $processed->add($data);
+
+        foreach ($array as $key => $value) {
+            if ($this->shortenArraysLongerThan > 0 &&
+                $counter > $this->shortenArraysLongerThan) {
+                break;
+            }
+
+            if (is_array($value)) {
+                if ($processed->contains($data[$key]) !== false) {
+                    $result[] = '*RECURSION*';
+                } else {
+                    $result[] = '[' . $this->shortenedCountedRecursiveExport($data[$key], $processed, $counter) . ']';
+                }
+            } else {
+                $result[] = $this->shortenedExport($value);
+            }
+
+            $counter++;
+        }
+
+        return implode(', ', $result);
+    }
+
     private function recursiveExport(mixed &$value, int $indentation = 0, ?RecursionContext $processed = null): string
     {
         if ($value === null) {
@@ -213,6 +270,7 @@ final readonly class Exporter
             return 'resource (closed)';
         }
 
+        /** @phpstan-ignore function.impossibleType */
         if (is_resource($value)) {
             return sprintf(
                 'resource(%d) of type (%s)',
@@ -284,30 +342,34 @@ final readonly class Exporter
         }
 
         return "'" .
-            str_replace(
-                '<lf>',
-                "\n",
-                str_replace(
-                    ["\r\n", "\n\r", "\r", "\n"],
-                    ['\r\n<lf>', '\n\r<lf>', '\r<lf>', '\n<lf>'],
-                    $value,
-                ),
+            strtr(
+                $value,
+                [
+                    "\r\n" => '\r\n' . "\n",
+                    "\n\r" => '\n\r' . "\n",
+                    "\r"   => '\r' . "\n",
+                    "\n"   => '\n' . "\n",
+                ],
             ) .
             "'";
     }
 
+    /**
+     * @param array<mixed> $value
+     */
     private function exportArray(array &$value, RecursionContext $processed, int $indentation): string
     {
         if (($key = $processed->contains($value)) !== false) {
             return 'Array &' . $key;
         }
 
-        $array      = $value;
-        $key        = $processed->add($value);
-        $values     = '';
-        $whitespace = str_repeat(' ', 4 * $indentation);
+        $array  = $value;
+        $key    = $processed->add($value);
+        $values = '';
 
         if (count($array) > 0) {
+            $whitespace = str_repeat(' ', 4 * $indentation);
+
             foreach ($array as $k => $v) {
                 $values .=
                     $whitespace
@@ -334,11 +396,12 @@ final readonly class Exporter
 
         $processed->add($value);
 
-        $array      = $this->toArray($value);
-        $buffer     = '';
-        $whitespace = str_repeat(' ', 4 * $indentation);
+        $array  = $this->toArray($value);
+        $buffer = '';
 
         if (count($array) > 0) {
+            $whitespace = str_repeat(' ', 4 * $indentation);
+
             foreach ($array as $k => $v) {
                 $buffer .=
                     $whitespace
@@ -353,5 +416,17 @@ final readonly class Exporter
         }
 
         return $class . ' Object #' . spl_object_id($value) . ' (' . $buffer . ')';
+    }
+
+    private function canBeReflected(object $object): bool
+    {
+        /** @phpstan-ignore class.notFound */
+        if ($object instanceof Message) {
+            // @codeCoverageIgnoreStart
+            return false;
+            // @codeCoverageIgnoreEnd
+        }
+
+        return true;
     }
 }

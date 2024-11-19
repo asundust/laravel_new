@@ -49,14 +49,9 @@ class PostgresBuilder extends Builder
 
         $table = $this->connection->getTablePrefix().$table;
 
-        foreach ($this->getTables() as $value) {
-            if (strtolower($table) === strtolower($value['name'])
-                && strtolower($schema) === strtolower($value['schema'])) {
-                return true;
-            }
-        }
-
-        return false;
+        return (bool) $this->connection->scalar(
+            $this->grammar->compileTableExists($schema, $table)
+        );
     }
 
     /**
@@ -254,7 +249,7 @@ class PostgresBuilder extends Builder
      * @param  string  $reference
      * @return array
      */
-    protected function parseSchemaAndTable($reference)
+    public function parseSchemaAndTable($reference)
     {
         $parts = explode('.', $reference);
 

@@ -38,6 +38,8 @@ composer require slowlyo/owl-dict
 admin_dict()->getValue('user.status', '未知');
 // 使用容器
 app('admin.dict')->getValue('user.status', '未知');
+// 使用接口获取字典选项 (该接口会返回 [['label' => xx, 'value' => xx]] 格式的数据
+/admin_dict/options?path=gender
 ```
 
 ### 可用方法

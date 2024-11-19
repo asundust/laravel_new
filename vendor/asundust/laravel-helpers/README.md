@@ -5,7 +5,7 @@
 <a href="https://packagist.org/packages/asundust/laravel-helpers"><img src="https://img.shields.io/packagist/dt/asundust/laravel-helpers" alt="Total Downloads"></a>
 <a href="https://packagist.org/packages/asundust/laravel-helpers"><img src="https://img.shields.io/packagist/v/asundust/laravel-helpers" alt="Latest Stable Version"></a>
 
-Laravel 快捷函数 / Quick Function for Laravel.
+Laravel 快捷函数 / Quick Function for Laravel
 
 ## 安装 / Installation
 
@@ -15,4 +15,4 @@ Laravel 快捷函数 / Quick Function for Laravel.
 
 ## License
 
-[The MIT License (MIT)](https://opensource.org/licenses/MIT) [MIT license](LICENSE.md).
+[The MIT License (MIT)](LICENSE.md)

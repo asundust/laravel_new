@@ -7,6 +7,6 @@ namespace LaravelLang\Config\Data\Hidden;
 class ModelsData
 {
     public function __construct(
-        public string $directory
+        public array|string $directory
     ) {}
 }

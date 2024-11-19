@@ -9,6 +9,9 @@
  */
 namespace SebastianBergmann\Type;
 
+/**
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for this library
+ */
 final class NeverType extends Type
 {
     public function isAssignable(Type $other): bool
@@ -17,7 +20,7 @@ final class NeverType extends Type
     }
 
     /**
-     * @psalm-return 'never'
+     * @return 'never'
      */
     public function name(): string
     {
@@ -29,9 +32,6 @@ final class NeverType extends Type
         return false;
     }
 
-    /**
-     * @psalm-assert-if-true NeverType $this
-     */
     public function isNever(): bool
     {
         return true;

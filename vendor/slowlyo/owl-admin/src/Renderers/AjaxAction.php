@@ -6,7 +6,7 @@ namespace Slowlyo\OwlAdmin\Renderers;
  * AjaxAction
  *
  * @author  slowlyo
- * @version 6.5.0
+ * @version 6.7.0
  */
 class AjaxAction extends BaseRenderer
 {
@@ -94,6 +94,14 @@ class AjaxAction extends BaseRenderer
     public function confirmText($value = '')
     {
         return $this->set('confirmText', $value);
+    }
+
+    /**
+     * 确认弹窗标题
+     */
+    public function confirmTitle($value = '')
+    {
+        return $this->set('confirmTitle', $value);
     }
 
     /**

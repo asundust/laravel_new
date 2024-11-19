@@ -46,7 +46,7 @@ class AccessToken implements RefreshableAccessTokenInterface
 
     public function getKey(): string
     {
-        return $this->key ?? $this->key = sprintf('%s.access_token.%s.%s.%s', static::CACHE_KEY_PREFIX, $this->appId, $this->secret, (int)$this->stable);
+        return $this->key ?? $this->key = sprintf('%s.access_token.%s.%s.%s', static::CACHE_KEY_PREFIX, $this->appId, $this->secret, (int) $this->stable);
     }
 
     public function setKey(string $key): static
@@ -69,7 +69,7 @@ class AccessToken implements RefreshableAccessTokenInterface
     {
         $token = $this->cache->get($this->getKey());
 
-        if ((bool) $token && is_string($token)) {
+        if ($token && is_string($token)) {
             return $token;
         }
 
@@ -132,7 +132,7 @@ class AccessToken implements RefreshableAccessTokenInterface
         )->toArray(false);
 
         if (empty($response['access_token'])) {
-            throw new HttpException('Failed to get stable access_token: ' . json_encode($response, JSON_UNESCAPED_UNICODE));
+            throw new HttpException('Failed to get stable access_token: '.json_encode($response, JSON_UNESCAPED_UNICODE));
         }
 
         $this->cache->set($this->getKey(), $response['access_token'], intval($response['expires_in']));
@@ -164,7 +164,7 @@ class AccessToken implements RefreshableAccessTokenInterface
         )->toArray(false);
 
         if (empty($response['access_token'])) {
-            throw new HttpException('Failed to get access_token: ' . json_encode($response, JSON_UNESCAPED_UNICODE));
+            throw new HttpException('Failed to get access_token: '.json_encode($response, JSON_UNESCAPED_UNICODE));
         }
 
         $this->cache->set($this->getKey(), $response['access_token'], intval($response['expires_in']));

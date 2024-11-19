@@ -3,6 +3,7 @@
 namespace Slowlyo\OwlAdmin\Extend;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Slowlyo\OwlAdmin\Admin;
 use Illuminate\Support\Facades\Validator;
 
@@ -59,7 +60,7 @@ trait CanImportMenu
 
             $menuModel::create([
                 'parent_id' => $this->getParentMenuId($menu['parent'] ?? 0),
-                'custom_order'     => $lastOrder + 1,
+                'custom_order'     => (int)($menu['custom_order'] ?? $lastOrder + 1),
                 'title'     => $menu['title'],
                 'icon'      => (string)($menu['icon'] ?? ''),
                 'url'       => (string)($menu['url'] ?? ''),
@@ -95,6 +96,12 @@ trait CanImportMenu
         }
 
         $menuModel = $this->getMenuModel();
+
+        if (Str::startsWith($parent,'/')){
+            return $menuModel::query()
+                ->where('url', $parent)
+                ->value('id') ?: 0;
+        }
 
         return $menuModel::query()
             ->where('title', $parent)

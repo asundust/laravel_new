@@ -104,12 +104,14 @@ class CodeGeneratorController extends AdminController
                     $this->previewCodeAction(),
                     amis()->DrawerAction()
                         ->label(admin_trans('admin.edit'))
-                        ->icon('fa-regular fa-pen-to-square')
                         ->level('link')
                         ->drawer($form(true)),
-                    $this->copyRecordAction(),
-                    $this->clearCodeAction(),
-                    $this->rowDeleteButton()->className('text-danger'),
+                    $this->rowDeleteButton(),
+                    amis()->DropdownButton()->label(admin_trans('admin.more'))->level('link')->buttons([
+                        $this->cloneAction(),
+                        $this->copyRecordAction(),
+                        $this->clearCodeAction(),
+                    ]),
                 ]),
             ]);
     }
@@ -982,7 +984,6 @@ class CodeGeneratorController extends AdminController
 
         return amis()->DialogAction()
             ->label(admin_trans('admin.code_generators.preview'))
-            ->icon('fa fa-eye')
             ->level('link')
             ->dialog(
                 amis()->Dialog()->size('lg')->title(admin_trans('admin.code_generators.preview_code'))->body(
@@ -999,6 +1000,28 @@ class CodeGeneratorController extends AdminController
     }
 
     /**
+     * 克隆记录 按钮
+     *
+     * @return \Slowlyo\OwlAdmin\Renderers\DialogAction
+     */
+    public function cloneAction()
+    {
+        return amis()->DialogAction()
+            ->label(admin_trans('admin.code_generators.clone_record'))
+            ->level('link')
+            ->dialog(
+                amis()->Dialog()->title(admin_trans('admin.code_generators.clone_record'))->body([
+                    amis()->Form()->wrapWithPanel(false)->api('post:/dev_tools/code_generator/clone')->body([
+                        amis()->HiddenControl('id'),
+                        amis()->TextControl('table_name', admin_trans('admin.code_generators.new_table_name'))
+                            ->required(),
+                        amis()->TextControl('title', admin_trans('admin.code_generators.new_app_title'))->required(),
+                    ]),
+                ])
+            );
+    }
+
+    /**
      * 复制记录 按钮
      *
      * @return \Slowlyo\OwlAdmin\Renderers\DialogAction
@@ -1007,7 +1030,6 @@ class CodeGeneratorController extends AdminController
     {
         return amis()->DialogAction()
             ->label(admin_trans('admin.code_generators.copy_record'))
-            ->icon('fa fa-copy')
             ->level('link')
             ->dialog(
                 amis()->Dialog()->title(false)->body(
@@ -1038,7 +1060,6 @@ class CodeGeneratorController extends AdminController
     {
         return amis()->DialogAction()
             ->level('link')
-            ->icon('fa fa-code')
             ->label(admin_trans('admin.code_generators.generate_code'))
             ->iconClassName('pr-4')
             ->dialog(
@@ -1079,9 +1100,7 @@ class CodeGeneratorController extends AdminController
     {
         return amis()->DialogAction()
             ->level('link')
-            ->icon('fa fa-brush')
             ->label(admin_trans('admin.code_generators.clear_code'))
-            ->className('text-danger')
             ->dialog(
                 amis()->Dialog()->title(admin_trans('admin.code_generators.select_clear_record'))->body([
                     amis()->Form()->api('post:/dev_tools/code_generator/clear?id=${id}')->mode('normal')->body([
@@ -1108,6 +1127,18 @@ class CodeGeneratorController extends AdminController
     public function clear()
     {
         GenCodeClear::make()->handle(request()->all());
+
+        return $this->response()->successMessage(admin_trans('admin.action_success'));
+    }
+
+    /**
+     * 克隆记录
+     *
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
+     */
+    public function clone()
+    {
+        $this->service->clone(request()->all());
 
         return $this->response()->successMessage(admin_trans('admin.action_success'));
     }

@@ -3,6 +3,7 @@
 namespace Laravel\Prompts;
 
 use Closure;
+use Laravel\Prompts\Support\Utils;
 
 class MultiSearchPrompt extends Prompt
 {
@@ -42,6 +43,7 @@ class MultiSearchPrompt extends Prompt
         public bool|string $required = false,
         public mixed $validate = null,
         public string $hint = '',
+        public ?Closure $transform = null,
     ) {
         $this->trackTypedValue(submit: false, ignore: fn ($key) => Key::oneOf([Key::SPACE, Key::HOME, Key::END, Key::CTRL_A, Key::CTRL_E], $key) && $this->highlighted !== null);
 
@@ -139,7 +141,7 @@ class MultiSearchPrompt extends Prompt
      */
     protected function toggleAll(): void
     {
-        $allMatchesSelected = collect($this->matches)->every(fn ($label, $key) => $this->isList()
+        $allMatchesSelected = Utils::allMatch($this->matches, fn ($label, $key) => $this->isList()
             ? array_key_exists($label, $this->values)
             : array_key_exists($key, $this->values));
 

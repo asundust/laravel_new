@@ -3,6 +3,7 @@
 namespace Slowlyo\OwlDict\Services;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Builder;
 use Slowlyo\OwlDict\OwlDictServiceProvider;
@@ -68,12 +69,21 @@ class AdminDictService extends AdminService
 
     public function store($data): bool
     {
-        $key      = Arr::get($data, 'key');
+        $key        = Arr::get($data, 'key');
+        $muggleMode = OwlDictServiceProvider::setting('muggle_mode');
+        // 麻瓜模式
+        regenerate:
+        if ($muggleMode) {
+            $data['key'] = $key = uniqid(mt_rand(1000, 9999));
+        }
         $parentId = Arr::get($data, 'parent_id', 0);
 
         $exists = $this->query()->where('parent_id', $parentId)->where('key', $key)->exists();
 
         if ($exists) {
+            if ($muggleMode) {
+                goto regenerate;
+            }
             return $this->repeatError($parentId);
         }
 

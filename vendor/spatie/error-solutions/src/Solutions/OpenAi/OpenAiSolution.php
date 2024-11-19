@@ -7,11 +7,14 @@ use Psr\SimpleCache\CacheInterface;
 use Spatie\Backtrace\Backtrace;
 use Spatie\Backtrace\Frame;
 use Spatie\ErrorSolutions\Contracts\Solution;
+use Spatie\ErrorSolutions\Solutions\Concerns\IsProvidedByFlare;
 use Spatie\ErrorSolutions\Support\AiPromptRenderer;
 use Throwable;
 
 class OpenAiSolution implements Solution
 {
+    use IsProvidedByFlare;
+
     public bool $aiGenerated = true;
 
     protected string $prompt;
@@ -25,6 +28,7 @@ class OpenAiSolution implements Solution
         protected int|null            $cacheTtlInSeconds = 60,
         protected string|null         $applicationType = null,
         protected string|null         $applicationPath = null,
+        protected string|null         $openAiModel = null,
     ) {
         $this->prompt = $this->generatePrompt();
 
@@ -96,7 +100,7 @@ class OpenAiSolution implements Solution
 
     protected function getModel(): string
     {
-        return 'gpt-3.5-turbo';
+        return $this->openAiModel ?? 'gpt-3.5-turbo';
     }
 
     protected function getApplicationFrame(Throwable $throwable): ?Frame

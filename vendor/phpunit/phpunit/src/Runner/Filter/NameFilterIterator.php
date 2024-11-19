@@ -13,6 +13,7 @@ use function end;
 use function preg_match;
 use function sprintf;
 use function str_replace;
+use function substr;
 use PHPUnit\Framework\Test;
 use PHPUnit\Framework\TestSuite;
 use PHPUnit\Runner\PhptTestCase;
@@ -20,20 +21,22 @@ use RecursiveFilterIterator;
 use RecursiveIterator;
 
 /**
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
+ *
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
  */
 abstract class NameFilterIterator extends RecursiveFilterIterator
 {
     /**
-     * @psalm-var non-empty-string
+     * @var non-empty-string
      */
     private readonly string $regularExpression;
     private readonly ?int $dataSetMinimum;
     private readonly ?int $dataSetMaximum;
 
     /**
-     * @psalm-param RecursiveIterator<int, Test> $iterator
-     * @psalm-param non-empty-string $filter
+     * @param RecursiveIterator<int, Test> $iterator
+     * @param non-empty-string             $filter
      */
     public function __construct(RecursiveIterator $iterator, string $filter)
     {
@@ -73,16 +76,16 @@ abstract class NameFilterIterator extends RecursiveFilterIterator
     abstract protected function doAccept(bool $result): bool;
 
     /**
-     * @psalm-param non-empty-string $filter
+     * @param non-empty-string $filter
      *
-     * @psalm-return array{regularExpression: non-empty-string, dataSetMinimum: ?int, dataSetMaximum: ?int}
+     * @return array{regularExpression: non-empty-string, dataSetMinimum: ?int, dataSetMaximum: ?int}
      */
     private function prepareFilter(string $filter): array
     {
         $dataSetMinimum = null;
         $dataSetMaximum = null;
 
-        if (@preg_match($filter, '') === false) {
+        if (preg_match('/[a-zA-Z0-9]/', substr($filter, 0, 1)) === 1 || @preg_match($filter, '') === false) {
             // Handles:
             //  * testAssertEqualsSucceeds#4
             //  * testAssertEqualsSucceeds#4-8

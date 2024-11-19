@@ -6,8 +6,9 @@ namespace LaravelLang\Config\Constants;
 
 class RouteName
 {
-    public const Cookie    = 'X-Localization';
-    public const Header    = 'X-Localization';
+    public const Column    = 'locale';
+    public const Cookie    = 'Accept-Language';
+    public const Header    = 'Accept-Language';
     public const Parameter = 'locale';
-    public const Session   = 'X-Localization';
+    public const Session   = 'Accept-Language';
 }

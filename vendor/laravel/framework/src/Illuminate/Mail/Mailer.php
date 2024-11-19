@@ -303,21 +303,18 @@ class Mailer implements MailerContract, MailQueueContract
 
         $data['mailer'] = $this->name;
 
-        // First we need to parse the view, which could either be a string or an array
-        // containing both an HTML and plain text versions of the view which should
-        // be used when sending an e-mail. We will extract both of them out here.
+        // Once we have retrieved the view content for the e-mail we will set the body
+        // of this message using the HTML type, which will provide a simple wrapper
+        // to creating view based emails that are able to receive arrays of data.
         [$view, $plain, $raw] = $this->parseView($view);
 
         $data['message'] = $message = $this->createMessage();
 
-        // Once we have retrieved the view content for the e-mail we will set the body
-        // of this message using the HTML type, which will provide a simple wrapper
-        // to creating view based emails that are able to receive arrays of data.
+        $this->addContent($message, $view, $plain, $raw, $data);
+
         if (! is_null($callback)) {
             $callback($message);
         }
-
-        $this->addContent($message, $view, $plain, $raw, $data);
 
         // If a global "to" address has been set, we will set that address on the mail
         // message. This is primarily useful during local development in which each
@@ -411,9 +408,9 @@ class Mailer implements MailerContract, MailQueueContract
      * Add the content to a given message.
      *
      * @param  \Illuminate\Mail\Message  $message
-     * @param  string  $view
-     * @param  string  $plain
-     * @param  string  $raw
+     * @param  string|null  $view
+     * @param  string|null  $plain
+     * @param  string|null  $raw
      * @param  array  $data
      * @return void
      */
@@ -468,7 +465,7 @@ class Mailer implements MailerContract, MailQueueContract
      * Queue a new mail message for sending.
      *
      * @param  \Illuminate\Contracts\Mail\Mailable|string|array  $view
-     * @param  string|null  $queue
+     * @param  \BackedEnum|string|null  $queue
      * @return mixed
      *
      * @throws \InvalidArgumentException
@@ -489,7 +486,7 @@ class Mailer implements MailerContract, MailQueueContract
     /**
      * Queue a new mail message for sending on the given queue.
      *
-     * @param  string  $queue
+     * @param  \BackedEnum|string|null  $queue
      * @param  \Illuminate\Contracts\Mail\Mailable  $view
      * @return mixed
      */

@@ -109,7 +109,7 @@ use SebastianBergmann\Template\Template;
 final class File extends Renderer
 {
     /**
-     * @psalm-var array<int,true>
+     * @var array<int,true>
      */
     private const KEYWORD_TOKENS = [
         T_ABSTRACT      => true,
@@ -548,7 +548,7 @@ final class File extends Renderer
 
             if (!empty($popoverTitle)) {
                 $popover = sprintf(
-                    ' data-title="%s" data-content="%s" data-placement="top" data-html="true"',
+                    ' data-bs-title="%s" data-bs-content="%s" data-bs-placement="top" data-bs-html="true"',
                     $popoverTitle,
                     htmlspecialchars($popoverContent, $this->htmlSpecialCharsFlags),
                 );
@@ -635,7 +635,7 @@ final class File extends Renderer
                 $trClass = $lineCss . ' popin';
 
                 $popover = sprintf(
-                    ' data-title="%s" data-content="%s" data-placement="top" data-html="true"',
+                    ' data-bs-title="%s" data-bs-content="%s" data-bs-placement="top" data-bs-html="true"',
                     $popoverTitle,
                     htmlspecialchars($popoverContent, $this->htmlSpecialCharsFlags),
                 );
@@ -725,7 +725,7 @@ final class File extends Renderer
                 $trClass = $lineCss . ' popin';
 
                 $popover = sprintf(
-                    ' data-title="%s" data-content="%s" data-placement="top" data-html="true"',
+                    ' data-bs-title="%s" data-bs-content="%s" data-bs-placement="top" data-bs-html="true"',
                     $popoverTitle,
                     htmlspecialchars($popoverContent, $this->htmlSpecialCharsFlags),
                 );
@@ -823,7 +823,7 @@ final class File extends Renderer
 
             if (!empty($popoverTitle)) {
                 $popover = sprintf(
-                    ' data-title="%s" data-content="%s" data-placement="top" data-html="true"',
+                    ' data-bs-title="%s" data-bs-content="%s" data-bs-placement="top" data-bs-html="true"',
                     $popoverTitle,
                     htmlspecialchars($popoverContent, $this->htmlSpecialCharsFlags),
                 );
@@ -938,7 +938,7 @@ final class File extends Renderer
 
                 if (!empty($popoverTitle)) {
                     $popover = sprintf(
-                        ' data-title="%s" data-content="%s" data-placement="top" data-html="true"',
+                        ' data-bs-title="%s" data-bs-content="%s" data-bs-placement="top" data-bs-html="true"',
                         $popoverTitle,
                         htmlspecialchars($popoverContent, $this->htmlSpecialCharsFlags),
                     );

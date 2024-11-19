@@ -6,13 +6,21 @@ namespace Slowlyo\OwlAdmin\Renderers;
  * ImageToolbarAction
  *
  * @author  slowlyo
- * @version 6.5.0
+ * @version 6.7.0
  */
 class ImageToolbarAction extends BaseRenderer
 {
     public function __construct()
     {
         $this->set('key', 'ROTATE_RIGHT');
+    }
+
+    /**
+     * 确认弹窗标题
+     */
+    public function confirmTitle($value = '')
+    {
+        return $this->set('confirmTitle', $value);
     }
 
     /**

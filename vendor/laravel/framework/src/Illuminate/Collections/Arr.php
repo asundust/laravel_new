@@ -158,7 +158,7 @@ class Arr
      * Determine if the given key exists in the provided array.
      *
      * @param  \ArrayAccess|array  $array
-     * @param  string|int  $key
+     * @param  string|int|float  $key
      * @return bool
      */
     public static function exists($array, $key)
@@ -642,11 +642,12 @@ class Arr
     /**
      * Run a map over each nested chunk of items.
      *
-     * @template TMapSpreadValue
+     * @template TKey
+     * @template TValue
      *
-     * @param  array  $array
-     * @param  callable(mixed...): TMapSpreadValue  $callback
-     * @return array<TKey, TMapSpreadValue>
+     * @param  array<TKey, array>  $array
+     * @param  callable(mixed...): TValue  $callback
+     * @return array<TKey, TValue>
      */
     public static function mapSpread(array $array, callable $callback)
     {

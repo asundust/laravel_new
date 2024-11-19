@@ -6,7 +6,7 @@ namespace Slowlyo\OwlAdmin\Renderers;
  * UrlAction
  *
  * @author  slowlyo
- * @version 6.5.0
+ * @version 6.7.0
  */
 class UrlAction extends BaseRenderer
 {
@@ -94,6 +94,14 @@ class UrlAction extends BaseRenderer
     public function confirmText($value = '')
     {
         return $this->set('confirmText', $value);
+    }
+
+    /**
+     * 确认弹窗标题
+     */
+    public function confirmTitle($value = '')
+    {
+        return $this->set('confirmTitle', $value);
     }
 
     /**

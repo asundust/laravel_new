@@ -9,16 +9,20 @@
  */
 namespace SebastianBergmann\Type;
 
+use function array_is_list;
 use function assert;
 use function count;
 use function implode;
 use function in_array;
 use function sort;
 
+/**
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for this library
+ */
 final class IntersectionType extends Type
 {
     /**
-     * @psalm-var non-empty-list<Type>
+     * @var non-empty-list<Type>
      */
     private array $types;
 
@@ -31,6 +35,8 @@ final class IntersectionType extends Type
         $this->ensureOnlyValidTypes(...$types);
         $this->ensureNoDuplicateTypes(...$types);
 
+        assert(array_is_list($types) && !empty($types));
+
         $this->types = $types;
     }
 
@@ -40,7 +46,7 @@ final class IntersectionType extends Type
     }
 
     /**
-     * @psalm-return non-empty-string
+     * @return non-empty-string
      */
     public function asString(): string
     {
@@ -48,7 +54,7 @@ final class IntersectionType extends Type
     }
 
     /**
-     * @psalm-return non-empty-string
+     * @return non-empty-string
      */
     public function name(): string
     {
@@ -68,16 +74,13 @@ final class IntersectionType extends Type
         return false;
     }
 
-    /**
-     * @psalm-assert-if-true IntersectionType $this
-     */
     public function isIntersection(): bool
     {
         return true;
     }
 
     /**
-     * @psalm-return non-empty-list<Type>
+     * @return non-empty-list<Type>
      */
     public function types(): array
     {

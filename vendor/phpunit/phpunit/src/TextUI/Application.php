@@ -10,6 +10,8 @@
 namespace PHPUnit\TextUI;
 
 use const PHP_EOL;
+use const PHP_VERSION;
+use function assert;
 use function class_exists;
 use function explode;
 use function function_exists;
@@ -52,6 +54,7 @@ use PHPUnit\Runner\ResultCache\ResultCache;
 use PHPUnit\Runner\ResultCache\ResultCacheHandler;
 use PHPUnit\Runner\TestSuiteSorter;
 use PHPUnit\Runner\Version;
+use PHPUnit\TestRunner\IssueFilter;
 use PHPUnit\TestRunner\TestResult\Facade as TestResultFacade;
 use PHPUnit\TextUI\CliArguments\Builder;
 use PHPUnit\TextUI\CliArguments\Configuration as CliConfiguration;
@@ -81,14 +84,20 @@ use PHPUnit\TextUI\Output\Printer;
 use PHPUnit\TextUI\XmlConfiguration\Configuration as XmlConfiguration;
 use PHPUnit\TextUI\XmlConfiguration\DefaultConfiguration;
 use PHPUnit\TextUI\XmlConfiguration\Loader;
+use PHPUnit\Util\Http\PhpDownloader;
 use SebastianBergmann\Timer\Timer;
 use Throwable;
 
 /**
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
+ *
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
  */
 final readonly class Application
 {
+    /**
+     * @param list<string> $argv
+     */
     public function run(array $argv): int
     {
         try {
@@ -114,14 +123,6 @@ final readonly class Application
 
             $this->executeCommandsThatDoNotRequireTheTestSuite($configuration, $cliConfiguration);
 
-            $testSuite = $this->buildTestSuite($configuration);
-
-            $this->executeCommandsThatRequireTheTestSuite($configuration, $cliConfiguration, $testSuite);
-
-            if ($testSuite->isEmpty() && !$configuration->hasCliArguments() && $configuration->testSuite()->isEmpty()) {
-                $this->execute(new ShowHelpCommand(Result::FAILURE));
-            }
-
             $pharExtensions                          = null;
             $extensionRequiresCodeCoverageCollection = false;
             $extensionReplacesOutput                 = false;
@@ -142,25 +143,11 @@ final readonly class Application
                 $extensionReplacesResultOutput           = $bootstrappedExtensions['replacesResultOutput'];
             }
 
-            CodeCoverage::instance()->init(
-                $configuration,
-                CodeCoverageFilterRegistry::instance(),
-                $extensionRequiresCodeCoverageCollection,
-            );
-
             $printer = OutputFacade::init(
                 $configuration,
                 $extensionReplacesProgressOutput,
                 $extensionReplacesResultOutput,
             );
-
-            if (!$configuration->debug() && !$extensionReplacesOutput) {
-                $this->writeRuntimeInformation($printer, $configuration);
-                $this->writePharExtensionInformation($printer, $pharExtensions);
-                $this->writeRandomSeedInformation($printer, $configuration);
-
-                $printer->print(PHP_EOL);
-            }
 
             if ($configuration->debug()) {
                 EventFacade::instance()->registerTracer(
@@ -171,12 +158,12 @@ final readonly class Application
                 );
             }
 
+            TestResultFacade::init();
+            DeprecationCollector::init();
+
             $this->registerLogfileWriters($configuration);
 
             $testDoxResultCollector = $this->testDoxResultCollector($configuration);
-
-            TestResultFacade::init();
-            DeprecationCollector::init();
 
             $resultCache = $this->initializeTestResultCache($configuration);
 
@@ -189,9 +176,31 @@ final readonly class Application
 
             $baselineGenerator = $this->configureBaseline($configuration);
 
-            $this->configureDeprecationTriggers($configuration);
-
             EventFacade::instance()->seal();
+
+            $testSuite = $this->buildTestSuite($configuration);
+
+            $this->executeCommandsThatRequireTheTestSuite($configuration, $cliConfiguration, $testSuite);
+
+            if ($testSuite->isEmpty() && !$configuration->hasCliArguments() && $configuration->testSuite()->isEmpty()) {
+                $this->execute(new ShowHelpCommand(Result::FAILURE));
+            }
+
+            CodeCoverage::instance()->init(
+                $configuration,
+                CodeCoverageFilterRegistry::instance(),
+                $extensionRequiresCodeCoverageCollection,
+            );
+
+            if (!$configuration->debug() && !$extensionReplacesOutput) {
+                $this->writeRuntimeInformation($printer, $configuration);
+                $this->writePharExtensionInformation($printer, $pharExtensions);
+                $this->writeRandomSeedInformation($printer, $configuration);
+
+                $printer->print(PHP_EOL);
+            }
+
+            $this->configureDeprecationTriggers($configuration);
 
             $timer = new Timer;
             $timer->start();
@@ -270,6 +279,7 @@ final readonly class Application
 
             $shellExitCode = (new ShellExitCodeCalculator)->calculate(
                 $configuration->failOnDeprecation(),
+                $configuration->failOnPhpunitDeprecation(),
                 $configuration->failOnEmptyTestSuite(),
                 $configuration->failOnIncomplete(),
                 $configuration->failOnNotice(),
@@ -289,15 +299,43 @@ final readonly class Application
         // @codeCoverageIgnoreEnd
     }
 
-    private function execute(Command\Command $command): never
+    private function execute(Command\Command $command, bool $requiresResultCollectedFromEvents = false): never
     {
+        $errored = false;
+
+        if ($requiresResultCollectedFromEvents) {
+            try {
+                TestResultFacade::init();
+                EventFacade::instance()->seal();
+
+                $resultCollectedFromEvents = TestResultFacade::result();
+
+                $errored = $resultCollectedFromEvents->hasTestTriggeredPhpunitErrorEvents();
+            } catch (EventFacadeIsSealedException|UnknownSubscriberTypeException) {
+            }
+        }
+
         print Version::getVersionString() . PHP_EOL . PHP_EOL;
 
-        $result = $command->execute();
+        if (!$errored) {
+            $result = $command->execute();
 
-        print $result->output();
+            print $result->output();
 
-        exit($result->shellExitCode());
+            exit($result->shellExitCode());
+        }
+
+        assert(isset($resultCollectedFromEvents));
+
+        print 'There were errors:' . PHP_EOL;
+
+        foreach ($resultCollectedFromEvents->testTriggeredPhpunitErrorEvents() as $events) {
+            foreach ($events as $event) {
+                print PHP_EOL . trim($event->message()) . PHP_EOL;
+            }
+        }
+
+        exit(Result::EXCEPTION);
     }
 
     private function loadBootstrapScript(string $filename): void
@@ -342,6 +380,9 @@ final readonly class Application
         EventFacade::emitter()->testRunnerBootstrapFinished($filename);
     }
 
+    /**
+     * @param list<string> $argv
+     */
     private function buildCliConfiguration(array $argv): CliConfiguration
     {
         try {
@@ -376,7 +417,7 @@ final readonly class Application
     }
 
     /**
-     * @psalm-return array{requiresCodeCoverageCollection: bool, replacesOutput: bool, replacesProgressOutput: bool, replacesResultOutput: bool}
+     * @return array{requiresCodeCoverageCollection: bool, replacesOutput: bool, replacesProgressOutput: bool, replacesResultOutput: bool}
      */
     private function bootstrapExtensions(Configuration $configuration): array
     {
@@ -425,7 +466,7 @@ final readonly class Application
         }
 
         if ($cliConfiguration->checkVersion()) {
-            $this->execute(new VersionCheckCommand);
+            $this->execute(new VersionCheckCommand(new PhpDownloader, Version::majorVersionNumber(), Version::id()));
         }
 
         if ($cliConfiguration->help()) {
@@ -435,10 +476,6 @@ final readonly class Application
 
     private function executeCommandsThatDoNotRequireTheTestSuite(Configuration $configuration, CliConfiguration $cliConfiguration): void
     {
-        if ($cliConfiguration->listSuites()) {
-            $this->execute(new ListTestSuitesCommand($configuration->testSuite()));
-        }
-
         if ($cliConfiguration->warmCoverageCache()) {
             $this->execute(new WarmCodeCoverageCacheCommand($configuration, CodeCoverageFilterRegistry::instance()));
         }
@@ -446,6 +483,10 @@ final readonly class Application
 
     private function executeCommandsThatRequireTheTestSuite(Configuration $configuration, CliConfiguration $cliConfiguration, TestSuite $testSuite): void
     {
+        if ($cliConfiguration->listSuites()) {
+            $this->execute(new ListTestSuitesCommand($testSuite));
+        }
+
         if ($cliConfiguration->listGroups()) {
             $this->execute(
                 new ListGroupsCommand(
@@ -454,6 +495,7 @@ final readonly class Application
                         $testSuite,
                     ),
                 ),
+                true,
             );
         }
 
@@ -465,6 +507,7 @@ final readonly class Application
                         $testSuite,
                     ),
                 ),
+                true,
             );
         }
 
@@ -477,6 +520,7 @@ final readonly class Application
                     ),
                     $cliConfiguration->listTestsXml(),
                 ),
+                true,
             );
         }
 
@@ -488,6 +532,7 @@ final readonly class Application
                         $testSuite,
                     ),
                 ),
+                true,
             );
         }
     }
@@ -514,7 +559,7 @@ final readonly class Application
     }
 
     /**
-     * @psalm-param ?list<string> $pharExtensions
+     * @param ?list<string> $pharExtensions
      */
     private function writePharExtensionInformation(Printer $printer, ?array $pharExtensions): void
     {
@@ -631,7 +676,10 @@ final readonly class Application
         if ($configuration->hasLogfileTestdoxHtml() ||
             $configuration->hasLogfileTestdoxText() ||
             $configuration->outputIsTestDox()) {
-            return new TestDoxResultCollector(EventFacade::instance());
+            return new TestDoxResultCollector(
+                EventFacade::instance(),
+                new IssueFilter($configuration->source()),
+            );
         }
 
         return null;
@@ -668,7 +716,6 @@ final readonly class Application
         }
 
         if ($configuration->source()->useBaseline()) {
-            /** @psalm-suppress MissingThrowsDocblock */
             $baselineFile = $configuration->source()->baseline();
             $baseline     = null;
 
@@ -739,7 +786,7 @@ final readonly class Application
     }
 
     /**
-     * @psalm-return list<TestCase|PhptTestCase>
+     * @return list<PhptTestCase|TestCase>
      */
     private function filteredTests(Configuration $configuration, TestSuite $suite): array
     {

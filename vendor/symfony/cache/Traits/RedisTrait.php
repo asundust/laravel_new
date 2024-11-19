@@ -149,10 +149,10 @@ trait RedisTrait
         if (isset($params['host']) || isset($params['path'])) {
             if (!isset($params['dbindex']) && isset($params['path'])) {
                 if (preg_match('#/(\d+)?$#', $params['path'], $m)) {
-                    $params['dbindex'] = $m[1] ?? '0';
+                    $params['dbindex'] = $m[1] ?? $query['dbindex'] ?? '0';
                     $params['path'] = substr($params['path'], 0, -\strlen($m[0]));
                 } elseif (isset($params['host'])) {
-                    throw new InvalidArgumentException('Invalid Redis DSN: query parameter "dbindex" must be a number.');
+                    throw new InvalidArgumentException('Invalid Redis DSN: parameter "dbindex" must be a number.');
                 }
             }
 
@@ -165,6 +165,10 @@ trait RedisTrait
 
         if (!$hosts) {
             throw new InvalidArgumentException('Invalid Redis DSN: missing host.');
+        }
+
+        if (isset($params['dbindex'], $query['dbindex']) && $params['dbindex'] !== $query['dbindex']) {
+            throw new InvalidArgumentException('Invalid Redis DSN: path and query "dbindex" parameters mismatch.');
         }
 
         $params += $query + $options + self::$defaultConnectionOptions;
@@ -234,10 +238,10 @@ trait RedisTrait
                             $options = [
                                 'host' => $host,
                                 'port' => $port,
-                                'connectTimeout' => $params['timeout'],
+                                'connectTimeout' => (float) $params['timeout'],
                                 'persistent' => $params['persistent_id'],
-                                'retryInterval' => $params['retry_interval'],
-                                'readTimeout' => $params['read_timeout'],
+                                'retryInterval' => (int) $params['retry_interval'],
+                                'readTimeout' => (float) $params['read_timeout'],
                             ];
 
                             if ($passAuth) {
@@ -248,10 +252,10 @@ trait RedisTrait
                         } else {
                             $extra = $passAuth ? [$params['auth']] : [];
 
-                            $sentinel = new $sentinelClass($host, $port, $params['timeout'], (string) $params['persistent_id'], $params['retry_interval'], $params['read_timeout'], ...$extra);
+                            $sentinel = @new $sentinelClass($host, $port, $params['timeout'], (string) $params['persistent_id'], $params['retry_interval'], $params['read_timeout'], ...$extra);
                         }
 
-                        if ($address = $sentinel->getMasterAddrByName($params['redis_sentinel'])) {
+                        if ($address = @$sentinel->getMasterAddrByName($params['redis_sentinel'])) {
                             [$host, $port] = $address;
                         }
                     } catch (\RedisException|\Relay\Exception $redisException) {
@@ -510,7 +514,7 @@ trait RedisTrait
 
             $cursor = null;
             do {
-                $keys = $host instanceof \Predis\ClientInterface ? $host->scan($cursor, 'MATCH', $pattern, 'COUNT', 1000) : $host->scan($cursor, $pattern, 1000);
+                $keys = $host instanceof \Predis\ClientInterface ? $host->scan($cursor ?? 0, 'MATCH', $pattern, 'COUNT', 1000) : $host->scan($cursor, $pattern, 1000);
                 if (isset($keys[1]) && \is_array($keys[1])) {
                     $cursor = $keys[0];
                     $keys = $keys[1];

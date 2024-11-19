@@ -18,19 +18,19 @@ use IteratorAggregate;
 /**
  * @template-implements IteratorAggregate<int, Metadata>
  *
- * @psalm-immutable
+ * @immutable
  *
  * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
  */
 final readonly class MetadataCollection implements Countable, IteratorAggregate
 {
     /**
-     * @psalm-var list<Metadata>
+     * @var list<Metadata>
      */
     private array $metadata;
 
     /**
-     * @psalm-param list<Metadata> $metadata
+     * @param list<Metadata> $metadata
      */
     public static function fromArray(array $metadata): self
     {
@@ -43,7 +43,7 @@ final readonly class MetadataCollection implements Countable, IteratorAggregate
     }
 
     /**
-     * @psalm-return list<Metadata>
+     * @return list<Metadata>
      */
     public function asArray(): array
     {
@@ -479,6 +479,16 @@ final readonly class MetadataCollection implements Countable, IteratorAggregate
             ...array_filter(
                 $this->metadata,
                 static fn (Metadata $metadata): bool => $metadata->isRequiresPhpunit(),
+            ),
+        );
+    }
+
+    public function isRequiresPhpunitExtension(): self
+    {
+        return new self(
+            ...array_filter(
+                $this->metadata,
+                static fn (Metadata $metadata): bool => $metadata->isRequiresPhpunitExtension(),
             ),
         );
     }

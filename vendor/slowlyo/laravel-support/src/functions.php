@@ -12,7 +12,7 @@ if (!function_exists('domain')) {
     }
 }
 
-if (!function_exists('safe_bc_dev')) {
+if (!function_exists('safe_bc_div')) {
     /**
      * 可以传入 0 的 bcdiv
      *
@@ -22,7 +22,7 @@ if (!function_exists('safe_bc_dev')) {
      *
      * @return int|string|null
      */
-    function safe_bc_dev($dividend, $divisor, $scale = 2)
+    function safe_bc_div($dividend, $divisor, $scale = 2)
     {
         if (!$dividend || !$divisor) {
             return 0;
@@ -174,5 +174,41 @@ if (!function_exists('make_dir')) {
         if (!is_dir($path)) {
             @mkdir($path, $mode, $recursive, $context);
         }
+    }
+}
+
+if (!function_exists('lottery')) {
+    /**
+     * 抽奖
+     *
+     * 参数格式:  [ 结果 => 权重 ]
+     *    [
+     *        1 => 10,
+     *        2 => 20,
+     *        3 => 30,
+     *    ]
+     *
+     * 中奖概率为 [权重] / [总权重]
+     *
+     * @param $probs
+     *
+     * @return int|string
+     */
+    function lottery($probs)
+    {
+        $win = '';
+        $sum = array_sum($probs);
+
+        foreach ($probs as $key => $prob) {
+            $rand = mt_rand(1, $sum);
+            if ($rand <= $prob) {
+                $win = $key;
+                break;
+            } else {
+                $sum -= $prob;
+            }
+        }
+
+        return $win;
     }
 }

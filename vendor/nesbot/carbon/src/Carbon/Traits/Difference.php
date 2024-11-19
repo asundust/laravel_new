@@ -143,20 +143,19 @@ trait Difference
 
         $yearsDiff = (int) $start->diff($end, $absolute)->format('%r%y');
         /** @var Carbon|CarbonImmutable $floorEnd */
-        $floorEnd = $start->copy()->addYears($yearsDiff);
+        $floorEnd = $start->avoidMutation()->addYears($yearsDiff);
 
         if ($floorEnd >= $end) {
             return $sign * $yearsDiff;
         }
 
-        /** @var Carbon|CarbonImmutable $startOfYearAfterFloorEnd */
-        $startOfYearAfterFloorEnd = $floorEnd->copy()->addYear()->startOfYear();
+        /** @var Carbon|CarbonImmutable $ceilEnd */
+        $ceilEnd = $start->avoidMutation()->addYears($yearsDiff + 1);
 
-        if ($startOfYearAfterFloorEnd > $end) {
-            return $sign * ($yearsDiff + $floorEnd->diffInDays($end) / $floorEnd->daysInYear);
-        }
+        $daysToFloor = $floorEnd->diffInDays($end);
+        $daysToCeil = $end->diffInDays($ceilEnd);
 
-        return $sign * ($yearsDiff + $floorEnd->diffInDays($startOfYearAfterFloorEnd) / $floorEnd->daysInYear + $startOfYearAfterFloorEnd->diffInDays($end) / $end->daysInYear);
+        return $sign * ($yearsDiff + $daysToFloor / ($daysToCeil + $daysToFloor));
     }
 
     /**
@@ -186,9 +185,9 @@ trait Difference
     {
         $start = $this;
         $end = $this->resolveCarbon($date);
-        $compareUsingUtc = $utc || ($end->timezoneName !== $start->timezoneName);
 
-        if ($compareUsingUtc) {
+        // Compare using UTC
+        if ($utc || ($end->timezoneName !== $start->timezoneName)) {
             $start = $start->avoidMutation()->utc();
             $end = $end->avoidMutation()->utc();
         }
@@ -220,14 +219,13 @@ trait Difference
             return $sign * $monthsDiff;
         }
 
-        /** @var Carbon|CarbonImmutable $startOfMonthAfterFloorEnd */
-        $startOfMonthAfterFloorEnd = $floorEnd->avoidMutation()->addMonthNoOverflow()->startOfMonth();
+        /** @var Carbon|CarbonImmutable $ceilEnd */
+        $ceilEnd = $start->avoidMutation()->addMonths($monthsDiff + 1);
 
-        if ($startOfMonthAfterFloorEnd > $end) {
-            return $sign * ($monthsDiff + $floorEnd->diffInDays($end) / $floorEnd->daysInMonth);
-        }
+        $daysToFloor = $floorEnd->diffInDays($end);
+        $daysToCeil = $end->diffInDays($ceilEnd);
 
-        return $sign * ($monthsDiff + $floorEnd->diffInDays($startOfMonthAfterFloorEnd) / $floorEnd->daysInMonth + $startOfMonthAfterFloorEnd->diffInDays($end) / $end->daysInMonth);
+        return $sign * ($monthsDiff + $daysToFloor / ($daysToCeil + $daysToFloor));
     }
 
     /**
@@ -257,32 +255,26 @@ trait Difference
     {
         $date = $this->resolveCarbon($date);
         $current = $this;
-        $compareUsingUtc = $utc || ($date->timezoneName !== $current->timezoneName);
 
-        if ($compareUsingUtc) {
+        // Compare using UTC
+        if ($utc || ($date->timezoneName !== $current->timezoneName)) {
             $date = $date->avoidMutation()->utc();
             $current = $current->avoidMutation()->utc();
         }
 
-        $interval = $current->diffAsDateInterval($date, $absolute);
+        $negative = ($date < $current);
+        [$start, $end] = $negative ? [$date, $current] : [$current, $date];
+        $interval = $start->diffAsDateInterval($end);
+        $daysA = $this->getIntervalDayDiff($interval);
+        $floorEnd = $start->avoidMutation()->addDays($daysA);
+        $daysB = $daysA + ($floorEnd <= $end ? 1 : -1);
+        $ceilEnd = $start->avoidMutation()->addDays($daysB);
+        $microsecondsBetween = $floorEnd->diffInMicroseconds($ceilEnd);
+        $microsecondsToEnd = $floorEnd->diffInMicroseconds($end);
 
-        if (!$compareUsingUtc) {
-            $minutes = $interval->i + ($interval->s + $interval->f) / static::SECONDS_PER_MINUTE;
-            // 24 hours means there is a DST bug
-            $hours = ($interval->h === 24 && $interval->days !== false ? 0 : $interval->h) + $minutes / static::MINUTES_PER_HOUR;
-
-            return $this->getIntervalDayDiff($interval)
-                + ($interval->invert ? -$hours : $hours) / static::HOURS_PER_DAY;
-        }
-
-        $hoursDiff = $current->diffInHours($date, $absolute);
-
-        if ($interval->y === 0 && $interval->m === 0 && $interval->d === 0) {
-            return $hoursDiff / static::HOURS_PER_DAY;
-        }
-
-        return $this->getIntervalDayDiff($interval)
-            + fmod($hoursDiff, static::HOURS_PER_DAY) / static::HOURS_PER_DAY;
+        return ($negative && !$absolute ? -1 : 1)
+            * ($daysA * ($microsecondsBetween - $microsecondsToEnd) + $daysB * $microsecondsToEnd)
+            / $microsecondsBetween;
     }
 
     /**
@@ -858,9 +850,6 @@ trait Difference
 
     private function getIntervalDayDiff(DateInterval $interval): int
     {
-        $daysDiff = (int) $interval->format('%a');
-        $sign = $interval->format('%r') === '-' ? -1 : 1;
-
-        return $daysDiff * $sign;
+        return (int) $interval->format('%r%a');
     }
 }

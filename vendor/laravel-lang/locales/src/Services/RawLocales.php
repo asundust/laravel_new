@@ -24,6 +24,7 @@ use LaravelLang\Locales\Concerns\Aliases;
 use LaravelLang\Locales\Concerns\Application;
 use LaravelLang\Locales\Concerns\Pathable;
 use LaravelLang\Locales\Concerns\Registry;
+use LaravelLang\Locales\Data\LocaleData;
 
 class RawLocales
 {
@@ -58,7 +59,7 @@ class RawLocales
                 )
                 ->flatten()
                 ->map(fn (string $name) => $this->toAlias(Path::filename($name)))
-                ->filter(fn (string $locale) => $this->isAvailable($locale))
+                ->filter(fn (?string $locale) => $this->isAvailable($locale))
                 ->when(! $withProtects, fn (Collection $items) => $items->filter(
                     fn (string $locale) => ! $this->isProtected($locale)
                 ))
@@ -82,7 +83,7 @@ class RawLocales
         ])->filter()->unique()->sort()->values()->all());
     }
 
-    public function isAvailable(Locale|string|null $locale): bool
+    public function isAvailable(Locale|LocaleData|string|null $locale): bool
     {
         $locales = $this->available();
 
@@ -90,7 +91,7 @@ class RawLocales
             || $this->inArray($this->fromAlias($locale), $locales);
     }
 
-    public function isInstalled(Locale|string|null $locale): bool
+    public function isInstalled(Locale|LocaleData|string|null $locale): bool
     {
         return $this->registry([__METHOD__, $locale], function () use ($locale) {
             $locales = $this->installed();
@@ -100,7 +101,7 @@ class RawLocales
         });
     }
 
-    public function isProtected(Locale|string|null $locale): bool
+    public function isProtected(Locale|LocaleData|string|null $locale): bool
     {
         return $this->registry([__METHOD__, $locale], function () use ($locale) {
             $locales = $this->protects();
@@ -169,7 +170,7 @@ class RawLocales
         });
     }
 
-    protected function inArray(Locale|string|null $locale, array $haystack): bool
+    protected function inArray(Locale|LocaleData|string|null $locale, array $haystack): bool
     {
         $locale = Resolver::toString($locale);
 

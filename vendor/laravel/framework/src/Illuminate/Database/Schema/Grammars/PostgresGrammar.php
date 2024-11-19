@@ -69,6 +69,23 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile the query to determine if the given table exists.
+     *
+     * @param  string  $schema
+     * @param  string  $table
+     * @return string
+     */
+    public function compileTableExists($schema, $table)
+    {
+        return sprintf(
+            'select exists (select 1 from pg_class c, pg_namespace n where '
+            ."n.nspname = %s and c.relname = %s and c.relkind in ('r', 'p') and n.oid = c.relnamespace)",
+            $this->quoteString($schema),
+            $this->quoteString($table)
+        );
+    }
+
+    /**
      * Compile the query to determine the tables.
      *
      * @return string
@@ -214,9 +231,9 @@ class PostgresGrammar extends Grammar
      */
     public function compileAdd(Blueprint $blueprint, Fluent $command)
     {
-        return sprintf('alter table %s %s',
+        return sprintf('alter table %s add column %s',
             $this->wrapTable($blueprint),
-            implode(', ', $this->prefixArray('add column', $this->getColumns($blueprint)))
+            $this->getColumn($blueprint, $command->column)
         );
     }
 
@@ -249,29 +266,28 @@ class PostgresGrammar extends Grammar
      */
     public function compileChange(Blueprint $blueprint, Fluent $command, Connection $connection)
     {
-        $columns = [];
+        $column = $command->column;
 
-        foreach ($blueprint->getChangedColumns() as $column) {
-            $changes = ['type '.$this->getType($column).$this->modifyCollate($blueprint, $column)];
+        $changes = ['type '.$this->getType($column).$this->modifyCollate($blueprint, $column)];
 
-            foreach ($this->modifiers as $modifier) {
-                if ($modifier === 'Collate') {
-                    continue;
-                }
-
-                if (method_exists($this, $method = "modify{$modifier}")) {
-                    $constraints = (array) $this->{$method}($blueprint, $column);
-
-                    foreach ($constraints as $constraint) {
-                        $changes[] = $constraint;
-                    }
-                }
+        foreach ($this->modifiers as $modifier) {
+            if ($modifier === 'Collate') {
+                continue;
             }
 
-            $columns[] = implode(', ', $this->prefixArray('alter column '.$this->wrap($column), $changes));
+            if (method_exists($this, $method = "modify{$modifier}")) {
+                $constraints = (array) $this->{$method}($blueprint, $column);
+
+                foreach ($constraints as $constraint) {
+                    $changes[] = $constraint;
+                }
+            }
         }
 
-        return 'alter table '.$this->wrapTable($blueprint).' '.implode(', ', $columns);
+        return sprintf('alter table %s %s',
+            $this->wrapTable($blueprint),
+            implode(', ', $this->prefixArray('alter column '.$this->wrap($column), $changes))
+        );
     }
 
     /**
@@ -1052,6 +1068,19 @@ class PostgresGrammar extends Grammar
         }
 
         return 'geography';
+    }
+
+    /**
+     * Create the column definition for a vector type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    protected function typeVector(Fluent $column)
+    {
+        return isset($column->dimensions) && $column->dimensions !== ''
+            ? "vector({$column->dimensions})"
+            : 'vector';
     }
 
     /**

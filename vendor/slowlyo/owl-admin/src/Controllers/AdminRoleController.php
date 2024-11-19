@@ -59,7 +59,6 @@ class AdminRoleController extends AdminController
     {
         return amis()->DrawerAction()
             ->label(admin_trans('admin.admin_role.set_permissions'))
-            ->icon('fa-solid fa-gear')
             ->level('link')
             ->drawer(
                 amis()->Drawer()
@@ -69,7 +68,7 @@ class AdminRoleController extends AdminController
                     ->closeOnEsc()
                     ->body([
                         amis()->Form()
-                            ->api(admin_url('system/admin_role_save_permissions'))
+                            ->api(admin_url('system/admin_roles/save_permissions'))
                             ->initApi($this->getEditGetDataPath())
                             ->mode('normal')
                             ->data(['id' => '${id}'])

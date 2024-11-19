@@ -33,7 +33,7 @@ class AdminPermissionController extends AdminController
             ->perPage(999)
             ->loadDataOnce()
             ->filterTogglable(false)
-            ->footerToolbar([])
+            ->footerToolbar(['statistics'])
             ->headerToolbar([
                 $this->createButton(true, 'lg'),
                 'bulkActions',
@@ -199,7 +199,7 @@ class AdminPermissionController extends AdminController
             ]);
 
             $_id = $item['id'];
-            while ($item['parent_id'] != 0) {
+            while (isset($item['parent_id'])?$item['parent_id']:0 != 0) {
                 $query->clone()->insert([
                     'permission_id' => $_id,
                     'menu_id'       => $item['parent_id'],

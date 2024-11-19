@@ -3,7 +3,6 @@
 namespace Slowlyo\OwlDict;
 
 use Slowlyo\OwlAdmin\Extend\ServiceProvider;
-use Slowlyo\OwlAdmin\Renderers\SwitchControl;
 
 class OwlDictServiceProvider extends ServiceProvider
 {
@@ -25,9 +24,10 @@ class OwlDictServiceProvider extends ServiceProvider
     public function settingForm()
     {
         return $this->baseSettingForm()->body([
-            SwitchControl::make()->name('disabled_dict_type')->label('屏蔽数据字典类型管理'),
-            SwitchControl::make()->name('disabled_dict_create')->label('屏蔽数据字典创建'),
-            SwitchControl::make()->name('disabled_dict_delete')->label('屏蔽数据字典删除'),
+            amis()->SwitchControl('disabled_dict_type', '屏蔽数据字典类型管理'),
+            amis()->SwitchControl('disabled_dict_create', '屏蔽数据字典创建'),
+            amis()->SwitchControl('disabled_dict_delete', '屏蔽数据字典删除'),
+            amis()->SwitchControl('muggle_mode', '麻瓜模式')->labelRemark('开启后, 字典值将由系统随机生成'),
         ]);
     }
 }

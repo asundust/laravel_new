@@ -294,6 +294,11 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
      */
     protected ?DateInterval $rawInterval = null;
 
+    /**
+     * Flag if the interval was made from a diff with absolute flag on.
+     */
+    protected bool $absolute = false;
+
     protected ?array $initialValues = null;
 
     /**
@@ -492,6 +497,11 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
                     $this->assertSafeForInteger('minute', $minutes);
                     $seconds = (float) ($match['second'] ?? 0);
                     $this->assertSafeForInteger('second', $seconds);
+                    $microseconds = (int) str_pad(
+                        substr(explode('.', $match['second'] ?? '0.0')[1] ?? '0', 0, 6),
+                        6,
+                        '0',
+                    );
                 }
 
                 $totalDays = (($weeks * static::getDaysPerWeek()) + $days);
@@ -503,6 +513,10 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
                 $this->h = (int) $hours;
                 $this->i = (int) $minutes;
                 $this->s = (int) $seconds;
+                $secondFloatPart = (float) ($microseconds / CarbonInterface::MICROSECONDS_PER_SECOND);
+                $this->f = $secondFloatPart;
+                $intervalMicroseconds = (int) ($this->f * CarbonInterface::MICROSECONDS_PER_SECOND);
+                $intervalSeconds = $seconds - $secondFloatPart;
 
                 if (
                     ((float) $this->y) !== $years ||
@@ -510,7 +524,8 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
                     ((float) $this->d) !== $totalDays ||
                     ((float) $this->h) !== $hours ||
                     ((float) $this->i) !== $minutes ||
-                    ((float) $this->s) !== $seconds
+                    ((float) $this->s) !== $intervalSeconds ||
+                    $intervalMicroseconds !== ((int) $microseconds)
                 ) {
                     $this->add(static::fromString(
                         ($years - $this->y).' years '.
@@ -518,7 +533,8 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
                         ($totalDays - $this->d).' days '.
                         ($hours - $this->h).' hours '.
                         ($minutes - $this->i).' minutes '.
-                        ($seconds - $this->s).' seconds '
+                        ($intervalSeconds - $this->s).' seconds '.
+                        ($microseconds - $intervalMicroseconds).' microseconds ',
                     ));
                 }
             } catch (Throwable $secondException) {
@@ -527,7 +543,7 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
         }
 
         if ($microseconds !== null) {
-            $this->f = $microseconds / Carbon::MICROSECONDS_PER_SECOND;
+            $this->f = $microseconds / CarbonInterface::MICROSECONDS_PER_SECOND;
         }
 
         foreach (['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds'] as $unit) {
@@ -791,6 +807,7 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
         $this->startDate = null;
         $this->endDate = null;
         $this->rawInterval = null;
+        $this->absolute = false;
 
         return $this;
     }
@@ -1065,7 +1082,7 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
 
                 default:
                     throw new InvalidIntervalException(
-                        sprintf('Invalid part %s in definition %s', $part, $intervalDefinition),
+                        \sprintf('Invalid part %s in definition %s', $part, $intervalDefinition),
                     );
             }
         }
@@ -1104,6 +1121,7 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
         $rawInterval = $start->diffAsDateInterval($end, $absolute);
         $interval = static::instance($rawInterval, $skip);
 
+        $interval->absolute = $absolute;
         $interval->rawInterval = $rawInterval;
         $interval->startDate = $start;
         $interval->endDate = $end;
@@ -1373,8 +1391,6 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
 
                 case 'day':
                     if ($value === false) {
-                        $this->days = false;
-
                         break;
                     }
 
@@ -1428,6 +1444,10 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
                     break;
 
                 default:
+                    if (str_starts_with($key, ' * ')) {
+                        return $this->setSetting(substr($key, 3), $value);
+                    }
+
                     if ($this->localStrictModeEnabled ?? Carbon::isStrictModeEnabled()) {
                         throw new UnknownSetterException($key);
                     }
@@ -2471,7 +2491,7 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
 
         $seconds = abs($interval->s);
         if ($microseconds && $interval->f > 0) {
-            $seconds = sprintf('%d.%06d', $seconds, abs($interval->f) * 1000000);
+            $seconds = \sprintf('%d.%06d', $seconds, abs($interval->f) * 1000000);
         }
 
         $time = array_filter([
@@ -2589,7 +2609,9 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
         $this->checkStartAndEnd();
 
         if ($this->startDate && $this->endDate) {
-            return $this->startDate->diffInUnit($unit, $this->endDate);
+            $diff = $this->startDate->diffInUnit($unit, $this->endDate);
+
+            return $this->absolute ? abs($diff) : $diff;
         }
 
         $result = 0;
@@ -3335,9 +3357,46 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
             && ($this->startDate !== null || $this->endDate !== null)
             && $this->initialValues !== $this->getInnerValues()
         ) {
+            $this->absolute = false;
             $this->startDate = null;
             $this->endDate = null;
             $this->rawInterval = null;
+        }
+    }
+
+    /** @return $this */
+    private function setSetting(string $setting, mixed $value): self
+    {
+        switch ($setting) {
+            case 'timezoneSetting':
+                return $value === null ? $this : $this->setTimezone($value);
+
+            case 'step':
+                $this->setStep($value);
+
+                return $this;
+
+            case 'localMonthsOverflow':
+                return $value === null ? $this : $this->settings(['monthOverflow' => $value]);
+
+            case 'localYearsOverflow':
+                return $value === null ? $this : $this->settings(['yearOverflow' => $value]);
+
+            case 'localStrictModeEnabled':
+            case 'localHumanDiffOptions':
+            case 'localToStringFormat':
+            case 'localSerializer':
+            case 'localMacros':
+            case 'localGenericMacros':
+            case 'localFormatFunction':
+            case 'localTranslator':
+                $this->$setting = $value;
+
+                return $this;
+
+            default:
+                // Drop unknown settings
+                return $this;
         }
     }
 }

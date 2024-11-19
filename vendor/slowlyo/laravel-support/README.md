@@ -42,5 +42,7 @@ composer require slowlyo/laravel-support
 
 // 创建目录function make_dir($path, $mode = 0777, $recursive = true, $context = null)
 
+// 抽奖function lottery($probs)
+
 // functions end
 ```

@@ -18,9 +18,7 @@ use function urldecode;
 
 class LegacySignature
 {
-    public function __construct(protected MerchantInterface $merchant)
-    {
-    }
+    public function __construct(protected MerchantInterface $merchant) {}
 
     /**
      * @param  array<string, mixed>  $params
@@ -56,8 +54,6 @@ class LegacySignature
         } else {
             $signType = 'md5';
         }
-
-        unset($params['sign_type']);
 
         $sign = call_user_func_array($signType, [urldecode(http_build_query($attributes))]);
 

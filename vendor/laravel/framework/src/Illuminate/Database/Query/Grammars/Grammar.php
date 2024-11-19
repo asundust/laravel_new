@@ -309,6 +309,24 @@ class Grammar extends BaseGrammar
     }
 
     /**
+     * Compile a "where like" clause.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  array  $where
+     * @return string
+     */
+    protected function whereLike(Builder $query, $where)
+    {
+        if ($where['caseSensitive']) {
+            throw new RuntimeException('This database engine does not support case sensitive like operations.');
+        }
+
+        $where['operator'] = $where['not'] ? 'not like' : 'like';
+
+        return $this->whereBasic($query, $where);
+    }
+
+    /**
      * Compile a "where in" clause.
      *
      * @param  \Illuminate\Database\Query\Builder  $query
@@ -1412,6 +1430,16 @@ class Grammar extends BaseGrammar
     }
 
     /**
+     * Compile a query to get the number of open connections for a database.
+     *
+     * @return string|null
+     */
+    public function compileThreadCount()
+    {
+        return null;
+    }
+
+    /**
      * Determine if the grammar supports savepoints.
      *
      * @return bool
@@ -1498,7 +1526,7 @@ class Grammar extends BaseGrammar
      */
     public function substituteBindingsIntoRawSql($sql, $bindings)
     {
-        $bindings = array_map(fn ($value) => $this->escape($value), $bindings);
+        $bindings = array_map(fn ($value) => $this->escape($value, is_resource($value) || gettype($value) === 'resource (closed)'), $bindings);
 
         $query = '';
 

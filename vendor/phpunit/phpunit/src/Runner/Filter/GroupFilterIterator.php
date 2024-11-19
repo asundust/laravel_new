@@ -20,18 +20,20 @@ use RecursiveFilterIterator;
 use RecursiveIterator;
 
 /**
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
+ *
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
  */
 abstract class GroupFilterIterator extends RecursiveFilterIterator
 {
     /**
-     * @psalm-var list<non-empty-string>
+     * @var list<non-empty-string>
      */
     private readonly array $groupTests;
 
     /**
-     * @psalm-param RecursiveIterator<int, Test> $iterator
-     * @psalm-param list<non-empty-string> $groups
+     * @param RecursiveIterator<int, Test> $iterator
+     * @param list<non-empty-string>       $groups
      */
     public function __construct(RecursiveIterator $iterator, array $groups, TestSuite $suite)
     {
@@ -39,7 +41,7 @@ abstract class GroupFilterIterator extends RecursiveFilterIterator
 
         $groupTests = [];
 
-        foreach ($suite->groupDetails() as $group => $tests) {
+        foreach ($suite->groups() as $group => $tests) {
             if (in_array($group, $groups, true)) {
                 $groupTests = array_merge($groupTests, $tests);
 
@@ -66,8 +68,8 @@ abstract class GroupFilterIterator extends RecursiveFilterIterator
     }
 
     /**
-     * @psalm-param non-empty-string $id
-     * @psalm-param list<non-empty-string> $groupTests
+     * @param non-empty-string       $id
+     * @param list<non-empty-string> $groupTests
      */
     abstract protected function doAccept(string $id, array $groupTests): bool;
 }

@@ -74,7 +74,7 @@ class Route
                 $router->resource('admin_roles', AdminRoleController::class);
                 $router->resource('admin_permissions', AdminPermissionController::class);
 
-                $router->post('admin_role_save_permissions', [AdminRoleController::class, 'savePermissions']);
+                $router->post('admin_roles/save_permissions', [AdminRoleController::class, 'savePermissions']);
                 $router->post('_admin_permissions_auto_generate', [AdminPermissionController::class, 'autoGenerate']);
             });
 
@@ -85,6 +85,7 @@ class Route
                         $router->post('preview', [CodeGeneratorController::class, 'preview']);
                         $router->post('generate', [CodeGeneratorController::class, 'generate']);
                         $router->post('clear', [CodeGeneratorController::class, 'clear']);
+                        $router->post('clone', [CodeGeneratorController::class, 'clone']);
                         $router->post('gen_record_options', [CodeGeneratorController::class, 'genRecordOptions']);
                         $router->post('form_data', [CodeGeneratorController::class, 'formData']);
                         $router->post('get_record', [CodeGeneratorController::class, 'getRecord']);

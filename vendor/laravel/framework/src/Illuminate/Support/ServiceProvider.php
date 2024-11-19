@@ -10,6 +10,10 @@ use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory as ModelFactory;
 use Illuminate\View\Compilers\BladeCompiler;
 
+/**
+ * @property array<string, string> $bindings All of the container bindings that should be registered.
+ * @property array<array-key, string> $singletons All of the singletons that should be registered.
+ */
 abstract class ServiceProvider
 {
     /**
@@ -53,6 +57,20 @@ abstract class ServiceProvider
      * @var array
      */
     protected static $publishableMigrationPaths = [];
+
+    /**
+     * Commands that should be run during the "optimize" command.
+     *
+     * @var array<string, string>
+     */
+    public static array $optimizeCommands = [];
+
+    /**
+     * Commands that should be run during the "optimize:clear" command.
+     *
+     * @var array<string, string>
+     */
+    public static array $optimizeClearCommands = [];
 
     /**
      * Create a new service provider instance.
@@ -142,6 +160,24 @@ abstract class ServiceProvider
             $config = $this->app->make('config');
 
             $config->set($key, array_merge(
+                require $path, $config->get($key, [])
+            ));
+        }
+    }
+
+    /**
+     * Replace the given configuration with the existing configuration recursively.
+     *
+     * @param  string  $path
+     * @param  string  $key
+     * @return void
+     */
+    protected function replaceConfigRecursivelyFrom($path, $key)
+    {
+        if (! ($this->app instanceof CachesConfiguration && $this->app->configurationIsCached())) {
+            $config = $this->app->make('config');
+
+            $config->set($key, array_replace_recursive(
                 require $path, $config->get($key, [])
             ));
         }
@@ -436,6 +472,36 @@ abstract class ServiceProvider
         Artisan::starting(function ($artisan) use ($commands) {
             $artisan->resolveCommands($commands);
         });
+    }
+
+    /**
+     * Register commands that should run on "optimize" or "optimize:clear".
+     *
+     * @param  string|null  $optimize
+     * @param  string|null  $clear
+     * @param  string|null  $key
+     * @return void
+     */
+    protected function optimizes(?string $optimize = null, ?string $clear = null, ?string $key = null)
+    {
+        $key ??= (string) Str::of(get_class($this))
+            ->classBasename()
+            ->before('ServiceProvider')
+            ->kebab()
+            ->lower()
+            ->trim();
+
+        if (empty($key)) {
+            $key = class_basename(get_class($this));
+        }
+
+        if ($optimize) {
+            static::$optimizeCommands[$key] = $optimize;
+        }
+
+        if ($clear) {
+            static::$optimizeClearCommands[$key] = $clear;
+        }
     }
 
     /**

@@ -5,15 +5,21 @@ declare(strict_types=1);
 namespace LaravelLang\Config\Services;
 
 use Illuminate\Config\Repository;
+use Illuminate\Support\Collection;
 use LaravelLang\Config\Constants\RouteName;
 use LaravelLang\Config\Data\Common\NonPushableData;
 use LaravelLang\Config\Data\Common\PushableData;
 use LaravelLang\Config\Data\Hidden\ModelsData as HiddenModelsData;
 use LaravelLang\Config\Data\HiddenData;
 use LaravelLang\Config\Data\Shared\ModelsData;
+use LaravelLang\Config\Data\Shared\ModelsFilterData;
 use LaravelLang\Config\Data\Shared\RouteNameData;
 use LaravelLang\Config\Data\Shared\RoutesData;
 use LaravelLang\Config\Data\Shared\SmartPunctuationData;
+use LaravelLang\Config\Data\Shared\Translators\TranslatorChannelsData;
+use LaravelLang\Config\Data\Shared\Translators\TranslatorData;
+use LaravelLang\Config\Data\Shared\Translators\TranslatorOptionsData;
+use LaravelLang\Config\Data\Shared\TranslatorsData;
 use LaravelLang\Config\Data\SharedData;
 use LaravelLang\Config\Enums\Name;
 use LaravelLang\Config\Helpers\Path;
@@ -35,6 +41,7 @@ class Config
             punctuation: $this->smartPunctuation(),
             routes     : $this->routes(),
             models     : $this->models(),
+            translators: $this->translators(),
         );
     }
 
@@ -78,6 +85,7 @@ class Config
                 header   : $this->value(Name::Shared, 'routes.names.header', fallback: RouteName::Header),
                 cookie   : $this->value(Name::Shared, 'routes.names.cookie', fallback: RouteName::Cookie),
                 session  : $this->value(Name::Shared, 'routes.names.session', fallback: RouteName::Session),
+                column   : $this->value(Name::Shared, 'routes.names.column', fallback: RouteName::Column),
             ),
             namePrefix: $this->value(Name::Shared, 'routes.name_prefix', fallback: 'localized.'),
             redirect  : $this->value(Name::Shared, 'routes.redirect_default', fallback: false),
@@ -87,11 +95,55 @@ class Config
     protected function models(): ModelsData
     {
         return new ModelsData(
-            connection: $this->value(Name::Shared, 'models.connection'),
-            table     : $this->value(Name::Shared, 'models.table', fallback: 'translations'),
-            flags     : $this->value(Name::Shared, 'models.flags', fallback: 0),
-            helpers   : $this->value(Name::Shared, 'models.helpers', fallback: Path::helpers()),
+            suffix : $this->value(Name::Shared, 'models.suffix', fallback: 'Translation'),
+            helpers: $this->value(Name::Shared, 'models.helpers', fallback: Path::helpers()),
+            filter : $this->modelsFilter(),
         );
+    }
+
+    protected function modelsFilter(): ModelsFilterData
+    {
+        return new ModelsFilterData(
+            enabled: (bool) $this->value(Name::Shared, 'models.filter.enabled'),
+        );
+    }
+
+    protected function translators(): TranslatorsData
+    {
+        return new TranslatorsData(
+            channels: $this->translatorChannels(),
+            options : $this->translatorOptions()
+        );
+    }
+
+    protected function translatorChannels(): TranslatorChannelsData
+    {
+        $items = $this->getTranslators();
+
+        return new TranslatorChannelsData($items, array_filter($items, fn (TranslatorData $item) => $item->enabled));
+    }
+
+    protected function translatorOptions(): TranslatorOptionsData
+    {
+        return new TranslatorOptionsData(
+            preserveParameters: $this->value(
+                Name::Shared,
+                'translators.options.preserve_parameters',
+                fallback: true
+            )
+        );
+    }
+
+    protected function getTranslators(): array
+    {
+        return (new Collection($this->value(Name::Shared, 'translators.channels')))->map(
+            fn (array $item) => new TranslatorData(
+                enabled    : $item['enabled'] ?? true,
+                translator : $item['translator'],
+                credentials: $item['credentials'] ?? [],
+                priority   : $item['priority']    ?? 0
+            )
+        )->sortBy(fn (TranslatorData $item) => $item->priority)->all();
     }
 
     protected function value(

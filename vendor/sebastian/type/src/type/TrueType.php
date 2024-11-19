@@ -9,6 +9,9 @@
  */
 namespace SebastianBergmann\Type;
 
+/**
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for this library
+ */
 final class TrueType extends Type
 {
     public function isAssignable(Type $other): bool
@@ -23,7 +26,7 @@ final class TrueType extends Type
     }
 
     /**
-     * @psalm-return 'true'
+     * @return 'true'
      */
     public function name(): string
     {
@@ -35,9 +38,6 @@ final class TrueType extends Type
         return false;
     }
 
-    /**
-     * @psalm-assert-if-true TrueType $this
-     */
     public function isTrue(): bool
     {
         return true;

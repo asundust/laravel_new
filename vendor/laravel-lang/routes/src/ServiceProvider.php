@@ -13,6 +13,11 @@ class ServiceProvider extends BaseServiceProvider
 {
     public function boot(): void
     {
+        $this->registerGroup();
+    }
+
+    protected function registerGroup(): void
+    {
         Route::macro('localizedGroup', fn (Closure $callback) => LocalizationRoute::group($callback));
     }
 }

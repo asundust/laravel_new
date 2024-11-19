@@ -6,7 +6,7 @@ namespace Slowlyo\OwlAdmin\Renderers;
  * CRUD2Table
  *
  * @author  slowlyo
- * @version 6.5.0
+ * @version 6.7.0
  */
 class CRUD2Table extends BaseRenderer
 {
@@ -213,6 +213,14 @@ class CRUD2Table extends BaseRenderer
     public function itemBadge($value = '')
     {
         return $this->set('itemBadge', $value);
+    }
+
+    /**
+     * 约束批量操作
+     */
+    public function itemCheckableOn($value = '')
+    {
+        return $this->set('itemCheckableOn', $value);
     }
 
     /**

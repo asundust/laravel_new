@@ -41,15 +41,20 @@ use PHPUnit\Event\Test\WarningTriggered;
 use PHPUnit\Event\UnknownSubscriberTypeException;
 use PHPUnit\Framework\TestStatus\TestStatus;
 use PHPUnit\Logging\TestDox\TestResult as TestDoxTestMethod;
+use PHPUnit\TestRunner\IssueFilter;
 use ReflectionMethod;
 
 /**
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
+ *
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
  */
 final class TestResultCollector
 {
+    private readonly IssueFilter $issueFilter;
+
     /**
-     * @psalm-var array<string, list<TestDoxTestMethod>>
+     * @var array<string, list<TestDoxTestMethod>>
      */
     private array $tests          = [];
     private ?TestStatus $status   = null;
@@ -60,13 +65,15 @@ final class TestResultCollector
      * @throws EventFacadeIsSealedException
      * @throws UnknownSubscriberTypeException
      */
-    public function __construct(Facade $facade)
+    public function __construct(Facade $facade, IssueFilter $issueFilter)
     {
+        $this->issueFilter = $issueFilter;
+
         $this->registerSubscribers($facade);
     }
 
     /**
-     * @psalm-return array<string, TestResultCollection>
+     * @return array<string, TestResultCollection>
      */
     public function testMethodsGroupedByClass(): array
     {
@@ -98,8 +105,8 @@ final class TestResultCollector
             uksort(
                 $testsByDeclaringClass,
                 /**
-                 * @psalm-param class-string $a
-                 * @psalm-param class-string $b
+                 * @param class-string $a
+                 * @param class-string $b
                  */
                 static function (string $a, string $b): int
                 {
@@ -208,7 +215,11 @@ final class TestResultCollector
 
     public function testTriggeredDeprecation(DeprecationTriggered $event): void
     {
-        if (!$event->test()->isTestMethod()) {
+        if (!$this->issueFilter->shouldBeProcessed($event, true)) {
+            return;
+        }
+
+        if ($event->ignoredByBaseline()) {
             return;
         }
 
@@ -217,7 +228,11 @@ final class TestResultCollector
 
     public function testTriggeredNotice(NoticeTriggered $event): void
     {
-        if (!$event->test()->isTestMethod()) {
+        if (!$this->issueFilter->shouldBeProcessed($event, true)) {
+            return;
+        }
+
+        if ($event->ignoredByBaseline()) {
             return;
         }
 
@@ -226,7 +241,11 @@ final class TestResultCollector
 
     public function testTriggeredWarning(WarningTriggered $event): void
     {
-        if (!$event->test()->isTestMethod()) {
+        if (!$this->issueFilter->shouldBeProcessed($event, true)) {
+            return;
+        }
+
+        if ($event->ignoredByBaseline()) {
             return;
         }
 
@@ -235,7 +254,11 @@ final class TestResultCollector
 
     public function testTriggeredPhpDeprecation(PhpDeprecationTriggered $event): void
     {
-        if (!$event->test()->isTestMethod()) {
+        if (!$this->issueFilter->shouldBeProcessed($event, true)) {
+            return;
+        }
+
+        if ($event->ignoredByBaseline()) {
             return;
         }
 
@@ -244,7 +267,11 @@ final class TestResultCollector
 
     public function testTriggeredPhpNotice(PhpNoticeTriggered $event): void
     {
-        if (!$event->test()->isTestMethod()) {
+        if (!$this->issueFilter->shouldBeProcessed($event, true)) {
+            return;
+        }
+
+        if ($event->ignoredByBaseline()) {
             return;
         }
 
@@ -253,7 +280,11 @@ final class TestResultCollector
 
     public function testTriggeredPhpWarning(PhpWarningTriggered $event): void
     {
-        if (!$event->test()->isTestMethod()) {
+        if (!$this->issueFilter->shouldBeProcessed($event, true)) {
+            return;
+        }
+
+        if ($event->ignoredByBaseline()) {
             return;
         }
 

@@ -138,7 +138,7 @@ class ExtensionController extends AdminController
                     amis()->AjaxAction()
                         ->label('${enabled ? "' . admin_trans('admin.extensions.disable') . '" : "' . admin_trans('admin.extensions.enable') . '"}')
                         ->level('link')
-                        ->className(["text-success" => '${!enabled}', "text-danger" => '${enabled}'])
+                        ->className(["text-danger" => '${enabled}'])
                         ->api([
                             'url'    => admin_url('dev_tools/extensions/enable'),
                             'method' => 'post',

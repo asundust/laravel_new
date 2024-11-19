@@ -14,12 +14,22 @@
         }
     ],
     "require": {
-        "php": "^7.1.3|^8.0",
-        "illuminate/support": "~5.8.0|>=6.0"
+        "php": "^8.0",
+        "illuminate/support": ">=9.0"
     },
     "autoload": {
+        "psr-4": {
+            "Asundust\\Helpers\\": "src/"
+        },
         "files": [
             "src/helpers.php"
         ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Asundust\\Helpers\\HelpersServiceProvider"
+            ]
+        }
     }
 }

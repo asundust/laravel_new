@@ -34,8 +34,8 @@ class OwlDictController extends AdminController
     public function navBar()
     {
         $formItems = [
-            amis()->TextControl('value', $this->trans('field.value'))->required()->maxLength(255),
-            amis()->TextControl('key', $this->trans('field.key'))->required()->maxLength(255),
+            amis()->TextControl('value', $this->trans('type_label'))->required()->maxLength(255),
+            amis()->TextControl('key', $this->trans('type_value'))->required()->maxLength(255),
             amis()->SwitchControl('enabled', $this->trans('field.enabled'))->value(1),
         ];
 
@@ -56,7 +56,7 @@ class OwlDictController extends AdminController
                         ->set('labelField', 'value')
                         ->showIcon(false)
                         ->searchable()
-                        ->set('rootCreateTip', __('admin.create') . $this->trans('dict_type'))
+                        ->set('rootCreateTip', admin_trans('admin.create') . $this->trans('dict_type'))
                         ->selectFirst()
                         ->creatable($this->dictTypeEnabled())
                         ->addControls($formItems)
@@ -102,7 +102,7 @@ class OwlDictController extends AdminController
             ])
             ->filter(
                 $this->baseFilter()->body([
-                    amis()->TextControl('key', $this->trans('field.key'))->size('md'),
+                    amis()->TextControl('key', $this->trans('field.key'))->size('md')->hidden($this->muggleMode()),
                     amis()->TextControl('value', $this->trans('field.value'))->size('md'),
                     amis()->SelectControl('enabled', $this->trans('field.enabled'))
                         ->size('md')
@@ -115,16 +115,16 @@ class OwlDictController extends AdminController
             )
             ->columns([
                 amis()->TableColumn('value', $this->trans('field.value')),
-                amis()->TableColumn('key', $this->trans('field.key')),
+                $this->muggleMode() ? '' : amis()->TableColumn('key', $this->trans('field.key')),
                 amis()->TableColumn('enabled', $this->trans('field.enabled'))->quickEdit(
                     amis()->SwitchControl()->mode('inline')->saveImmediately(true)
                 ),
-                amis()->TableColumn('sort', $this->trans('field.sort'))->width(120),
-                amis()->TableColumn('created_at', __('admin.created_at'))->width(120),
+                amis()->TableColumn('sort', $this->trans('field.sort')),
+                amis()->TableColumn('created_at', admin_trans('admin.created_at')),
                 $this->rowActions([
                     $this->rowEditButton(true),
                     $this->rowDeleteButton()->visible(!OwlDictServiceProvider::setting('disabled_dict_delete')),
-                ])->set('width', 240),
+                ]),
             ]);
 
         return $this->baseList($crud);
@@ -144,23 +144,26 @@ class OwlDictController extends AdminController
                 ->valueField('id')
                 ->labelField('value'),
             amis()->TextControl('value', $this->trans('field.value'))->required()->maxLength(255),
-            amis()->TextControl('key', $this->trans('field.key'))->required()->maxLength(255)->addOn(
-                amis()->VanillaAction()->label($this->trans('random'))->icon('fa-solid fa-shuffle')->onEvent([
-                    'click' => [
-                        'actions' => [
-                            [
-                                'actionType'  => 'setValue',
-                                'componentId' => 'dict_item_form',
-                                'args'        => [
-                                    'value' => [
-                                        'key' => '${PADSTART(INT(RAND()*1000000000), 9, "0") | base64Encode | lowerCase}',
+            $this->muggleMode() ? '' : amis()->TextControl('key', $this->trans('field.key'))
+                ->required()
+                ->maxLength(255)
+                ->addOn(
+                    amis()->VanillaAction()->label($this->trans('random'))->icon('fa-solid fa-shuffle')->onEvent([
+                        'click' => [
+                            'actions' => [
+                                [
+                                    'actionType'  => 'setValue',
+                                    'componentId' => 'dict_item_form',
+                                    'args'        => [
+                                        'value' => [
+                                            'key' => '${PADSTART(INT(RAND()*1000000000), 9, "0") | base64Encode | lowerCase}',
+                                        ],
                                     ],
                                 ],
                             ],
                         ],
-                    ],
-                ])
-            ),
+                    ])
+                ),
             amis()->NumberControl('sort', $this->trans('field.sort'))
                 ->displayMode('enhance')
                 ->min(0)
@@ -173,6 +176,17 @@ class OwlDictController extends AdminController
     public function dictTypeOptions()
     {
         return $this->response()->success($this->service->getDictTypeOptions());
+    }
+
+    public function dictOptions()
+    {
+        $path = request('path');
+        $list = [];
+        if ($path) {
+            $list = admin_dict()->getOptions($path);
+        }
+
+        return $this->response()->success($list);
     }
 
     public function detail($id)
@@ -188,5 +202,10 @@ class OwlDictController extends AdminController
     private function dictTypeEnabled()
     {
         return !OwlDictServiceProvider::setting('disabled_dict_type');
+    }
+
+    private function muggleMode()
+    {
+        return OwlDictServiceProvider::setting('muggle_mode');
     }
 }
